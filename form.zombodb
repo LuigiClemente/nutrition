@@ -1,0 +1,166 @@
+-- Step 1: Ensure ZomboDB Extension is Installed
+CREATE EXTENSION IF NOT EXISTS zombodb;
+
+-- Step 2: Create ZomboDB Indexes
+
+-- Index for `user_health_info` table
+CREATE INDEX IF NOT EXISTS idx_user_health_info_zdb 
+ON user_health_info 
+USING zombodb ((user_health_info.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `dietary_preferences` table
+CREATE INDEX IF NOT EXISTS idx_dietary_preferences_zdb 
+ON dietary_preferences 
+USING zombodb ((dietary_preferences.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `food_allergies_intolerances` table
+CREATE INDEX IF NOT EXISTS idx_food_allergies_intolerances_zdb 
+ON food_allergies_intolerances 
+USING zombodb ((food_allergies_intolerances.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `specific_food_avoidances` table
+CREATE INDEX IF NOT EXISTS idx_specific_food_avoidances_zdb 
+ON specific_food_avoidances 
+USING zombodb ((specific_food_avoidances.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `nutritional_deficiencies` table
+CREATE INDEX IF NOT EXISTS idx_nutritional_deficiencies_zdb 
+ON nutritional_deficiencies 
+USING zombodb ((nutritional_deficiencies.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `food_consumption_frequency` table
+CREATE INDEX IF NOT EXISTS idx_food_consumption_frequency_zdb 
+ON food_consumption_frequency 
+USING zombodb ((food_consumption_frequency.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `cooking_habits` table
+CREATE INDEX IF NOT EXISTS idx_cooking_habits_zdb 
+ON cooking_habits 
+USING zombodb ((cooking_habits.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `health_conditions` table
+CREATE INDEX IF NOT EXISTS idx_health_conditions_zdb 
+ON health_conditions 
+USING zombodb ((health_conditions.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `health_goals` table
+CREATE INDEX IF NOT EXISTS idx_health_goals_zdb 
+ON health_goals 
+USING zombodb ((health_goals.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `family_medical_history` table
+CREATE INDEX IF NOT EXISTS idx_family_medical_history_zdb 
+ON family_medical_history 
+USING zombodb ((family_medical_history.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `eating_behavior` table
+CREATE INDEX IF NOT EXISTS idx_eating_behavior_zdb 
+ON eating_behavior 
+USING zombodb ((eating_behavior.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `food_addiction_concerns` table
+CREATE INDEX IF NOT EXISTS idx_food_addiction_concerns_zdb 
+ON food_addiction_concerns 
+USING zombodb ((food_addiction_concerns.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `adverse_reactions_to_foods` table
+CREATE INDEX IF NOT EXISTS idx_adverse_reactions_to_foods_zdb 
+ON adverse_reactions_to_foods 
+USING zombodb ((adverse_reactions_to_foods.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `health_monitoring_technology` table
+CREATE INDEX IF NOT EXISTS idx_health_monitoring_technology_zdb 
+ON health_monitoring_technology 
+USING zombodb ((health_monitoring_technology.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `historical_eating_patterns` table
+CREATE INDEX IF NOT EXISTS idx_historical_eating_patterns_zdb 
+ON historical_eating_patterns 
+USING zombodb ((historical_eating_patterns.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `eating_out_frequency` table
+CREATE INDEX IF NOT EXISTS idx_eating_out_frequency_zdb 
+ON eating_out_frequency 
+USING zombodb ((eating_out_frequency.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `snacking_habits` table
+CREATE INDEX IF NOT EXISTS idx_snacking_habits_zdb 
+ON snacking_habits 
+USING zombodb ((snacking_habits.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `alcohol_consumption` table
+CREATE INDEX IF NOT EXISTS idx_alcohol_consumption_zdb 
+ON alcohol_consumption 
+USING zombodb ((alcohol_consumption.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `smoking_status` table
+CREATE INDEX IF NOT EXISTS idx_smoking_status_zdb 
+ON smoking_status 
+USING zombodb ((smoking_status.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `recent_diet_changes` table
+CREATE INDEX IF NOT EXISTS idx_recent_diet_changes_zdb 
+ON recent_diet_changes 
+USING zombodb ((recent_diet_changes.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `feedback_on_past_diets` table
+CREATE INDEX IF NOT EXISTS idx_feedback_on_past_diets_zdb 
+ON feedback_on_past_diets 
+USING zombodb ((feedback_on_past_diets.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `eating_schedule_flexibility` table
+CREATE INDEX IF NOT EXISTS idx_eating_schedule_flexibility_zdb 
+ON eating_schedule_flexibility 
+USING zombodb ((eating_schedule_flexibility.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `microbiome_data` table
+CREATE INDEX IF NOT EXISTS idx_microbiome_data_zdb 
+ON microbiome_data 
+USING zombodb ((microbiome_data.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `cgm_data` table
+CREATE INDEX IF NOT EXISTS idx_cgm_data_zdb 
+ON cgm_data 
+USING zombodb ((cgm_data.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `lipid_profile_data` table
+CREATE INDEX IF NOT EXISTS idx_lipid_profile_data_zdb 
+ON lipid_profile_data 
+USING zombodb ((lipid_profile_data.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `other_health_tests` table
+CREATE INDEX IF NOT EXISTS idx_other_health_tests_zdb 
+ON other_health_tests 
+USING zombodb ((other_health_tests.*)) 
+WITH (url='http://localhost:9200/');
+
+-- Index for `environmental_factors` table
+CREATE INDEX IF NOT EXISTS idx_environmental_factors_zdb 
+ON environmental_factors 
+USING zombodb ((environmental_factors.*)) 
+WITH (url='http://localhost:9200/');
