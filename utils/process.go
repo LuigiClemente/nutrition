@@ -11,55 +11,53 @@ import (
 // CalculateMealScore computes scores for meals based on user preferences and goals.
 func CalculateMealScore(user models.User, meals []models.Meal) []models.ScoredMeal {
 	mealsWithScores := make([]models.ScoredMeal, len(meals))
-	var nutritionalContent map[string]float64
-	var healthScores map[string]float64
-	/*
-		maxDietaryMatch := 40.0
-		maxNutritionalMatch := 30.0
-		maxHealthGoalsAlignment := 25.0
-		maxNutritionalImpact := 20.0
-		maxMicrobiomeCompatibility := 15.0
-		maxEnvironmentalAdaptability := 10.0
-		maxRecentConsumptionPenalty := 5.0
-		maxAgeGenderScore := 10.0
-	*/
-	maxPossibleScore := 155.0 // Total of the highest possible scores from each component
+
+	// Pre-calculate user's BMI for health goal-related calculations.
+	userBMI := user.BodyMetrics.Weight / ((user.BodyMetrics.Height / 100) * (user.BodyMetrics.Height / 100))
+
+	// Constants for max possible scores for normalization.
+	const maxTotalScore = 155.0
 
 	for i, meal := range meals {
 		fitScore := 0.0
+		var nutritionalContent, healthScores map[string]float64
 
-		// Unmarshal JSONB fields once per meal
+		// Unmarshal JSONB fields once per meal for nutritional content and health scores.
 		if err := json.Unmarshal(meal.NutritionalContent, &nutritionalContent); err != nil {
 			fmt.Println("Error unmarshaling nutritional content:", err)
 			continue
 		}
-
 		if err := json.Unmarshal(meal.HealthScores, &healthScores); err != nil {
 			fmt.Println("Error unmarshaling health scores:", err)
 			continue
 		}
 
-		// Add the calculated score from each component
+		// Add the calculated score from each component.
 		fitScore += calculateDietaryMatch(user, meal)
 		fitScore += calculateNutritionalMatch(user, meal)
-		fitScore += calculateHealthGoalsAlignment(user, meal)
+		fitScore += calculateHealthGoalsAlignment(user,  nutritionalContent, healthScores, userBMI)
 		fitScore += calculateNutritionalImpact(user, meal)
 		fitScore += calculateMicrobiomeCompatibility(user, meal)
 		fitScore += calculateEnvironmentalAdaptability(user, meal)
 		fitScore += calculateRecentConsumptionPenalty(user, meal)
 		fitScore += calculateAgeGenderScore(user, meal)
 
-		// Normalize the score to be out of 100 and round to 2 decimal places
-		normalizedScore := math.Max(0, math.Min(100, math.Round((fitScore/maxPossibleScore)*100*100)/100))
+		// Normalize the score to be out of 100 and round to 2 decimal places.
+		normalizedScore := normalizeScore(fitScore, maxTotalScore)
 		mealsWithScores[i] = models.ScoredMeal{Meal: meal, Score: normalizedScore}
 	}
 
-	// Sort meals by normalized score in descending order
+	// Sort meals by normalized score in descending order.
 	sort.Slice(mealsWithScores, func(i, j int) bool {
 		return mealsWithScores[i].Score > mealsWithScores[j].Score
 	})
 
 	return mealsWithScores
+}
+
+// Normalize the score to a 0-100 scale.
+func normalizeScore(fitScore, maxPossibleScore float64) float64 {
+	return math.Max(0, math.Min(100, math.Round((fitScore/maxPossibleScore)*100*100)/100))
 }
 
 // calculateDietaryMatch scores meals based on user's dietary preferences and avoidances.
@@ -100,23 +98,8 @@ func calculateNutritionalMatch(user models.User, meal models.Meal) float64 {
 }
 
 // calculateHealthGoalsAlignment scores meals based on how well they align with user's health goals.
-func calculateHealthGoalsAlignment(user models.User, meal models.Meal) float64 {
+func calculateHealthGoalsAlignment(user models.User,  nutritionalContent, healthScores map[string]float64, bmi float64) float64 {
 	score := 0.0
-	var nutritionalContent map[string]float64
-	var healthScores map[string]float64
-
-	if err := json.Unmarshal(meal.NutritionalContent, &nutritionalContent); err != nil {
-		fmt.Println("Error unmarshaling nutritional content:", err)
-		return 0
-	}
-
-	if err := json.Unmarshal(meal.HealthScores, &healthScores); err != nil {
-		fmt.Println("Error unmarshaling health scores:", err)
-		return 0
-	}
-
-	// Calculate BMI
-	bmi := user.BodyMetrics.Weight / ((user.BodyMetrics.Height / 100) * (user.BodyMetrics.Height / 100))
 
 	for _, goal := range user.Goals {
 		switch goal.Type {

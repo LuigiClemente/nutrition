@@ -163,7 +163,7 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 		}
 
 		// Calculate top meals
-		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 2)
+		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3)
 
 		// Prepare recommendations
 		var scoreRecommendations []models.Recommended
@@ -221,7 +221,7 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 		}
 
 		// Calculate top meals
-		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 2)
+		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3)
 
 		// Prepare recommendations
 		var scoreRecommendations []models.Recommended
