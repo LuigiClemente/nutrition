@@ -6,6 +6,7 @@ import (
 	"math"
 	"nutrition/models"
 	"sort"
+	"sync"
 	"time"
 )
 
@@ -91,180 +92,216 @@ func calculateNutritionalMatch(user models.User, meal models.Meal) float64 {
 
 // calculateHealthGoalsAlignment scores meals based on how well they align with user's health goals.
 func calculateHealthGoalsAlignment(user models.User, nutritionalContent, healthScores map[string]float64, bmi float64) float64 {
-	score := 0.0
+	var wg sync.WaitGroup
+	scoreMap := sync.Map{}
 
-	for _, goal := range user.Goals {
-		switch goal.Type {
+	// Cache frequently used values
+	calories, hasCalories := nutritionalContent["calories"]
+	sugar, hasSugar := nutritionalContent["sugar"]
+	fiber, hasFiber := nutritionalContent["fiber"]
+
+	// Function to calculate score for a specific goal
+	calculateScore := func(goalType string) {
+		defer wg.Done()
+		score := 0.0
+
+		switch goalType {
 		case "Weight loss":
-			if nutritionalContent["calories"] <= 400.0 {
+			if hasCalories && calories <= 400.0 {
 				score += 30.0
 			}
-			if bmi >= 25 && nutritionalContent["calories"] <= 400.0 {
-				score += 30.0
-			} else if bmi < 25 && nutritionalContent["calories"] <= 500.0 {
+			if hasCalories {
+				if bmi >= 25 && calories <= 400.0 {
+					score += 30.0
+				} else if bmi < 25 && calories <= 500.0 {
+					score += 20.0
+				}
+			}
+			if hasSugar && sugar <= 5.0 {
 				score += 20.0
 			}
-			if nutritionalContent["sugar"] <= 5.0 {
-				score += 20.0
-			}
-			if nutritionalContent["fiber"] >= 5.0 {
+			if hasFiber && fiber >= 5.0 {
 				score += 10.0
 			}
 
 		case "Muscle gain":
-			if nutritionalContent["protein"] >= 25.0 {
+			if protein, hasProtein := nutritionalContent["protein"]; hasProtein && protein >= 25.0 {
 				score += 30.0
 			}
-			if nutritionalContent["calories"] >= 500.0 {
+			if hasCalories && calories >= 500.0 {
 				score += 20.0
 			}
-			if nutritionalContent["fat"] >= 10.0 {
+			if fat, hasFat := nutritionalContent["fat"]; hasFat && fat >= 10.0 {
 				score += 10.0
 			}
-			if nutritionalContent["protein"] >= 25.0 && nutritionalContent["calories"] <= 600.0 {
+			if protein, hasProtein := nutritionalContent["protein"]; hasProtein && protein >= 25.0 && calories <= 600.0 {
 				score += 30.0
 			}
 
 		case "Heart health":
-			if healthScores["heart_healthy"] >= 8.0 {
+			if heartHealthy, ok := healthScores["heart_healthy"]; ok && heartHealthy >= 8.0 {
 				score += 30.0
 			}
-			if nutritionalContent["cholesterol"] <= 20.0 {
+			if cholesterol, hasCholesterol := nutritionalContent["cholesterol"]; hasCholesterol && cholesterol <= 20.0 {
 				score += 10.0
 			}
-			if nutritionalContent["fat"] <= 10.0 {
+			if fat, hasFat := nutritionalContent["fat"]; hasFat && fat <= 10.0 {
 				score += 10.0
 			}
-			if nutritionalContent["fiber"] >= 5.0 {
+			if hasFiber && fiber >= 5.0 {
 				score += 10.0
 			}
 
 		case "Blood sugar management":
-			if healthScores["diabetes_friendly"] >= 8.0 {
+			if diabetesFriendly, ok := healthScores["diabetes_friendly"]; ok && diabetesFriendly >= 8.0 {
 				score += 30.0
 			}
-			if nutritionalContent["sugar"] <= 5.0 {
+			if hasSugar && sugar <= 5.0 {
 				score += 20.0
 			}
-			if nutritionalContent["fiber"] >= 8.0 {
+			if hasFiber && fiber >= 8.0 {
 				score += 10.0
 			}
 
 		case "Gut health":
-			if nutritionalContent["fiber"] >= 8.0 {
+			if hasFiber && fiber >= 8.0 {
 				score += 30.0
 			}
 
 		case "Metabolic health":
-			if nutritionalContent["sugar"] <= 5.0 && nutritionalContent["calories"] <= 500.0 {
+			if hasSugar && sugar <= 5.0 && hasCalories && calories <= 500.0 {
 				score += 30.0
 			}
-			if nutritionalContent["protein"] >= 15.0 && nutritionalContent["fat"] <= 15.0 {
-				score += 20.0
+			if protein, hasProtein := nutritionalContent["protein"]; hasProtein && protein >= 15.0 {
+				if fat, hasFat := nutritionalContent["fat"]; hasFat && fat <= 15.0 {
+					score += 20.0
+				}
 			}
 
 		case "Cholesterol reduction":
-			if nutritionalContent["cholesterol"] <= 20.0 {
+			if cholesterol, hasCholesterol := nutritionalContent["cholesterol"]; hasCholesterol && cholesterol <= 20.0 {
 				score += 30.0
 			}
-			if nutritionalContent["fiber"] >= 5.0 {
+			if hasFiber && fiber >= 5.0 {
 				score += 20.0
 			}
 
 		case "Weight maintenance":
-			if nutritionalContent["calories"] >= 400.0 && nutritionalContent["calories"] <= 600.0 {
+			if hasCalories && calories >= 400.0 && calories <= 600.0 {
 				score += 30.0
 			}
-			if nutritionalContent["fat"] <= 15.0 && nutritionalContent["sugar"] <= 5.0 {
+			if fat, hasFat := nutritionalContent["fat"]; hasFat && fat <= 15.0 && hasSugar && sugar <= 5.0 {
 				score += 20.0
 			}
-			if nutritionalContent["protein"] >= 15.0 {
+			if protein, hasProtein := nutritionalContent["protein"]; hasProtein && protein >= 15.0 {
 				score += 10.0
 			}
 
 		case "Lean muscle maintenance":
-			if nutritionalContent["protein"] >= 15.0 {
+			if protein, hasProtein := nutritionalContent["protein"]; hasProtein && protein >= 15.0 {
 				score += 30.0
 			}
-			if nutritionalContent["fiber"] >= 5.0 {
+			if hasFiber && fiber >= 5.0 {
 				score += 10.0
 			}
 
 		case "Improved energy levels":
-			if nutritionalContent["carbs"] >= 40.0 {
+			if carbs, hasCarbs := nutritionalContent["carbs"]; hasCarbs && carbs >= 40.0 {
 				score += 30.0
 			}
-			if nutritionalContent["calories"] >= 400.0 && nutritionalContent["calories"] <= 600.0 {
+			if hasCalories && calories >= 400.0 && calories <= 600.0 {
 				score += 20.0
 			}
-			if nutritionalContent["sugar"] <= 5.0 {
+			if hasSugar && sugar <= 5.0 {
 				score += 10.0
 			}
 
 		case "Endurance training support":
-			if nutritionalContent["carbs"] >= 40.0 {
+			if carbs, hasCarbs := nutritionalContent["carbs"]; hasCarbs && carbs >= 40.0 {
 				score += 30.0
 			}
-			if nutritionalContent["protein"] >= 15.0 {
+			if protein, hasProtein := nutritionalContent["protein"]; hasProtein && protein >= 15.0 {
 				score += 20.0
 			}
-			if nutritionalContent["fat"] <= 15.0 {
+			if fat, hasFat := nutritionalContent["fat"]; hasFat && fat <= 15.0 {
 				score += 10.0
 			}
 
 		case "Cardiovascular fitness":
-			if nutritionalContent["sodium"] <= 200.0 {
+			if sodium, hasSodium := nutritionalContent["sodium"]; hasSodium && sodium <= 200.0 {
 				score += 30.0
 			}
-			if nutritionalContent["cholesterol"] <= 20.0 && nutritionalContent["fat"] <= 10.0 {
-				score += 20.0
+			if cholesterol, hasCholesterol := nutritionalContent["cholesterol"]; hasCholesterol && cholesterol <= 20.0 {
+				if fat, hasFat := nutritionalContent["fat"]; hasFat && fat <= 10.0 {
+					score += 20.0
+				}
 			}
-			if nutritionalContent["antioxidants"] >= 5.0 {
+			if antioxidants, hasAntioxidants := nutritionalContent["antioxidants"]; hasAntioxidants && antioxidants >= 5.0 {
 				score += 10.0
 			}
 
 		case "Detoxification":
-			if nutritionalContent["fiber"] >= 8.0 {
+			if hasFiber && fiber >= 8.0 {
 				score += 30.0
 			}
 
 		case "Bone health":
-			if nutritionalContent["calcium"] >= 200.0 {
+			if calcium, hasCalcium := nutritionalContent["calcium"]; hasCalcium && calcium >= 200.0 {
 				score += 30.0
 			}
 
 		case "Skin health":
-			if nutritionalContent["vitamin A"] >= 10.0 && nutritionalContent["vitamin C"] >= 20.0 {
-				score += 30.0
+			if vitaminA, hasVitaminA := nutritionalContent["vitamin A"]; hasVitaminA {
+				if vitaminC, hasVitaminC := nutritionalContent["vitamin C"]; hasVitaminC && vitaminA >= 10.0 && vitaminC >= 20.0 {
+					score += 30.0
+				}
 			}
-			if nutritionalContent["healthy fats"] >= 10.0 {
+			if healthyFats, hasHealthyFats := nutritionalContent["healthy fats"]; hasHealthyFats && healthyFats >= 10.0 {
 				score += 20.0
 			}
 
 		case "Anti-inflammatory diet":
-			if nutritionalContent["antioxidants"] >= 5.0 {
+			if antioxidants, hasAntioxidants := nutritionalContent["antioxidants"]; hasAntioxidants && antioxidants >= 5.0 {
 				score += 30.0
 			}
 
 		case "Hormonal balance":
-			if nutritionalContent["omega-3"] >= 10.0 {
+			if omega3, hasOmega3 := nutritionalContent["omega-3"]; hasOmega3 && omega3 >= 10.0 {
 				score += 30.0
 			}
-			if nutritionalContent["protein"] >= 15.0 && nutritionalContent["fiber"] >= 5.0 {
+			if protein, hasProtein := nutritionalContent["protein"]; hasProtein && protein >= 15.0 && hasFiber && fiber >= 5.0 {
 				score += 20.0
 			}
 
 		case "Improved mental clarity":
-			if nutritionalContent["omega-3"] >= 10.0 {
+			if omega3, hasOmega3 := nutritionalContent["omega-3"]; hasOmega3 && omega3 >= 10.0 {
 				score += 30.0
 			}
-			if nutritionalContent["antioxidants"] >= 5.0 {
+			if antioxidants, hasAntioxidants := nutritionalContent["antioxidants"]; hasAntioxidants && antioxidants >= 5.0 {
 				score += 20.0
 			}
-
 		}
+
+		// Store the calculated score in the thread-safe map
+		scoreMap.Store(goalType, score)
 	}
-	return score
+
+	// Launch concurrent calculation for each goal
+	for _, goal := range user.Goals {
+		wg.Add(1)
+		go calculateScore(goal.Type)
+	}
+	// Wait for all calculations to finish
+	wg.Wait()
+
+	// Sum up all scores from the thread-safe map
+	totalScore := 0.0
+	scoreMap.Range(func(_, value interface{}) bool {
+		totalScore += value.(float64)
+		return true
+	})
+
+	return totalScore
 }
 
 // calculateNutritionalImpact adjusts the score based on how meals impact the user's health monitoring (e.g., blood sugar, cholesterol).
