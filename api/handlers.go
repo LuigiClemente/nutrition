@@ -18,95 +18,6 @@ func NewHandler() *Handler {
 	}
 }
 
-// GetDietaryPreferences returns all dietary preferences
-func (h *Handler) GetDietaryPreferences(c *gin.Context) {
-
-	preferences, err := h.service.GetDietaryPreferences()
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, preferences)
-}
-
-// PostDietaryPreferences adds a new dietary preference
-func (h *Handler) PostDietaryPreferences(c *gin.Context) {
-	var preference models.DietaryPreferences
-	if err := c.ShouldBindJSON(&preference); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	postedpreference, err := h.service.PostDietaryPreferences(preference)
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusCreated, postedpreference)
-
-}
-
-// DeleteDietaryPreferencesUserId deletes dietary preferences by user ID
-func (h *Handler) DeleteDietaryPreferencesUserId(c *gin.Context) {
-	id, err := utils.ParseAndValidateID(c.Param("userId"))
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
-		return
-	}
-
-	err = h.service.DeleteDietaryPreferencesUserId(id)
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"message": "User dietary preferences deleted successfully"})
-}
-
-// GetDietaryPreferencesUserId gets dietary preferences by user ID
-func (h *Handler) GetDietaryPreferencesUserId(c *gin.Context) {
-	id, err := utils.ParseAndValidateID(c.Param("userId"))
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
-		return
-	}
-
-	preference, err := h.service.GetDietaryPreferencesUserId(id)
-
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Dietary preferences not found"})
-		return
-	}
-	c.JSON(http.StatusOK, preference)
-}
-
-// PutDietaryPreferencesUserId updates dietary preferences by user ID
-func (h *Handler) PutDietaryPreferencesUserId(c *gin.Context) {
-	var preference models.DietaryPreferences
-	if err := c.ShouldBindJSON(&preference); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	id, err := utils.ParseAndValidateID(c.Param("userId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
-		return
-	}
-
-	updatedPrefrences, err := h.service.PutDietaryPreferencesUserId(id, preference)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, updatedPrefrences)
-}
-
 // GetUser returns all user health information
 func (h *Handler) GetUser(c *gin.Context) {
 	healthInfo, err := h.service.GetUser()
@@ -196,7 +107,186 @@ func (h *Handler) PutUserUserId(c *gin.Context) {
 	c.JSON(http.StatusOK, updatedInfo)
 }
 
-// GetEnvironmentalFactors returns all EnvironmentalFactors
+// GetMeal returns all Meal
+func (h *Handler) GetMeal(c *gin.Context) {
+	items, err := h.service.GetMeal()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, items)
+}
+
+// GetMealForOption returns all Meal for listing in options value
+func (h *Handler) GetMealForOption(c *gin.Context) {
+	items, err := h.service.GetMealForOption()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, items)
+}
+
+// PostMeal creates a new Meal record
+func (h *Handler) PostMeal(c *gin.Context) {
+	var item []models.Meal
+	if err := c.ShouldBindJSON(&item); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	postedItem, err := h.service.PostMeals(item)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, postedItem)
+}
+
+// DeleteMealMealId deletes Meal by meal ID
+func (h *Handler) DeleteMealMealId(c *gin.Context) {
+	id, err := utils.ParseAndValidateID(c.Param("mealId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid meal ID"})
+		return
+	}
+
+	err = h.service.DeleteMealMealId(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Meal deleted successfully"})
+}
+
+// GetMealMealId gets Meal by user ID
+func (h *Handler) GetMealMealId(c *gin.Context) {
+	id, err := utils.ParseAndValidateID(c.Param("mealId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	item, err := h.service.GetMealMealId(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Meal not found"})
+		return
+	}
+	c.JSON(http.StatusOK, item)
+}
+
+// PutMealMealId updates Meal by user ID
+func (h *Handler) PutMealMealId(c *gin.Context) {
+	var item models.Meal
+	if err := c.ShouldBindJSON(&item); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	id, err := utils.ParseAndValidateID(c.Param("mealId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	updatedItem, err := h.service.PutMealMealId(id, item)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, updatedItem)
+}
+
+/* // GetDietaryPreferences returns all dietary preferences
+func (h *Handler) GetDietaryPreferences(c *gin.Context) {
+
+	preferences, err := h.service.GetDietaryPreferences()
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, preferences)
+}
+
+// PostDietaryPreferences adds a new dietary preference
+func (h *Handler) PostDietaryPreferences(c *gin.Context) {
+	var preference models.DietaryPreferences
+	if err := c.ShouldBindJSON(&preference); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	postedpreference, err := h.service.PostDietaryPreferences(preference)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, postedpreference)
+
+}
+
+// DeleteDietaryPreferencesUserId deletes dietary preferences by user ID
+func (h *Handler) DeleteDietaryPreferencesUserId(c *gin.Context) {
+	id, err := utils.ParseAndValidateID(c.Param("userId"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	err = h.service.DeleteDietaryPreferencesUserId(id)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "User dietary preferences deleted successfully"})
+}
+
+// GetDietaryPreferencesUserId gets dietary preferences by user ID
+func (h *Handler) GetDietaryPreferencesUserId(c *gin.Context) {
+	id, err := utils.ParseAndValidateID(c.Param("userId"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	preference, err := h.service.GetDietaryPreferencesUserId(id)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Dietary preferences not found"})
+		return
+	}
+	c.JSON(http.StatusOK, preference)
+}
+
+// PutDietaryPreferencesUserId updates dietary preferences by user ID
+func (h *Handler) PutDietaryPreferencesUserId(c *gin.Context) {
+	var preference models.DietaryPreferences
+	if err := c.ShouldBindJSON(&preference); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	id, err := utils.ParseAndValidateID(c.Param("userId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	updatedPrefrences, err := h.service.PutDietaryPreferencesUserId(id, preference)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, updatedPrefrences)
+} */
+
+/* // GetEnvironmentalFactors returns all EnvironmentalFactors
 func (h *Handler) GetEnvironmentalFactors(c *gin.Context) {
 	items, err := h.service.GetEnvironmentalFactors()
 	if err != nil {
@@ -275,83 +365,4 @@ func (h *Handler) PutEnvironmentalFactorsUserId(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, updatedItem)
 }
-
-// GetMeal returns all Meal
-func (h *Handler) GetMeal(c *gin.Context) {
-	items, err := h.service.GetMeal()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, items)
-}
-
-// PostMeal creates a new Meal record
-func (h *Handler) PostMeal(c *gin.Context) {
-	var item []models.Meal
-	if err := c.ShouldBindJSON(&item); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	postedItem, err := h.service.PostMeals(item)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusCreated, postedItem)
-}
-
-// DeleteMealMealId deletes Meal by meal ID
-func (h *Handler) DeleteMealMealId(c *gin.Context) {
-	id, err := utils.ParseAndValidateID(c.Param("mealId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid meal ID"})
-		return
-	}
-
-	err = h.service.DeleteMealMealId(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"message": "Meal deleted successfully"})
-}
-
-// GetMealMealId gets Meal by user ID
-func (h *Handler) GetMealMealId(c *gin.Context) {
-	id, err := utils.ParseAndValidateID(c.Param("mealId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
-		return
-	}
-
-	item, err := h.service.GetMealMealId(id)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Meal not found"})
-		return
-	}
-	c.JSON(http.StatusOK, item)
-}
-
-// PutMealMealId updates Meal by user ID
-func (h *Handler) PutMealMealId(c *gin.Context) {
-	var item models.Meal
-	if err := c.ShouldBindJSON(&item); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	id, err := utils.ParseAndValidateID(c.Param("mealId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
-		return
-	}
-
-	updatedItem, err := h.service.PutMealMealId(id, item)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, updatedItem)
-}
+*/

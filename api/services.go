@@ -449,7 +449,59 @@ func (s *Service) DeleteUserUserId(userId int) error {
 	return nil
 }
 
-// =============== Dietary Preferences ===============
+// =============== Meal ===============
+
+func (s *Service) PostMeals(meals []models.Meal) (*[]models.Meal, error) {
+	if err := s.db.CreateInBatches(&meals, 100).Error; err != nil {
+		return nil, err
+	}
+
+	return &meals, nil
+}
+
+func (s *Service) GetMeal() (*[]models.Meal, error) {
+	var meals []models.Meal
+	if err := s.db.Preload("Ingredients").Order("id DESC").Find(&meals).Error; err != nil {
+		return nil, err
+	}
+	return &meals, nil
+}
+
+func (s *Service) GetMealForOption() (*[]models.MealForOption, error) {
+	var factors []models.MealForOption
+	if err := s.db.Model(&models.Meal{}).Order("id DESC").Find(&factors).Error; err != nil {
+		return nil, err
+	}
+	return &factors, nil
+}
+
+func (s *Service) GetMealMealId(id int) (*models.Meal, error) {
+	var meal models.Meal
+	if err := s.db.Where("id = ?", id).Preload("Ingredients").First(&meal).Error; err != nil {
+		return nil, err
+	}
+	return &meal, nil
+}
+
+func (s *Service) PutMealMealId(mealId int, meal models.Meal) (*models.Meal, error) {
+	if err := s.db.Model(&meal).Where("id = ?", mealId).Updates(meal).Error; err != nil {
+		return nil, err
+	}
+	updatedMeal, err := s.GetMealMealId(mealId)
+	if err != nil {
+		return nil, err
+	}
+	return updatedMeal, nil
+}
+
+func (s *Service) DeleteMealMealId(mealId int) error {
+	if err := s.db.Where("id = ?", mealId).Delete(&models.Meal{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+/* // =============== Dietary Preferences ===============
 
 func (s *Service) PostDietaryPreferences(dietaryPreferences models.DietaryPreferences) (*models.DietaryPreferences, error) {
 	if err := s.db.Create(&dietaryPreferences).Error; err != nil {
@@ -533,48 +585,4 @@ func (s *Service) DeleteEnvironmentalFactorsUserId(userId int) error {
 		return err
 	}
 	return nil
-}
-
-// =============== Meal ===============
-
-func (s *Service) PostMeals(meals []models.Meal) (*[]models.Meal, error) {
-	if err := s.db.CreateInBatches(&meals, 100).Error; err != nil {
-		return nil, err
-	}
-
-	return &meals, nil
-}
-
-func (s *Service) GetMeal() (*[]models.Meal, error) {
-	var factors []models.Meal
-	if err := s.db.Preload("Ingredients").Order("id DESC").Find(&factors).Error; err != nil {
-		return nil, err
-	}
-	return &factors, nil
-}
-
-func (s *Service) GetMealMealId(id int) (*models.Meal, error) {
-	var meal models.Meal
-	if err := s.db.Where("id = ?", id).Preload("Ingredients").First(&meal).Error; err != nil {
-		return nil, err
-	}
-	return &meal, nil
-}
-
-func (s *Service) PutMealMealId(mealId int, meal models.Meal) (*models.Meal, error) {
-	if err := s.db.Model(&meal).Where("id = ?", mealId).Updates(meal).Error; err != nil {
-		return nil, err
-	}
-	updatedMeal, err := s.GetMealMealId(mealId)
-	if err != nil {
-		return nil, err
-	}
-	return updatedMeal, nil
-}
-
-func (s *Service) DeleteMealMealId(mealId int) error {
-	if err := s.db.Where("id = ?", mealId).Delete(&models.Meal{}).Error; err != nil {
-		return err
-	}
-	return nil
-}
+} */

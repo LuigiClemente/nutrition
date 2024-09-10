@@ -145,3 +145,9 @@ type UserHealthInfoResponse struct {
 	User                  User          `json:"user_info"`
 	ScoreAndRecmensdtionS []Recommended `json:"recommendations"`
 }
+
+type MealForOption struct {
+	ID       uint   `json:"id"`
+	Name     string `json:"name"`
+	Category string `json:"category"`
+}

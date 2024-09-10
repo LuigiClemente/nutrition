@@ -26,6 +26,17 @@ func SetupRouter() *gin.Engine {
 		infoRoutes.DELETE("/:userId", userHandler.DeleteUserUserId)
 	}
 
+	mealRoutes := router.Group("api/meals")
+	{
+		mealHandler := NewHandler()
+		mealRoutes.POST("/", mealHandler.PostMeal)
+		mealRoutes.GET("/", mealHandler.GetMeal)
+		mealRoutes.GET("/options", mealHandler.GetMealForOption)
+		mealRoutes.GET("/:mealId", mealHandler.GetMealMealId)
+		mealRoutes.PUT("/:mealId", mealHandler.PutMealMealId)
+		mealRoutes.DELETE("/:mealId", mealHandler.DeleteMealMealId)
+	}
+
 	// dietaryRoutes := router.Group("api/dietary-preferences")
 	// {
 	// 	dietaryHandler := NewHandler()
@@ -45,16 +56,6 @@ func SetupRouter() *gin.Engine {
 	// 	environmentalFactorsRoutes.PUT("/:userId", environmentalHandler.PutEnvironmentalFactorsUserId)
 	// 	environmentalFactorsRoutes.DELETE("/:userId", environmentalHandler.DeleteEnvironmentalFactorsUserId)
 	// }
-
-	mealRoutes := router.Group("api/meals")
-	{
-		mealHandler := NewHandler()
-		mealRoutes.POST("/", mealHandler.PostMeal)
-		mealRoutes.GET("/", mealHandler.GetMeal)
-		mealRoutes.GET("/:mealId", mealHandler.GetMealMealId)
-		mealRoutes.PUT("/:mealId", mealHandler.PutMealMealId)
-		mealRoutes.DELETE("/:mealId", mealHandler.DeleteMealMealId)
-	}
 
 	return router
 }
