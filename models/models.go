@@ -117,30 +117,15 @@ type Meal struct {
 	Difficulty         string         `json:"difficulty"`
 	ServingSize        int            `json:"serving_size"`
 	Instructions       string         `json:"instructions"`
-	PortionSize        float64        `json:"portion_size"` // Total portion size calculated
-}
-
-type MealAdjustment struct {
-	MealID                  uint       `json:"meal_id"`
-	AddedIngredient         Ingredient `json:"add_ingredient"`
-	RemovedIngredient       Ingredient `json:"remove_ingredient"`
-	RecalculatedPortionSize float64    `json:"recalculated_portion_size"`
-}
-
-type MealReceipt struct {
-	MealID                 uint    `json:"meal_id"`
-	PreExistingCalculation bool    `json:"pre_existing_calculation"`
-	TotalPortionSize       float64 `json:"total_portion_size"`
 }
 
 type Ingredient struct {
-	ID                 uint           `json:"id" gorm:"primaryKey;autoIncrement"`
-	MealID             uint           `json:"meal_id"`
-	Name               string         `json:"name"`
-	Amount             float64        `json:"amount"`                // Total amount used
-	Unit               string         `json:"unit"`                  // Measurement unit
-	PortionSizePer100g float64        `json:"portion_size_per_100g"` // Portion size per 100 grams
-	Nutritional        datatypes.JSON `json:"nutritional"`           // Nutritional info as JSON
+	ID          uint           `json:"id" gorm:"primaryKey;autoIncrement"`
+	MealID      uint           `json:"meal_id"`
+	Name        string         `json:"name"`
+	Amount      float64        `json:"amount"`      // Total amount used
+	Unit        string         `json:"unit"`        // Measurement unit
+	Nutritional datatypes.JSON `json:"nutritional"` // Nutritional info as JSON
 }
 
 type ScoredMeal struct {
