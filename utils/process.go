@@ -6,6 +6,7 @@ import (
 	"math"
 	"nutrition/models"
 	"sort"
+	"time"
 )
 
 // CalculateMealScore computes scores for meals based on user preferences and goals.
@@ -311,10 +312,33 @@ func calculateEnvironmentalAdaptability(user models.User, meal models.Meal) floa
 func calculateRecentConsumptionPenalty(user models.User, meal models.Meal) float64 {
 	for _, recentMeal := range user.RecentMeals {
 		if recentMeal.ID == meal.ID {
-			return -15.0 // Penalize for recent consumption
+			parsedTime, _ := ParseTime(recentMeal.Timestamp)
+			return CalculateRecentMealPenalty(parsedTime)
+
 		}
 	}
 	return 0.0
+}
+
+func CalculateRecentMealPenalty(mealDate time.Time) float64 {
+	// Define constants for maximum and minimum penalty
+	const maxPenalty = -15.0
+	const minPenalty = -5.0
+
+	currentDate := time.Now()
+	// Calculate the number of days since the meal was consumed
+	daysSinceMeal := currentDate.Sub(mealDate).Hours() / 24
+
+	// Apply a linear scaling for the penalty
+	// Scale the penalty to decrease from maxPenalty to minPenalty as daysSinceMeal increases
+	penalty := maxPenalty
+	if daysSinceMeal > 7 { // Assuming 7 days is the threshold for minimum penalty
+		penalty = minPenalty
+	} else {
+		penalty = maxPenalty + (minPenalty-maxPenalty)*(daysSinceMeal/7)
+	}
+
+	return penalty
 }
 
 // calculateAgeGenderScore adjusts the meal score based on age and gender.
