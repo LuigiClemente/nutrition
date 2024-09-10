@@ -11,19 +11,13 @@ import (
 
 // CalculateMealScore computes scores for meals based on user preferences and goals.
 func CalculateMealScore(user models.User, meals []models.Meal) []models.ScoredMeal {
-	mealsWithScores := make([]models.ScoredMeal, len(meals))
-
-	// Pre-calculate user's BMI for health goal-related calculations.
-	userBMI := user.BodyMetrics.Weight / ((user.BodyMetrics.Height / 100) * (user.BodyMetrics.Height / 100))
-
-	// Constants for max possible scores for normalization.
+	mealsWithScores := make([]models.ScoredMeal, 0, len(meals))
+	userBMI := calculateBMI(user.BodyMetrics.Height, user.BodyMetrics.Weight)
 	const maxTotalScore = 155.0
 
-	for i, meal := range meals {
-		fitScore := 0.0
-		var nutritionalContent, healthScores map[string]float64
+	for _, meal := range meals {
+		fitScore, nutritionalContent, healthScores := 0.0, map[string]float64{}, map[string]float64{}
 
-		// Unmarshal JSONB fields once per meal for nutritional content and health scores.
 		if err := json.Unmarshal(meal.NutritionalContent, &nutritionalContent); err != nil {
 			fmt.Println("Error unmarshaling nutritional content:", err)
 			continue
@@ -33,7 +27,7 @@ func CalculateMealScore(user models.User, meals []models.Meal) []models.ScoredMe
 			continue
 		}
 
-		// Add the calculated score from each component.
+		// Calculate total score using modular functions.
 		fitScore += calculateDietaryMatch(user, meal)
 		fitScore += calculateNutritionalMatch(user, meal)
 		fitScore += calculateHealthGoalsAlignment(user, nutritionalContent, healthScores, userBMI)
@@ -43,9 +37,8 @@ func CalculateMealScore(user models.User, meals []models.Meal) []models.ScoredMe
 		fitScore += calculateRecentConsumptionPenalty(user, meal)
 		fitScore += calculateAgeGenderScore(user, meal, nutritionalContent)
 
-		// Normalize the score to be out of 100 and round to 2 decimal places.
 		normalizedScore := normalizeScore(fitScore, maxTotalScore)
-		mealsWithScores[i] = models.ScoredMeal{Meal: meal, Score: normalizedScore}
+		mealsWithScores = append(mealsWithScores, models.ScoredMeal{Meal: meal, Score: normalizedScore})
 	}
 
 	// Sort meals by normalized score in descending order.
@@ -61,27 +54,25 @@ func normalizeScore(fitScore, maxPossibleScore float64) float64 {
 	return math.Max(0, math.Min(100, math.Round((fitScore/maxPossibleScore)*100*100)/100))
 }
 
+// calculateBMI calculates the BMI from height and weight.
+func calculateBMI(height, weight float64) float64 {
+	heightInMeters := height / 100
+	return weight / (heightInMeters * heightInMeters)
+}
+
 // calculateDietaryMatch scores meals based on user's dietary preferences and avoidances.
 func calculateDietaryMatch(user models.User, meal models.Meal) float64 {
 	score := 0.0
+	preferences := map[string]bool{
+		"vegetarian":  user.DietaryPreferences.Vegetarian,
+		"vegan":       user.DietaryPreferences.Vegan,
+		"gluten-free": user.DietaryPreferences.GlutenFree,
+		"dairy-free":  user.DietaryPreferences.DairyFree,
+	}
+
 	for _, tag := range meal.Tags {
-		switch tag {
-		case "vegetarian":
-			if user.DietaryPreferences.Vegetarian {
-				score += 10.0
-			}
-		case "vegan":
-			if user.DietaryPreferences.Vegan {
-				score += 10.0
-			}
-		case "gluten-free":
-			if user.DietaryPreferences.GlutenFree {
-				score += 10.0
-			}
-		case "dairy-free":
-			if user.DietaryPreferences.DairyFree {
-				score += 10.0
-			}
+		if preferences[tag] {
+			score += 10.0
 		}
 	}
 	return score
