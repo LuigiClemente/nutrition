@@ -1393,5 +1393,387 @@
         "difficulty": "Easy",
         "serving_size": 1,
         "instructions": "Mash avocado with lemon juice and spread on toasted whole wheat bread."
+    },
+    {
+        "name": "Lentil Soup",
+        "ingredients": [
+            {
+                "name": "Red Lentils",
+                "amount": 150,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 170,
+                    "protein": 13.0,
+                    "fat": 0.6,
+                    "carbs": 29.0
+                }
+            },
+            {
+                "name": "Carrots",
+                "amount": 100,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 41,
+                    "protein": 0.9,
+                    "fat": 0.2,
+                    "carbs": 9.6
+                }
+            },
+            {
+                "name": "Onion",
+                "amount": 80,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 32,
+                    "protein": 0.9,
+                    "fat": 0.1,
+                    "carbs": 7.6
+                }
+            }
+        ],
+        "nutritional_content": {
+            "calories": 243,
+            "protein": 14.8,
+            "fat": 0.9,
+            "carbs": 46.2
+        },
+        "category": "Soup",
+        "meal_type": [
+            "Lunch",
+            "Dinner"
+        ],
+        "cuisine": "Middle Eastern",
+        "tags": [
+            "Vegan",
+            "High Protein",
+            "Low Fat"
+        ],
+        "health_scores": {
+            "heart_health": 95,
+            "diabetes_friendly": 85,
+            "weight_loss": 90
+        },
+        "preparation_time": 40,
+        "difficulty": "Medium",
+        "serving_size": 2,
+        "instructions": "Simmer lentils with carrots and onions until tender. Season and serve."
+    },
+    {
+        "name": "Grilled Salmon",
+        "ingredients": [
+            {
+                "name": "Salmon Fillet",
+                "amount": 200,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 280,
+                    "protein": 25.0,
+                    "fat": 20.0,
+                    "carbs": 0
+                }
+            },
+            {
+                "name": "Lemon Juice",
+                "amount": 1,
+                "unit": "tbsp",
+                "nutritional": {
+                    "calories": 4,
+                    "protein": 0.1,
+                    "fat": 0,
+                    "carbs": 1.3
+                }
+            },
+            {
+                "name": "Olive Oil",
+                "amount": 1,
+                "unit": "tbsp",
+                "nutritional": {
+                    "calories": 120,
+                    "protein": 0,
+                    "fat": 14.0,
+                    "carbs": 0
+                }
+            }
+        ],
+        "nutritional_content": {
+            "calories": 404,
+            "protein": 25.1,
+            "fat": 34.0,
+            "carbs": 1.3
+        },
+        "category": "Main Dish",
+        "meal_type": [
+            "Lunch",
+            "Dinner"
+        ],
+        "cuisine": "Mediterranean",
+        "tags": [
+            "High Protein",
+            "Gluten-Free",
+            "Low Carb"
+        ],
+        "health_scores": {
+            "heart_health": 95,
+            "diabetes_friendly": 90,
+            "weight_loss": 80
+        },
+        "preparation_time": 25,
+        "difficulty": "Easy",
+        "serving_size": 1,
+        "instructions": "Grill salmon and drizzle with lemon juice and olive oil before serving."
+    },
+    {
+        "name": "Quinoa Salad",
+        "ingredients": [
+            {
+                "name": "Quinoa",
+                "amount": 100,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 120,
+                    "protein": 4.0,
+                    "fat": 1.5,
+                    "carbs": 21.0
+                }
+            },
+            {
+                "name": "Cucumber",
+                "amount": 100,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 12,
+                    "protein": 0.6,
+                    "fat": 0.1,
+                    "carbs": 2.0
+                }
+            },
+            {
+                "name": "Feta Cheese",
+                "amount": 50,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 130,
+                    "protein": 6.0,
+                    "fat": 11.0,
+                    "carbs": 2.0
+                }
+            }
+        ],
+        "nutritional_content": {
+            "calories": 262,
+            "protein": 10.6,
+            "fat": 12.6,
+            "carbs": 25.0
+        },
+        "category": "Salad",
+        "meal_type": [
+            "Lunch",
+            "Dinner"
+        ],
+        "cuisine": "Mediterranean",
+        "tags": [
+            "Vegetarian",
+            "Gluten-Free",
+            "Low Carb"
+        ],
+        "health_scores": {
+            "heart_health": 90,
+            "diabetes_friendly": 80,
+            "weight_loss": 75
+        },
+        "preparation_time": 15,
+        "difficulty": "Easy",
+        "serving_size": 2,
+        "instructions": "Mix cooked quinoa, cucumber, and feta cheese. Drizzle with olive oil."
+    },
+    {
+        "name": "Eggplant Parmesan",
+        "ingredients": [
+            {
+                "name": "Eggplant",
+                "amount": 200,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 48,
+                    "protein": 1.0,
+                    "fat": 0.2,
+                    "carbs": 11.5
+                }
+            },
+            {
+                "name": "Mozzarella Cheese",
+                "amount": 50,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 143,
+                    "protein": 8.5,
+                    "fat": 11.0,
+                    "carbs": 1.0
+                }
+            },
+            {
+                "name": "Tomato Sauce",
+                "amount": 100,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 50,
+                    "protein": 1.5,
+                    "fat": 0.5,
+                    "carbs": 10.0
+                }
+            }
+        ],
+        "nutritional_content": {
+            "calories": 241,
+            "protein": 11.0,
+            "fat": 11.7,
+            "carbs": 22.5
+        },
+        "category": "Main Dish",
+        "meal_type": [
+            "Lunch",
+            "Dinner"
+        ],
+        "cuisine": "Italian",
+        "tags": [
+            "Vegetarian",
+            "Comfort Food"
+        ],
+        "health_scores": {
+            "heart_health": 70,
+            "diabetes_friendly": 65,
+            "weight_loss": 60
+        },
+        "preparation_time": 30,
+        "difficulty": "Medium",
+        "serving_size": 2,
+        "instructions": "Layer eggplant with mozzarella and tomato sauce. Bake until golden."
+    },
+    {
+        "name": "Tofu Stir Fry",
+        "ingredients": [
+            {
+                "name": "Tofu",
+                "amount": 200,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 144,
+                    "protein": 16.0,
+                    "fat": 9.0,
+                    "carbs": 3.0
+                }
+            },
+            {
+                "name": "Bell Peppers",
+                "amount": 100,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 31,
+                    "protein": 1.0,
+                    "fat": 0.3,
+                    "carbs": 6.0
+                }
+            },
+            {
+                "name": "Soy Sauce",
+                "amount": 1,
+                "unit": "tbsp",
+                "nutritional": {
+                    "calories": 9,
+                    "protein": 1.0,
+                    "fat": 0,
+                    "carbs": 1.5
+                }
+            }
+        ],
+        "nutritional_content": {
+            "calories": 184,
+            "protein": 18.0,
+            "fat": 9.3,
+            "carbs": 10.5
+        },
+        "category": "Main Dish",
+        "meal_type": [
+            "Lunch",
+            "Dinner"
+        ],
+        "cuisine": "Asian",
+        "tags": [
+            "Vegan",
+            "High Protein",
+            "Low Carb"
+        ],
+        "health_scores": {
+            "heart_health": 90,
+            "diabetes_friendly": 85,
+            "weight_loss": 80
+        },
+        "preparation_time": 20,
+        "difficulty": "Medium",
+        "serving_size": 2,
+        "instructions": "Stir fry tofu and bell peppers with soy sauce until cooked. Serve hot."
+    },
+    {
+        "name": "Mushroom Risotto",
+        "ingredients": [
+            {
+                "name": "Arborio Rice",
+                "amount": 150,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 540,
+                    "protein": 12.0,
+                    "fat": 1.5,
+                    "carbs": 120.0
+                }
+            },
+            {
+                "name": "Mushrooms",
+                "amount": 100,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 22,
+                    "protein": 3.0,
+                    "fat": 0.3,
+                    "carbs": 4.5
+                }
+            },
+            {
+                "name": "Parmesan Cheese",
+                "amount": 30,
+                "unit": "g",
+                "nutritional": {
+                    "calories": 120,
+                    "protein": 10.0,
+                    "fat": 8.0,
+                    "carbs": 1.0
+                }
+            }
+        ],
+        "nutritional_content": {
+            "calories": 682,
+            "protein": 25.0,
+            "fat": 9.8,
+            "carbs": 125.5
+        },
+        "category": "Main Dish",
+        "meal_type": [
+            "Lunch",
+            "Dinner"
+        ],
+        "cuisine": "Italian",
+        "tags": [
+            "Vegetarian",
+            "Comfort Food"
+        ],
+        "health_scores": {
+            "heart_health": 65,
+            "diabetes_friendly": 60,
+            "weight_loss": 50
+        },
+        "preparation_time": 40,
+        "difficulty": "Hard",
+        "serving_size": 2,
+        "instructions": "Cook arborio rice with mushrooms. Stir in parmesan before serving."
     }
 ]
