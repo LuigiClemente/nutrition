@@ -35,12 +35,12 @@ func CalculateMealScore(user models.User, meals []models.Meal) []models.ScoredMe
 		// Add the calculated score from each component.
 		fitScore += calculateDietaryMatch(user, meal)
 		fitScore += calculateNutritionalMatch(user, meal)
-		fitScore += calculateHealthGoalsAlignment(user,  nutritionalContent, healthScores, userBMI)
-		fitScore += calculateNutritionalImpact(user, meal)
+		fitScore += calculateHealthGoalsAlignment(user, nutritionalContent, healthScores, userBMI)
+		fitScore += calculateNutritionalImpact(user, healthScores)
 		fitScore += calculateMicrobiomeCompatibility(user, meal)
 		fitScore += calculateEnvironmentalAdaptability(user, meal)
 		fitScore += calculateRecentConsumptionPenalty(user, meal)
-		fitScore += calculateAgeGenderScore(user, meal)
+		fitScore += calculateAgeGenderScore(user, meal, nutritionalContent)
 
 		// Normalize the score to be out of 100 and round to 2 decimal places.
 		normalizedScore := normalizeScore(fitScore, maxTotalScore)
@@ -98,7 +98,7 @@ func calculateNutritionalMatch(user models.User, meal models.Meal) float64 {
 }
 
 // calculateHealthGoalsAlignment scores meals based on how well they align with user's health goals.
-func calculateHealthGoalsAlignment(user models.User,  nutritionalContent, healthScores map[string]float64, bmi float64) float64 {
+func calculateHealthGoalsAlignment(user models.User, nutritionalContent, healthScores map[string]float64, bmi float64) float64 {
 	score := 0.0
 
 	for _, goal := range user.Goals {
@@ -276,12 +276,7 @@ func calculateHealthGoalsAlignment(user models.User,  nutritionalContent, health
 }
 
 // calculateNutritionalImpact adjusts the score based on how meals impact the user's health monitoring (e.g., blood sugar, cholesterol).
-func calculateNutritionalImpact(user models.User, meal models.Meal) float64 {
-	var healthScores map[string]float64
-	if err := json.Unmarshal(meal.HealthScores, &healthScores); err != nil {
-		fmt.Println("Error unmarshaling health scores:", err)
-		return 0
-	}
+func calculateNutritionalImpact(user models.User, healthScores map[string]float64) float64 {
 
 	score := 0.0
 	if user.BloodGlucose > 100 && healthScores["diabetes_friendly"] >= 8.0 {
@@ -323,16 +318,8 @@ func calculateRecentConsumptionPenalty(user models.User, meal models.Meal) float
 }
 
 // calculateAgeGenderScore adjusts the meal score based on age and gender.
-func calculateAgeGenderScore(user models.User, meal models.Meal) float64 {
+func calculateAgeGenderScore(user models.User, meal models.Meal, nutritionalContent map[string]float64) float64 {
 	score := 0.0
-
-	var nutritionalContent map[string]float64
-
-	// Unmarshal the JSONB fields
-	if err := json.Unmarshal(meal.NutritionalContent, &nutritionalContent); err != nil {
-		fmt.Println("Error unmarshaling nutritional content:", err)
-		return 0
-	}
 
 	// Age factor: Older users get lower-calorie and nutrient-specific recommendations
 	if user.Age > 50 {
