@@ -51,29 +51,29 @@ CREATE TABLE goals (
 
 -- Microbiome Data Table
 CREATE TABLE microbiome_data (
-    id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     diversity_score FLOAT,
-    gut_health_recommendations TEXT[]
+    gut_health_recommendations TEXT[],
+    PRIMARY KEY(user_id)
 );
 
 -- Lipid Profile Table
 CREATE TABLE lipid_profiles (
-    id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     cholesterol FLOAT,
     hdl FLOAT,
     ldl FLOAT,
-    triglycerides FLOAT
+    triglycerides FLOAT,
+    PRIMARY KEY(user_id)
 );
 
 -- Environmental Factors Table
 CREATE TABLE environmental_factors (
-    id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     location VARCHAR(255),
     climate VARCHAR(255),
-    season VARCHAR(50)
+    season VARCHAR(50),
+    PRIMARY KEY(user_id)
     
 );
 

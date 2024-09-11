@@ -58,14 +58,12 @@ type Goal struct {
 }
 
 type MicrobiomeData struct {
-	ID                       uint           `json:"id" gorm:"primaryKey;autoIncrement"`
 	UserID                   uint           `json:"user_id"`
 	DiversityScore           float64        `json:"diversity_score"`
 	GutHealthRecommendations pq.StringArray `gorm:"type:text[]" json:"gut_health_recommendations"`
 }
 
 type LipidProfile struct {
-	ID            uint    `json:"id" gorm:"primaryKey;autoIncrement"`
 	UserID        uint    `json:"user_id"`
 	Cholesterol   float64 `json:"cholesterol"`
 	HDL           float64 `json:"hdl"`
