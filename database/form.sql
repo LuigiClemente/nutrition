@@ -125,11 +125,11 @@ CREATE TABLE ingredients (
 
 -- User Preferences Table
 CREATE TABLE user_preferences (
-    id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     preferred_cuisines TEXT[],    -- Array of preferred cuisines
     meal_timings TEXT[],          -- Array of meal timings
-    favorite_ingredients TEXT[]   -- Array of favorite ingredients
+    favorite_ingredients TEXT[],   -- Array of favorite ingredients
+    PRIMARY KEY(user_id)
 );
 
 -- Scored Meals Table

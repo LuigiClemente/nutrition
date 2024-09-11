@@ -252,6 +252,8 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 
 // update
 func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models.UserHealthInfoResponse, error) {
+
+	userHealthInfo.ID = uint(userId)
 	// Start a transaction
 	tx := s.db.Begin()
 	if tx.Error != nil {
