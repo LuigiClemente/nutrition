@@ -132,11 +132,11 @@ type ScoredMeal struct {
 }
 
 type Recommended struct {
-	Meal               string  `json:"meal"`
+	MealName               string  `json:"meal_name"`
+	Ingredients        []Ingredient   `json:"ingredients" gorm:"foreignKey:MealID"`
 	Score              float64 `json:"score"`
 	Tags               []string
 	NutritionalContent datatypes.JSON `json:"nutritional_content"`
-	HealthScores       datatypes.JSON `json:"health_scores"`
 }
 
 type UserHealthInfoResponse struct {

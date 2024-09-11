@@ -169,11 +169,12 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 		var scoreRecommendations []models.Recommended
 		for _, mealWithScore := range topMeals {
 			scoreRecommendations = append(scoreRecommendations, models.Recommended{
-				Meal:               mealWithScore.Meal.Name,
+				MealName:           mealWithScore.Meal.Name,
+				Ingredients:        mealWithScore.Meal.Ingredients,
 				Score:              mealWithScore.Score,
 				Tags:               mealWithScore.Meal.Tags,
 				NutritionalContent: mealWithScore.Meal.NutritionalContent,
-				HealthScores:       mealWithScore.Meal.HealthScores,
+				// HealthScores:       mealWithScore.Meal.HealthScores,
 			})
 		}
 		resultChan <- scoreRecommendations
@@ -227,11 +228,13 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 		var scoreRecommendations []models.Recommended
 		for _, mealWithScore := range topMeals {
 			scoreRecommendations = append(scoreRecommendations, models.Recommended{
-				Meal:               mealWithScore.Meal.Name,
+				MealName:           mealWithScore.Meal.Name,
+				Ingredients:        mealWithScore.Meal.Ingredients,
 				Score:              mealWithScore.Score,
 				Tags:               mealWithScore.Meal.Tags,
 				NutritionalContent: mealWithScore.Meal.NutritionalContent,
-				HealthScores:       mealWithScore.Meal.HealthScores,
+
+				// HealthScores:       mealWithScore.Meal.HealthScores,
 			})
 		}
 		resultChan <- scoreRecommendations
@@ -428,11 +431,11 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 	var scoreRecommendations []models.Recommended
 	for _, mealWithScore := range topMeals {
 		scoreRecommendations = append(scoreRecommendations, models.Recommended{
-			Meal:               mealWithScore.Meal.Name,
+			MealName:           mealWithScore.Meal.Name,
+			Ingredients:        mealWithScore.Meal.Ingredients,
 			Score:              mealWithScore.Score,
 			Tags:               mealWithScore.Meal.Tags,
 			NutritionalContent: mealWithScore.Meal.NutritionalContent,
-			HealthScores:       mealWithScore.Meal.HealthScores,
 		})
 	}
 
