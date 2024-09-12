@@ -16,7 +16,6 @@ CREATE TABLE body_metrics (
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     weight FLOAT,
     height FLOAT,
-    bmi FLOAT,
     PRIMARY KEY(user_id)
 );
 

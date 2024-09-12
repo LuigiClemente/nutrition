@@ -49,7 +49,7 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 	}
 
 	// Step 2: Insert into body_metrics table
-	if err := tx.Exec(`INSERT INTO body_metrics (user_id, weight, height, bmi) VALUES (?, ?, ?, ?)`, userID, userHealthInfo.BodyMetrics.Weight, userHealthInfo.BodyMetrics.Height, userHealthInfo.BodyMetrics.BMI).Error; err != nil {
+	if err := tx.Exec(`INSERT INTO body_metrics (user_id, weight, height) VALUES (?, ?, ?)`, userID, userHealthInfo.BodyMetrics.Weight, userHealthInfo.BodyMetrics.Height).Error; err != nil {
 		tx.Rollback()
 		return nil, err
 	}
@@ -271,11 +271,11 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 	}
 
 	// Step 2: Update or Insert into body_metrics table
-	BodyMetricsSQL := `INSERT INTO body_metrics (user_id, weight, height, bmi) 
-	                   VALUES (?, ?, ?, ?) 
+	BodyMetricsSQL := `INSERT INTO body_metrics (user_id, weight, height) 
+	                   VALUES (?, ?, ?) 
 	                   ON CONFLICT (user_id) DO UPDATE 
-	                   SET weight = EXCLUDED.weight, height = EXCLUDED.height, bmi = EXCLUDED.bmi`
-	if err := tx.Exec(BodyMetricsSQL, userId, userHealthInfo.BodyMetrics.Weight, userHealthInfo.BodyMetrics.Height, userHealthInfo.BodyMetrics.BMI).Error; err != nil {
+	                   SET weight = EXCLUDED.weight, height = EXCLUDED.height`
+	if err := tx.Exec(BodyMetricsSQL, userId, userHealthInfo.BodyMetrics.Weight, userHealthInfo.BodyMetrics.Height).Error; err != nil {
 		tx.Rollback()
 		return nil, err
 	}

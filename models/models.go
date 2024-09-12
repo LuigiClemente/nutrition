@@ -31,7 +31,6 @@ type BodyMetrics struct {
 	UserID uint    `json:"user_id"`
 	Weight float64 `json:"weight"` // kg
 	Height float64 `json:"height"` // cm
-	BMI    float64 `json:"bmi"`
 }
 
 type DietaryPreferences struct {
