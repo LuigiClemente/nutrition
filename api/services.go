@@ -489,13 +489,93 @@ func (s *Service) GetMealMealId(id int) (*models.Meal, error) {
 }
 
 func (s *Service) PutMealMealId(mealId int, meal models.Meal) (*models.Meal, error) {
-	if err := s.db.Model(&meal).Where("id = ?", mealId).Updates(meal).Error; err != nil {
+	// Start a transaction
+	tx := s.db.Begin()
+
+	// Update the main meal fields that have changed
+	if err := tx.Model(&models.Meal{}).Where("id = ?", mealId).Updates(&meal).Error; err != nil {
+		tx.Rollback() // Rollback transaction on error
 		return nil, err
 	}
+
+	// Get existing ingredients for the meal in a map for quick lookup
+	var existingIngredients []models.Ingredient
+	if err := tx.Where("meal_id = ?", mealId).Find(&existingIngredients).Error; err != nil {
+		tx.Rollback() // Rollback transaction on error
+		return nil, err
+	}
+
+	// Map existing ingredients by ID for efficient comparison
+	existingIngredientsMap := make(map[uint]models.Ingredient)
+	for _, ingredient := range existingIngredients {
+		existingIngredientsMap[ingredient.ID] = ingredient
+	}
+
+	// Create slices for batch insert, update, and delete
+	var ingredientsToInsert []models.Ingredient
+	var ingredientsToUpdate []models.Ingredient
+	ingredientIDsToKeep := make(map[uint]bool)
+
+	for _, newIngredient := range meal.Ingredients {
+		newIngredient.MealID = uint(mealId) // Ensure the MealID is set
+
+		if existingIngredient, found := existingIngredientsMap[newIngredient.ID]; found {
+			// Check if there's a change before updating
+			if newIngredient.Name != existingIngredient.Name ||
+				newIngredient.Amount != existingIngredient.Amount ||
+				newIngredient.Unit != existingIngredient.Unit ||
+				!utils.CompareJSONFields(newIngredient.Nutritional, existingIngredient.Nutritional) {
+				ingredientsToUpdate = append(ingredientsToUpdate, newIngredient)
+			}
+			// Mark ingredient as one to keep
+			ingredientIDsToKeep[newIngredient.ID] = true
+		} else {
+			// New ingredient to insert
+			ingredientsToInsert = append(ingredientsToInsert, newIngredient)
+		}
+	}
+
+	// Perform batch updates for changed ingredients
+	if len(ingredientsToUpdate) > 0 {
+		if err := tx.Save(&ingredientsToUpdate).Error; err != nil {
+			tx.Rollback() // Rollback on error
+			return nil, err
+		}
+	}
+
+	// Perform batch insert for new ingredients
+	if len(ingredientsToInsert) > 0 {
+		if err := tx.Create(&ingredientsToInsert).Error; err != nil {
+			tx.Rollback() // Rollback on error
+			return nil, err
+		}
+	}
+
+	// Delete ingredients that are no longer part of the meal
+	var ingredientIDs []uint
+	for _, ingredient := range existingIngredients {
+		if !ingredientIDsToKeep[ingredient.ID] {
+			ingredientIDs = append(ingredientIDs, ingredient.ID)
+		}
+	}
+	if len(ingredientIDs) > 0 {
+		if err := tx.Where("meal_id = ? AND id IN (?)", mealId, ingredientIDs).Delete(&models.Ingredient{}).Error; err != nil {
+			tx.Rollback() // Rollback on error
+			return nil, err
+		}
+	}
+
+	// Commit the transaction
+	if err := tx.Commit().Error; err != nil {
+		return nil, err
+	}
+
+	// Fetch the updated meal with ingredients
 	updatedMeal, err := s.GetMealMealId(mealId)
 	if err != nil {
 		return nil, err
 	}
+
 	return updatedMeal, nil
 }
 
