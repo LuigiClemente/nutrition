@@ -425,7 +425,7 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 		return nil, err
 	}
 
-	topMeals := utils.GetTopMeals(userHealthInfo, *meals, 2)
+	topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3)
 
 	// Prepare response
 	var scoreRecommendations []models.Recommended

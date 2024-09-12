@@ -12,37 +12,51 @@ import (
 
 // CalculateMealScore computes scores for meals based on user preferences and goals.
 func CalculateMealScore(user models.User, meals []models.Meal) []models.ScoredMeal {
-	mealsWithScores := make([]models.ScoredMeal, 0, len(meals))
+	var wg sync.WaitGroup
+	mealsWithScores := make([]models.ScoredMeal, len(meals))
 	userBMI := calculateBMI(user.BodyMetrics.Height, user.BodyMetrics.Weight)
 	const maxTotalScore = 155.0
 
-	for _, meal := range meals {
-		fitScore, nutritionalContent, healthScores := 0.0, map[string]float64{}, map[string]float64{}
+	// Use a WaitGroup to score meals concurrently
+	for i, meal := range meals {
+		wg.Add(1)
+		go func(i int, meal models.Meal) {
+			defer wg.Done()
 
-		if err := json.Unmarshal(meal.NutritionalContent, &nutritionalContent); err != nil {
-			fmt.Println("Error unmarshaling nutritional content:", err)
-			continue
-		}
-		if err := json.Unmarshal(meal.HealthScores, &healthScores); err != nil {
-			fmt.Println("Error unmarshaling health scores:", err)
-			continue
-		}
+			fitScore := 0.0
+			nutritionalContent := map[string]float64{}
+			healthScores := map[string]float64{}
 
-		// Calculate total score using modular functions.
-		fitScore += calculateDietaryMatch(user, meal)
-		fitScore += calculateNutritionalMatch(user, meal)
-		fitScore += calculateHealthGoalsAlignment(user, nutritionalContent, healthScores, userBMI)
-		fitScore += calculateNutritionalImpact(user, healthScores)
-		fitScore += calculateMicrobiomeCompatibility(user, meal)
-		fitScore += calculateEnvironmentalAdaptability(user, meal)
-		fitScore += calculateRecentConsumptionPenalty(user, meal)
-		fitScore += calculateAgeGenderScore(user, meal, nutritionalContent)
+			// Unmarshal JSON concurrently
+			if err := json.Unmarshal(meal.NutritionalContent, &nutritionalContent); err != nil {
+				fmt.Println("Error unmarshaling nutritional content:", err)
+				return
+			}
+			if err := json.Unmarshal(meal.HealthScores, &healthScores); err != nil {
+				fmt.Println("Error unmarshaling health scores:", err)
+				return
+			}
 
-		normalizedScore := normalizeScore(fitScore, maxTotalScore)
-		mealsWithScores = append(mealsWithScores, models.ScoredMeal{Meal: meal, Score: normalizedScore})
+			// Calculate the scores concurrently
+			fitScore += calculateDietaryMatch(user, meal)
+			fitScore += calculateNutritionalMatch(user, meal)
+			fitScore += calculateHealthGoalsAlignment(user, nutritionalContent, healthScores, userBMI)
+			fitScore += calculateNutritionalImpact(user, healthScores)
+			fitScore += calculateMicrobiomeCompatibility(user, meal)
+			fitScore += calculateEnvironmentalAdaptability(user, meal)
+			fitScore += calculateRecentConsumptionPenalty(user, meal)
+			fitScore += calculateAgeGenderScore(user, meal, nutritionalContent)
+
+			// Normalize the score
+			normalizedScore := normalizeScore(fitScore, maxTotalScore)
+			mealsWithScores[i] = models.ScoredMeal{Meal: meal, Score: normalizedScore}
+		}(i, meal)
 	}
 
-	// Sort meals by normalized score in descending order.
+	// Wait for all goroutines to finish
+	wg.Wait()
+
+	// Sort meals by normalized score in descending order
 	sort.Slice(mealsWithScores, func(i, j int) bool {
 		return mealsWithScores[i].Score > mealsWithScores[j].Score
 	})
