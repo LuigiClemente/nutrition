@@ -37,25 +37,5 @@ func SetupRouter() *gin.Engine {
 		mealRoutes.DELETE("/:mealId", mealHandler.DeleteMealMealId)
 	}
 
-	// dietaryRoutes := router.Group("api/dietary-preferences")
-	// {
-	// 	dietaryHandler := NewHandler()
-	// 	dietaryRoutes.POST("/", dietaryHandler.PostDietaryPreferences)
-	// 	dietaryRoutes.GET("/", dietaryHandler.GetDietaryPreferences)
-	// 	dietaryRoutes.GET("/:userId", dietaryHandler.GetDietaryPreferencesUserId)
-	// 	dietaryRoutes.PUT("/:userId", dietaryHandler.PutDietaryPreferencesUserId)
-	// 	dietaryRoutes.DELETE("/:userId", dietaryHandler.DeleteDietaryPreferencesUserId)
-	// }
-
-	// environmentalFactorsRoutes := router.Group("api/environmental-factors")
-	// {
-	// 	environmentalHandler := NewHandler()
-	// 	environmentalFactorsRoutes.POST("/", environmentalHandler.PostEnvironmentalFactors)
-	// 	environmentalFactorsRoutes.GET("/", environmentalHandler.GetEnvironmentalFactors)
-	// 	environmentalFactorsRoutes.GET("/:userId", environmentalHandler.GetEnvironmentalFactorsUserId)
-	// 	environmentalFactorsRoutes.PUT("/:userId", environmentalHandler.PutEnvironmentalFactorsUserId)
-	// 	environmentalFactorsRoutes.DELETE("/:userId", environmentalHandler.DeleteEnvironmentalFactorsUserId)
-	// }
-
 	return router
 }
