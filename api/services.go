@@ -454,6 +454,12 @@ func (s *Service) DeleteUserUserId(userId int) error {
 	return nil
 }
 
+// get user with a meal
+func (s *Service) SearchMealUser(userId int, mealId int) (*models.UserHealthInfoResponse, error) {
+
+	return nil, nil
+}
+
 // =============== Meal ===============
 
 func (s *Service) PostMeals(meals []models.Meal) (*[]models.Meal, error) {

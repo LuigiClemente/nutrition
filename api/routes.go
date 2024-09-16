@@ -22,6 +22,7 @@ func SetupRouter() *gin.Engine {
 		infoRoutes.POST("/", userHandler.PostUser)
 		infoRoutes.GET("/", userHandler.GetUser)
 		infoRoutes.GET("/:userId", userHandler.GetUserUserId)
+		infoRoutes.GET("/:userId/:mealId", userHandler.SearchMealUser)
 		infoRoutes.PUT("/:userId", userHandler.PutUserUserId)
 		infoRoutes.DELETE("/:userId", userHandler.DeleteUserUserId)
 	}
