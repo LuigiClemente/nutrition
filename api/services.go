@@ -456,8 +456,50 @@ func (s *Service) DeleteUserUserId(userId int) error {
 
 // get user with a meal
 func (s *Service) SearchMealUser(userId int, mealId int) (*models.UserHealthInfoResponse, error) {
+	var userHealthInfo models.User
+	// Fetch user data with necessary preloads
+	if err := s.db.Preload("BodyMetrics").Preload("DietaryPreferences").Preload("HealthConditions").
+		Preload("MicrobiomeData").Preload("Goals").Preload("MealHistory").Preload("RecentMeals").
+		Preload("EnvironmentalFactors").Preload("LipidProfile").Where("id = ?", userId).First(&userHealthInfo).Error; err != nil {
+		return nil, err
+	}
 
-	return nil, nil
+	// Fetch the specific meal by mealId
+	var meal models.Meal
+	if err := s.db.Where("id = ?", mealId).Preload("Ingredients").First(&meal).Error; err != nil {
+		return nil, err
+	}
+
+	// Get all meals (you might want to optimize this depending on your use case)
+	meals, err := s.GetMeal()
+	if err != nil {
+		return nil, err
+	}
+
+	// Calculate top meals (if needed, for a broader recommendation)
+	topMeals := utils.GetTopMeals(userHealthInfo, *meals, 1) // Fetch top 3 meals
+
+	// Prepare recommendations based on the specific meal
+	var mealRecommendations []models.Recommended
+	for _, mealWithScore := range topMeals {
+		if mealWithScore.Meal.ID == uint(mealId) {
+			mealRecommendations = append(mealRecommendations, models.Recommended{
+				MealName:           mealWithScore.Meal.Name,
+				Score:              mealWithScore.Score,
+				Ingredients:        mealWithScore.Meal.Ingredients,
+				Tags:               mealWithScore.Meal.Tags,
+				NutritionalContent: mealWithScore.Meal.NutritionalContent,
+			})
+		}
+	}
+
+	// Prepare response
+	response := &models.UserHealthInfoResponse{
+		User:                  userHealthInfo,
+		ScoreAndRecmensdtionS: mealRecommendations,
+	}
+
+	return response, nil
 }
 
 // =============== Meal ===============
