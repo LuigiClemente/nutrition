@@ -79,7 +79,7 @@ CREATE TABLE environmental_factors (
 -- Meals Table
 CREATE TABLE meals (
     id SERIAL PRIMARY KEY,  -- Auto-incrementing ID for the meal
-    name VARCHAR(255) NOT NULL,  -- Name of the meal
+    name VARCHAR(255) UNIQUE NOT NULL,  -- Name of the meal
     nutritional_content JSONB,  -- Nutritional content stored as JSONB
     category VARCHAR(100),  -- Category (e.g., 'Salad')
     meal_type TEXT[],  -- Meal type as a PostgreSQL array (e.g., ['Lunch', 'Dinner'])
