@@ -29,11 +29,11 @@ func CalculateMealScore(user models.User, meals []models.Meal) []models.ScoredMe
 
 			// Unmarshal JSON concurrently
 			if err := json.Unmarshal(meal.NutritionalContent, &nutritionalContent); err != nil {
-				fmt.Println("Error unmarshaling nutritional content:", err)
+				handleError(fmt.Errorf("error unmarshaling nutritional content for meal %d: %w", meal.ID, err))
 				return
 			}
 			if err := json.Unmarshal(meal.HealthScores, &healthScores); err != nil {
-				fmt.Println("Error unmarshaling health scores:", err)
+				handleError(fmt.Errorf("error unmarshaling health scores for meal %d: %w", meal.ID, err))
 				return
 			}
 
@@ -294,6 +294,10 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent, healthS
 			if antioxidants, hasAntioxidants := nutritionalContent["antioxidants"]; hasAntioxidants && antioxidants >= 5.0 {
 				score += 20.0
 			}
+
+		default:
+			handleError(fmt.Errorf("unknown health goal type: %s", goalType))
+
 		}
 
 		// Store the calculated score in the thread-safe map
@@ -430,6 +434,12 @@ func contains(slice []string, item string) bool {
 		}
 	}
 	return false
+}
+
+// handleError logs and handles errors.
+func handleError(err error) {
+	// Here you can log the error to a file, monitoring system, or simply print it
+	fmt.Printf("Error: %v\n", err)
 }
 
 // GetTopMeals recommends the top N meals based on their calculated scores.
