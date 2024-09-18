@@ -123,7 +123,7 @@ type Ingredient struct {
 	Amount      float64        `json:"amount"`      // Total amount used
 	Unit        string         `json:"unit"`        // Measurement unit
 	Nutritional datatypes.JSON `json:"nutritional"` // Nutritional info as JSON
-	Percentage  float64        `json:"percentage"` //The proportion of that ingredient in the dish
+	Percentage  float64        `json:"percentage"`  //The proportion of that ingredient in the dish
 }
 
 type ScoredMeal struct {
@@ -131,17 +131,20 @@ type ScoredMeal struct {
 	Score float64 `json:"score"`
 }
 
+type Course struct {
+	MealName    string       `json:"meal_name"`
+	Ingredients []Ingredient `json:"ingredients"`
+}
+
 type Recommended struct {
-	MealName           string       `json:"meal_name"`
-	Ingredients        []Ingredient `json:"ingredients" gorm:"foreignKey:MealID"`
-	Score              float64      `json:"score"`
-	Tags               []string
-	NutritionalContent datatypes.JSON `json:"nutritional_content"`
+	Type string   `json:"type"`
+	Courses  []Course `json:"courses"`
+	Score    float64  `json:"score"`
 }
 
 type UserHealthInfoResponse struct {
 	User                  User          `json:"user_info"`
-	ScoreAndRecmensdtionS []Recommended `json:"recommendations"`
+	ScoreAndRecmensdtions []Recommended `json:"recommendations"`
 }
 
 type MealForOption struct {

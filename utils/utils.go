@@ -14,3 +14,20 @@ func CompareJSONFields(a, b datatypes.JSON) bool {
 	_ = json.Unmarshal(b, &bMap)
 	return reflect.DeepEqual(aMap, bMap)
 }
+
+// Helper function to determine the course type based on the number of courses
+
+func GetCourseType(numCourses int) string {
+	switch numCourses {
+	case 1:
+		return "single"
+	case 2:
+		return "2-course"
+	case 3:
+		return "3-course"
+	case 4:
+		return "4-course"
+	default:
+		return "multi-course" // For any other number of courses
+	}
+}

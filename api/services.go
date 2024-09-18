@@ -165,16 +165,20 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 		// Calculate top meals
 		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3)
 
-		// Prepare recommendations
+		// Prepare recommendations based on the number of courses
 		var scoreRecommendations []models.Recommended
 		for _, mealWithScore := range topMeals {
+			numCourses := len(mealWithScore.Meal.Ingredients) // Example logic to determine number of courses
+
 			scoreRecommendations = append(scoreRecommendations, models.Recommended{
-				MealName:           mealWithScore.Meal.Name,
-				Ingredients:        mealWithScore.Meal.Ingredients,
-				Score:              mealWithScore.Score,
-				Tags:               mealWithScore.Meal.Tags,
-				NutritionalContent: mealWithScore.Meal.NutritionalContent,
-				// HealthScores:       mealWithScore.Meal.HealthScores,
+				Type: utils.GetCourseType(numCourses),
+				Courses: []models.Course{ // Populate courses
+					{
+						MealName:    mealWithScore.Meal.Name,
+						Ingredients: mealWithScore.Meal.Ingredients,
+					},
+				},
+				Score: mealWithScore.Score,
 			})
 		}
 		resultChan <- scoreRecommendations
@@ -185,7 +189,7 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 	case scoreRecommendations := <-resultChan:
 		response := &models.UserHealthInfoResponse{
 			User:                  userHealthInfo,
-			ScoreAndRecmensdtionS: scoreRecommendations,
+			ScoreAndRecmensdtions: scoreRecommendations,
 		}
 		return response, nil
 	case err := <-errorChan:
@@ -227,14 +231,17 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 		// Prepare recommendations
 		var scoreRecommendations []models.Recommended
 		for _, mealWithScore := range topMeals {
-			scoreRecommendations = append(scoreRecommendations, models.Recommended{
-				MealName:           mealWithScore.Meal.Name,
-				Ingredients:        mealWithScore.Meal.Ingredients,
-				Score:              mealWithScore.Score,
-				Tags:               mealWithScore.Meal.Tags,
-				NutritionalContent: mealWithScore.Meal.NutritionalContent,
+			numCourses := len(mealWithScore.Meal.Ingredients) // Example logic to determine number of courses
 
-				// HealthScores:       mealWithScore.Meal.HealthScores,
+			scoreRecommendations = append(scoreRecommendations, models.Recommended{
+				Type: utils.GetCourseType(numCourses),
+				Courses: []models.Course{ // Populate courses
+					{
+						MealName:    mealWithScore.Meal.Name,
+						Ingredients: mealWithScore.Meal.Ingredients,
+					},
+				},
+				Score: mealWithScore.Score,
 			})
 		}
 		resultChan <- scoreRecommendations
@@ -245,7 +252,7 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 	case scoreRecommendations := <-resultChan:
 		response := &models.UserHealthInfoResponse{
 			User:                  userHealthInfo,
-			ScoreAndRecmensdtionS: scoreRecommendations,
+			ScoreAndRecmensdtions: scoreRecommendations,
 		}
 		return response, nil
 	case err := <-errorChan:
@@ -430,18 +437,23 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 	// Prepare response
 	var scoreRecommendations []models.Recommended
 	for _, mealWithScore := range topMeals {
+		numCourses := len(mealWithScore.Meal.Ingredients)
+
 		scoreRecommendations = append(scoreRecommendations, models.Recommended{
-			MealName:           mealWithScore.Meal.Name,
-			Ingredients:        mealWithScore.Meal.Ingredients,
-			Score:              mealWithScore.Score,
-			Tags:               mealWithScore.Meal.Tags,
-			NutritionalContent: mealWithScore.Meal.NutritionalContent,
+			Type: utils.GetCourseType(numCourses),
+			Courses: []models.Course{ // Populate courses
+				{
+					MealName:    mealWithScore.Meal.Name,
+					Ingredients: mealWithScore.Meal.Ingredients,
+				},
+			},
+			Score: mealWithScore.Score,
 		})
 	}
 
 	response := &models.UserHealthInfoResponse{
 		User:                  userHealthInfo,
-		ScoreAndRecmensdtionS: scoreRecommendations,
+		ScoreAndRecmensdtions: scoreRecommendations,
 	}
 
 	return response, nil
@@ -477,18 +489,22 @@ func (s *Service) SearchMealUser(userId int, mealId int) (*models.UserHealthInfo
 	}
 
 	// Calculate top meals (if needed, for a broader recommendation)
-	topMeals := utils.GetTopMeals(userHealthInfo, *meals, 1) // Fetch top 3 meals
+	topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3) // Fetch top 3 meals
 
 	// Prepare recommendations based on the specific meal
 	var mealRecommendations []models.Recommended
 	for _, mealWithScore := range topMeals {
+		numCourses := len(mealWithScore.Meal.Ingredients)
 		if mealWithScore.Meal.ID == uint(mealId) {
 			mealRecommendations = append(mealRecommendations, models.Recommended{
-				MealName:           mealWithScore.Meal.Name,
-				Score:              mealWithScore.Score,
-				Ingredients:        mealWithScore.Meal.Ingredients,
-				Tags:               mealWithScore.Meal.Tags,
-				NutritionalContent: mealWithScore.Meal.NutritionalContent,
+				Type: utils.GetCourseType(numCourses),
+				Courses: []models.Course{ // Populate courses
+					{
+						MealName:    mealWithScore.Meal.Name,
+						Ingredients: mealWithScore.Meal.Ingredients,
+					},
+				},
+				Score: mealWithScore.Score,
 			})
 		}
 	}
@@ -496,7 +512,7 @@ func (s *Service) SearchMealUser(userId int, mealId int) (*models.UserHealthInfo
 	// Prepare response
 	response := &models.UserHealthInfoResponse{
 		User:                  userHealthInfo,
-		ScoreAndRecmensdtionS: mealRecommendations,
+		ScoreAndRecmensdtions: mealRecommendations,
 	}
 
 	return response, nil
