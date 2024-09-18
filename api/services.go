@@ -477,19 +477,13 @@ func (s *Service) SearchMealUser(userId int, mealId int) (*models.UserHealthInfo
 	}
 
 	// Fetch the specific meal by mealId
-	var meal models.Meal
-	if err := s.db.Where("id = ?", mealId).Preload("Ingredients").First(&meal).Error; err != nil {
-		return nil, err
-	}
-
-	// Get all meals (you might want to optimize this depending on your use case)
-	meals, err := s.GetMeal()
-	if err != nil {
+	var meals []models.Meal
+	if err := s.db.Where("id = ?", mealId).Preload("Ingredients").Find(&meals).Error; err != nil {
 		return nil, err
 	}
 
 	// Calculate top meals (if needed, for a broader recommendation)
-	topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3) // Fetch top 3 meals
+	topMeals := utils.GetTopMeals(userHealthInfo, meals, 1) // Fetch top 1 meals
 
 	// Prepare recommendations based on the specific meal
 	var mealRecommendations []models.Recommended
