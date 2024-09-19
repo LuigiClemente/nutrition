@@ -11,7 +11,8 @@
                     "protein": 4.2,
                     "fat": 0.5,
                     "carbs": 10.0
-                }
+                },
+                "percentage": 45
             },
             {
                 "name": "Carrots",
@@ -22,7 +23,8 @@
                     "protein": 0.9,
                     "fat": 0.2,
                     "carbs": 9.6
-                }
+                },
+                "percentage": 35
             },
             {
                 "name": "Bell Peppers",
@@ -33,7 +35,8 @@
                     "protein": 0.9,
                     "fat": 0.2,
                     "carbs": 5.5
-                }
+                },
+                "percentage": 3
             },
             {
                 "name": "Soy Sauce",
@@ -44,7 +47,8 @@
                     "protein": 1,
                     "fat": 0,
                     "carbs": 1.5
-                }
+                },
+                "percentage": 2
             }
         ],
         "nutritional_content": {
@@ -68,7 +72,7 @@
             "heart_health": 90,
             "diabetes_friendly": 85,
             "weight_loss": 85
-        },nutritional_deficiencies
+        },
         "preparation_time": 20,
         "difficulty": "Medium",
         "serving_size": 2,

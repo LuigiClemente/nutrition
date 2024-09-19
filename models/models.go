@@ -152,3 +152,4 @@ type MealForOption struct {
 	Name     string `json:"name"`
 	Category string `json:"category"`
 }
+

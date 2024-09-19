@@ -119,7 +119,7 @@ CREATE TABLE ingredients (
     unit VARCHAR(50),  -- Unit of measurement (e.g., 'grams')
     portion_size_per_100g FLOAT,  -- portion size for each ingredient
     nutritional JSONB,  -- Nutritional information stored as JSONB (e.g., {"calories": 200, "protein": 30})
-    percentage FLOAT  -- The proportion of that ingredient in the dish
+    percentage FLOAT DEFAULT 0.0 -- The proportion of that ingredient in the dish
 );
 
 

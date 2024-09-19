@@ -16,7 +16,6 @@ func CompareJSONFields(a, b datatypes.JSON) bool {
 }
 
 // Helper function to determine the course type based on the number of courses
-
 func GetCourseType(numCourses int) string {
 	switch numCourses {
 	case 1:
