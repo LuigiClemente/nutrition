@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"nutrition/database"
 	"nutrition/models"
 	"nutrition/utils"
@@ -18,6 +19,16 @@ func NewService() *Service {
 	}
 }
 
+// CustomError wraps the original error with a message
+type CustomError struct {
+	Message string
+	Err     error
+}
+
+func (e *CustomError) Error() string {
+	return fmt.Sprintf("%s: %v", e.Message, e.Err)
+}
+
 // =============== User Health Info ===============
 func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoResponse, error) {
 	// Start a transaction
@@ -25,11 +36,12 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
+			log.Println("Panic recovered:", r)
 		}
 	}()
 
 	if tx.Error != nil {
-		return nil, tx.Error
+		return nil, &CustomError{"Failed to begin transaction", tx.Error}
 	}
 
 	// Step 1: Insert into users table and return userID
@@ -38,7 +50,7 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 	var userID uint
 	if err := tx.Raw(userSQL, userHealthInfo.Name, userHealthInfo.Age, userHealthInfo.Gender, userHealthInfo.ActivityLevel, userHealthInfo.BloodGlucose, userHealthInfo.HealthScore, userHealthInfo.NutritionalDeficiencies, userHealthInfo.Allergies).Scan(&userID).Error; err != nil {
 		tx.Rollback()
-		return nil, err
+		return nil, &CustomError{"Failed to insert user", err}
 	}
 	userHealthInfo.ID = userID
 
@@ -51,14 +63,14 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 	// Step 2: Insert into body_metrics table
 	if err := tx.Exec(`INSERT INTO body_metrics (user_id, weight, height) VALUES (?, ?, ?)`, userID, userHealthInfo.BodyMetrics.Weight, userHealthInfo.BodyMetrics.Height).Error; err != nil {
 		tx.Rollback()
-		return nil, err
+		return nil, &CustomError{"Failed to insert body metrics", err}
 	}
 
 	// Step 3: Insert into dietary_preferences table
 	if err := tx.Exec(`INSERT INTO dietary_preferences (user_id, vegetarian, vegan, gluten_free, dairy_free, specific_avoidances) 
                       VALUES (?, ?, ?, ?, ?, ?)`, userID, userHealthInfo.DietaryPreferences.Vegetarian, userHealthInfo.DietaryPreferences.Vegan, userHealthInfo.DietaryPreferences.GlutenFree, userHealthInfo.DietaryPreferences.DairyFree, userHealthInfo.DietaryPreferences.SpecificAvoidances).Error; err != nil {
 		tx.Rollback()
-		return nil, err
+		return nil, &CustomError{"Failed to insert dietary preferences", err}
 	}
 
 	// Batch inserts for health_conditions
@@ -71,7 +83,7 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 		}
 		if err := batchInsert("health_conditions", "user_id, name, severity", healthConditionsValues, strings.Join(placeholders, ",")); err != nil {
 			tx.Rollback()
-			return nil, err
+			return nil, &CustomError{"Failed to insert health conditions", err}
 		}
 	}
 
@@ -85,7 +97,7 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 		}
 		if err := batchInsert("goals", "user_id, type, target, duration", goalsValues, strings.Join(placeholders, ",")); err != nil {
 			tx.Rollback()
-			return nil, err
+			return nil, &CustomError{"Failed to insert goals", err}
 		}
 	}
 
@@ -93,21 +105,21 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 	if err := tx.Exec(`INSERT INTO microbiome_data (user_id, diversity_score, gut_health_recommendations) 
                       VALUES (?, ?, ?)`, userID, userHealthInfo.MicrobiomeData.DiversityScore, userHealthInfo.MicrobiomeData.GutHealthRecommendations).Error; err != nil {
 		tx.Rollback()
-		return nil, err
+		return nil, &CustomError{"Failed to insert microbiome data", err}
 	}
 
 	// Insert lipid profile data
 	if err := tx.Exec(`INSERT INTO lipid_profiles (user_id, cholesterol, hdl, ldl, triglycerides) 
                       VALUES (?, ?, ?, ?, ?)`, userID, userHealthInfo.LipidProfile.Cholesterol, userHealthInfo.LipidProfile.HDL, userHealthInfo.LipidProfile.LDL, userHealthInfo.LipidProfile.Triglycerides).Error; err != nil {
 		tx.Rollback()
-		return nil, err
+		return nil, &CustomError{"Failed to insert lipid profile data", err}
 	}
 
 	// Insert environmental factors
 	if err := tx.Exec(`INSERT INTO environmental_factors (user_id, location, climate, season) 
                       VALUES (?, ?, ?, ?)`, userID, userHealthInfo.EnvironmentalFactors.Location, userHealthInfo.EnvironmentalFactors.Climate, userHealthInfo.EnvironmentalFactors.Season).Error; err != nil {
 		tx.Rollback()
-		return nil, err
+		return nil, &CustomError{"Failed to insert environmental factors", err}
 	}
 
 	// Batch insert meal histories
@@ -120,7 +132,7 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 		}
 		if err := batchInsert("meal_histories", "user_id, meal_id, timestamp", mealHistoryValues, strings.Join(placeholders, ",")); err != nil {
 			tx.Rollback()
-			return nil, err
+			return nil, &CustomError{"Failed to insert meal histories", err}
 		}
 	}
 
@@ -134,7 +146,7 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 		}
 		if err := batchInsert("recent_meals", "user_id, meal_id, timestamp", recentMealsValues, strings.Join(placeholders, ",")); err != nil {
 			tx.Rollback()
-			return nil, err
+			return nil, &CustomError{"Failed to insert recent meals", err}
 		}
 	}
 
@@ -142,12 +154,12 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 	if err := tx.Exec(`INSERT INTO user_preferences (user_id, preferred_cuisines, meal_timings, favorite_ingredients) 
                       VALUES (?, ?, ?, ?)`, userID, userHealthInfo.Preferences.PreferredCuisines, userHealthInfo.Preferences.MealTimings, userHealthInfo.Preferences.FavoriteIngredients).Error; err != nil {
 		tx.Rollback()
-		return nil, err
+		return nil, &CustomError{"Failed to insert user preferences", err}
 	}
 
 	// Commit the transaction
 	if err := tx.Commit().Error; err != nil {
-		return nil, err
+		return nil, &CustomError{"Failed to commit transaction", err}
 	}
 
 	// Fetch meals and calculate recommendations concurrently
@@ -158,7 +170,7 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 		// Fetch meals
 		meals, err := s.GetMeal()
 		if err != nil {
-			errorChan <- err
+			errorChan <- &CustomError{"Failed to fetch meals", err}
 			return
 		}
 
@@ -199,18 +211,43 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 
 func (s *Service) GetUser() (*[]models.User, error) {
 	var userHealthInfo []models.User
-	if err := s.db.Preload("BodyMetrics").Preload("DietaryPreferences").Preload("HealthConditions").Preload("MicrobiomeData").Preload("Goals").Preload("MealHistory").Preload("RecentMeals").Preload("EnvironmentalFactors").Preload("LipidProfile").Order("id DESC").Find(&userHealthInfo).Error; err != nil {
-		return nil, err
+
+	// Fetch users with related data using Preload for eager loading
+	if err := s.db.Preload("BodyMetrics").
+		Preload("DietaryPreferences").
+		Preload("HealthConditions").
+		Preload("MicrobiomeData").
+		Preload("Goals").
+		Preload("MealHistory").
+		Preload("RecentMeals").
+		Preload("EnvironmentalFactors").
+		Preload("LipidProfile").
+		Order("id DESC").
+		Find(&userHealthInfo).Error; err != nil {
+		log.Println("Error fetching user data:", err)
+		return nil, &CustomError{"Failed to retrieve user data", err}
 	}
 
 	return &userHealthInfo, nil
-
 }
 
 func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, error) {
 	var userHealthInfo models.User
-	if err := s.db.Preload("BodyMetrics").Preload("DietaryPreferences").Preload("HealthConditions").Preload("MicrobiomeData").Preload("Goals").Preload("MealHistory").Preload("RecentMeals").Preload("EnvironmentalFactors").Preload("LipidProfile").Where("id = ?", userId).First(&userHealthInfo).Error; err != nil {
-		return nil, err
+
+	// Fetch user health information with related data
+	if err := s.db.Preload("BodyMetrics").
+		Preload("DietaryPreferences").
+		Preload("HealthConditions").
+		Preload("MicrobiomeData").
+		Preload("Goals").
+		Preload("MealHistory").
+		Preload("RecentMeals").
+		Preload("EnvironmentalFactors").
+		Preload("LipidProfile").
+		Where("id = ?", userId).
+		First(&userHealthInfo).Error; err != nil {
+		log.Println("Error fetching user health info:", err)
+		return nil, &CustomError{"Failed to retrieve user health information", err}
 	}
 
 	// Fetch meals and calculate recommendations concurrently
@@ -256,6 +293,7 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 		}
 		return response, nil
 	case err := <-errorChan:
+		log.Println("Error fetching or calculating meal recommendations:", err)
 		return nil, err
 	}
 }
