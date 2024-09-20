@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/lib/pq"
 )
 
@@ -78,17 +80,23 @@ type EnvironmentalFactors struct {
 }
 
 type RecentMeals struct {
-	ID        uint   `json:"id" gorm:"primaryKey;autoIncrement"`
-	UserID    uint   `json:"user_id"`
-	MealID    uint   `json:"meal_id"` // Foreign key for Meal
-	Timestamp string `json:"timestamp"`
+	ID        uint      `json:"id" gorm:"primaryKey;autoIncrement"`
+	UserID    uint      `json:"user_id"`
+	MealID    uint      `json:"meal_id"` // Foreign key for Meal
+	Timestamp time.Time `json:"timestamp"`
 }
 
 type MealHistory struct {
-	ID        uint   `json:"id" gorm:"primaryKey;autoIncrement"`
-	UserID    uint   `json:"user_id"`
-	MealID    uint   `json:"meal_id"` // Foreign key for Meal
-	Timestamp string `json:"timestamp"`
+	ID        uint      `json:"id" gorm:"primaryKey;autoIncrement"`
+	UserID    uint      `json:"user_id"`
+	MealID    uint      `json:"meal_id"` // Foreign key for Meal
+	Timestamp time.Time `json:"timestamp"`
+}
+
+type RequestedMeal struct {
+	UserID    uint      `json:"user_id" gorm:"primaryKey"`
+	MealType  string    `json:"meal_type"`
+	Timestamp time.Time `json:"timestamp"`
 }
 
 type UserPreferences struct {

@@ -10,8 +10,8 @@ type Meal struct {
 	Name               string         `json:"name" binding:"required"`
 	Ingredients        []Ingredient   `json:"ingredients" gorm:"foreignKey:MealID"`
 	NutritionalContent datatypes.JSON `json:"nutritional_content"`
-	Category           string         `json:"category"`
-	MealType           pq.StringArray `gorm:"type:text[]" json:"meal_type"`
+	Category           string         `json:"category"` // pasta, pizza, stew
+	MealType           pq.StringArray `gorm:"type:text[]" json:"meal_type"` // diner, breackfast, snack, luanch
 	Cuisine            string         `json:"cuisine"`
 	Tags               pq.StringArray `gorm:"type:text[]" json:"tags"`
 	HealthScores       datatypes.JSON `json:"health_scores"`
@@ -37,19 +37,18 @@ type ScoredMeal struct {
 }
 
 type Course struct {
-	MealName    string       `json:"meal_name"`
-	Ingredients []Ingredient `json:"ingredients"`
+	Meal  Meal    `json:"meal"`
+	Score float64 `json:"score"`
 }
 
 type Recommended struct {
 	Type    string   `json:"type"`
 	Courses []Course `json:"courses"`
-	Score   float64  `json:"score"`
 }
 
 type UserHealthInfoResponse struct {
-	User                  User          `json:"user_info"`
-	ScoreAndRecmensdtions []Recommended `json:"recommendations"`
+	User                   User        `json:"user_info"`
+	ScoreAndRecommendation Recommended `json:"recommendation"`
 }
 
 type MealForOption struct {
