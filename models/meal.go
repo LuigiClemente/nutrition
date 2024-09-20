@@ -10,7 +10,7 @@ type Meal struct {
 	Name               string         `json:"name" binding:"required"`
 	Ingredients        []Ingredient   `json:"ingredients" gorm:"foreignKey:MealID"`
 	NutritionalContent datatypes.JSON `json:"nutritional_content"`
-	Category           string         `json:"category"` // pasta, pizza, stew
+	Category           string         `json:"category"`                     // pasta, pizza, stew
 	MealType           pq.StringArray `gorm:"type:text[]" json:"meal_type"` // diner, breackfast, snack, luanch
 	Cuisine            string         `json:"cuisine"`
 	Tags               pq.StringArray `gorm:"type:text[]" json:"tags"`

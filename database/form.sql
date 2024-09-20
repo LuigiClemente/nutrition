@@ -102,6 +102,9 @@ CREATE TABLE meals (
 );
 
 
+CREATE INDEX idx_category ON meals (category);
+
+
 -- Meal History Table
 CREATE TABLE meal_histories (
     id SERIAL PRIMARY KEY,

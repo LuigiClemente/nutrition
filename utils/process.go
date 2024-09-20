@@ -358,8 +358,8 @@ func calculateEnvironmentalAdaptability(user models.User, meal models.Meal) floa
 func calculateRecentConsumptionPenalty(user models.User, meal models.Meal) float64 {
 	for _, recentMeal := range user.RecentMeals {
 		if recentMeal.ID == meal.ID {
-			parsedTime, _ := ParseTime(recentMeal.Timestamp)
-			return CalculateRecentMealPenalty(parsedTime)
+			
+			return CalculateRecentMealPenalty(recentMeal.Timestamp)
 
 		}
 	}

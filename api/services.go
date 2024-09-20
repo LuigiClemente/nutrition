@@ -163,7 +163,7 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 	}
 
 	// Fetch meals and calculate recommendations concurrently
-	resultChan := make(chan []models.Recommended, 1)
+	resultChan := make(chan models.Recommended, 1)
 	errorChan := make(chan error, 1)
 
 	go func() {
@@ -174,34 +174,37 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 			return
 		}
 
-		// Calculate top meals
+		// Calculate top 3 meals
 		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3)
+		numCourses := len(topMeals)
+		// Prepare recommendation with all 3 top meals
+		var scoreRecommendation models.Recommended
+		if len(topMeals) > 0 {
+			courses := make([]models.Course, len(topMeals))
+			for i, mealWithScore := range topMeals {
 
-		// Prepare recommendations based on the number of courses
-		var scoreRecommendations []models.Recommended
-		for _, mealWithScore := range topMeals {
-			numCourses := len(mealWithScore.Meal.Ingredients) // Example logic to determine number of courses
+				courses[i] = models.Course{
+					Meal:  mealWithScore.Meal,
+					Score: mealWithScore.Score,
+				}
+			}
 
-			scoreRecommendations = append(scoreRecommendations, models.Recommended{
-				Type: utils.GetCourseType(numCourses),
-				Courses: []models.Course{ // Populate courses
-					{
-						MealName:    mealWithScore.Meal.Name,
-						Ingredients: mealWithScore.Meal.Ingredients,
-					},
-				},
-				Score: mealWithScore.Score,
-			})
+			// Set the first course's type based on the number of ingredients
+			scoreRecommendation = models.Recommended{
+				Type:    utils.GetCourseType(numCourses),
+				Courses: courses, // Assign all 3 top meals to the courses
+			}
 		}
-		resultChan <- scoreRecommendations
+
+		resultChan <- scoreRecommendation
 	}()
 
 	// Wait for the result from the goroutine or handle errors
 	select {
-	case scoreRecommendations := <-resultChan:
+	case scoreRecommendation := <-resultChan:
 		response := &models.UserHealthInfoResponse{
-			User:                  userHealthInfo,
-			ScoreAndRecmensdtions: scoreRecommendations,
+			User:                   userHealthInfo,
+			ScoreAndRecommendation: scoreRecommendation,
 		}
 		return response, nil
 	case err := <-errorChan:
@@ -251,49 +254,51 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 	}
 
 	// Fetch meals and calculate recommendations concurrently
-	resultChan := make(chan []models.Recommended, 1)
+	resultChan := make(chan models.Recommended, 1)
 	errorChan := make(chan error, 1)
 
 	go func() {
 		// Fetch meals
 		meals, err := s.GetMeal()
 		if err != nil {
-			errorChan <- err
+			errorChan <- &CustomError{"Failed to fetch meals", err}
 			return
 		}
 
-		// Calculate top meals
+		// Calculate top 3 meals
 		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3)
+		numCourses := len(topMeals)
+		// Prepare recommendation with all 3 top meals
+		var scoreRecommendation models.Recommended
+		if len(topMeals) > 0 {
+			courses := make([]models.Course, len(topMeals))
+			for i, mealWithScore := range topMeals {
 
-		// Prepare recommendations
-		var scoreRecommendations []models.Recommended
-		for _, mealWithScore := range topMeals {
-			numCourses := len(mealWithScore.Meal.Ingredients) // Example logic to determine number of courses
+				courses[i] = models.Course{
+					Meal:  mealWithScore.Meal,
+					Score: mealWithScore.Score,
+				}
+			}
 
-			scoreRecommendations = append(scoreRecommendations, models.Recommended{
-				Type: utils.GetCourseType(numCourses),
-				Courses: []models.Course{ // Populate courses
-					{
-						MealName:    mealWithScore.Meal.Name,
-						Ingredients: mealWithScore.Meal.Ingredients,
-					},
-				},
-				Score: mealWithScore.Score,
-			})
+			// Set the first course's type based on the number of ingredients
+			scoreRecommendation = models.Recommended{
+				Type:    utils.GetCourseType(numCourses),
+				Courses: courses, // Assign all 3 top meals to the courses
+			}
 		}
-		resultChan <- scoreRecommendations
+
+		resultChan <- scoreRecommendation
 	}()
 
 	// Wait for the result from the goroutine or handle errors
 	select {
-	case scoreRecommendations := <-resultChan:
+	case scoreRecommendation := <-resultChan:
 		response := &models.UserHealthInfoResponse{
-			User:                  userHealthInfo,
-			ScoreAndRecmensdtions: scoreRecommendations,
+			User:                   userHealthInfo,
+			ScoreAndRecommendation: scoreRecommendation,
 		}
 		return response, nil
 	case err := <-errorChan:
-		log.Println("Error fetching or calculating meal recommendations:", err)
 		return nil, err
 	}
 }
@@ -316,9 +321,9 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 	}
 
 	// Step 2: Update or Insert into body_metrics table
-	BodyMetricsSQL := `INSERT INTO body_metrics (user_id, weight, height) 
-	                   VALUES (?, ?, ?) 
-	                   ON CONFLICT (user_id) DO UPDATE 
+	BodyMetricsSQL := `INSERT INTO body_metrics (user_id, weight, height)
+	                   VALUES (?, ?, ?)
+	                   ON CONFLICT (user_id) DO UPDATE
 	                   SET weight = EXCLUDED.weight, height = EXCLUDED.height`
 	if err := tx.Exec(BodyMetricsSQL, userId, userHealthInfo.BodyMetrics.Weight, userHealthInfo.BodyMetrics.Height).Error; err != nil {
 		tx.Rollback()
@@ -326,9 +331,9 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 	}
 
 	// Step 3: Update or Insert into dietary_preferences table
-	DietaryPreferencesSQL := `INSERT INTO dietary_preferences (user_id, vegetarian, vegan, gluten_free, dairy_free, specific_avoidances) 
-	                          VALUES (?, ?, ?, ?, ?, ?) 
-	                          ON CONFLICT (user_id) DO UPDATE 
+	DietaryPreferencesSQL := `INSERT INTO dietary_preferences (user_id, vegetarian, vegan, gluten_free, dairy_free, specific_avoidances)
+	                          VALUES (?, ?, ?, ?, ?, ?)
+	                          ON CONFLICT (user_id) DO UPDATE
 	                          SET vegetarian = EXCLUDED.vegetarian, vegan = EXCLUDED.vegan, gluten_free = EXCLUDED.gluten_free, dairy_free = EXCLUDED.dairy_free, specific_avoidances = EXCLUDED.specific_avoidances`
 	if err := tx.Exec(DietaryPreferencesSQL, userId, userHealthInfo.DietaryPreferences.Vegetarian, userHealthInfo.DietaryPreferences.Vegan, userHealthInfo.DietaryPreferences.GlutenFree, userHealthInfo.DietaryPreferences.DairyFree, userHealthInfo.DietaryPreferences.SpecificAvoidances).Error; err != nil {
 		tx.Rollback()
@@ -380,9 +385,9 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 	}
 
 	// Step 6: Update or Insert into microbiome_data table
-	MicrobiomeDataSQL := `INSERT INTO microbiome_data (user_id, diversity_score, gut_health_recommendations) 
-	                      VALUES (?, ?, ?) 
-	                      ON CONFLICT (user_id) DO UPDATE 
+	MicrobiomeDataSQL := `INSERT INTO microbiome_data (user_id, diversity_score, gut_health_recommendations)
+	                      VALUES (?, ?, ?)
+	                      ON CONFLICT (user_id) DO UPDATE
 	                      SET diversity_score = EXCLUDED.diversity_score, gut_health_recommendations = EXCLUDED.gut_health_recommendations`
 	if err := tx.Exec(MicrobiomeDataSQL, userId, userHealthInfo.MicrobiomeData.DiversityScore, userHealthInfo.MicrobiomeData.GutHealthRecommendations).Error; err != nil {
 		tx.Rollback()
@@ -390,9 +395,9 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 	}
 
 	// Step 7: Update or Insert into lipid_profiles table
-	LipidProfileSQL := `INSERT INTO lipid_profiles (user_id, cholesterol, hdl, ldl, triglycerides) 
-	                    VALUES (?, ?, ?, ?, ?) 
-	                    ON CONFLICT (user_id) DO UPDATE 
+	LipidProfileSQL := `INSERT INTO lipid_profiles (user_id, cholesterol, hdl, ldl, triglycerides)
+	                    VALUES (?, ?, ?, ?, ?)
+	                    ON CONFLICT (user_id) DO UPDATE
 	                    SET cholesterol = EXCLUDED.cholesterol, hdl = EXCLUDED.hdl, ldl = EXCLUDED.ldl, triglycerides = EXCLUDED.triglycerides`
 	if err := tx.Exec(LipidProfileSQL, userId, userHealthInfo.LipidProfile.Cholesterol, userHealthInfo.LipidProfile.HDL, userHealthInfo.LipidProfile.LDL, userHealthInfo.LipidProfile.Triglycerides).Error; err != nil {
 		tx.Rollback()
@@ -400,9 +405,9 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 	}
 
 	// Step 8: Update or Insert into environmental_factors table
-	EnvironmentalFactorsSQL := `INSERT INTO environmental_factors (user_id, location, climate, season) 
-	                            VALUES (?, ?, ?, ?) 
-	                            ON CONFLICT (user_id) DO UPDATE 
+	EnvironmentalFactorsSQL := `INSERT INTO environmental_factors (user_id, location, climate, season)
+	                            VALUES (?, ?, ?, ?)
+	                            ON CONFLICT (user_id) DO UPDATE
 	                            SET location = EXCLUDED.location, climate = EXCLUDED.climate, season = EXCLUDED.season`
 	if err := tx.Exec(EnvironmentalFactorsSQL, userId, userHealthInfo.EnvironmentalFactors.Location, userHealthInfo.EnvironmentalFactors.Climate, userHealthInfo.EnvironmentalFactors.Season).Error; err != nil {
 		tx.Rollback()
@@ -450,9 +455,9 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 	}
 
 	// Step 11: Update or Insert into user_preferences table
-	UserPreferencesSQL := `INSERT INTO user_preferences (user_id, preferred_cuisines, meal_timings, favorite_ingredients) 
-	                       VALUES (?, ?, ?, ?) 
-	                       ON CONFLICT (user_id) DO UPDATE 
+	UserPreferencesSQL := `INSERT INTO user_preferences (user_id, preferred_cuisines, meal_timings, favorite_ingredients)
+	                       VALUES (?, ?, ?, ?)
+	                       ON CONFLICT (user_id) DO UPDATE
 	                       SET preferred_cuisines = EXCLUDED.preferred_cuisines, meal_timings = EXCLUDED.meal_timings, favorite_ingredients = EXCLUDED.favorite_ingredients`
 	if err := tx.Exec(UserPreferencesSQL, userId, userHealthInfo.Preferences.PreferredCuisines, userHealthInfo.Preferences.MealTimings, userHealthInfo.Preferences.FavoriteIngredients).Error; err != nil {
 		tx.Rollback()
@@ -464,37 +469,53 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 		return nil, err
 	}
 
-	// Fetch meals and calculate recommendations
-	meals, err := s.GetMeal()
-	if err != nil {
+	resultChan := make(chan models.Recommended, 1)
+	errorChan := make(chan error, 1)
+
+	go func() {
+		// Fetch meals
+		meals, err := s.GetMeal()
+		if err != nil {
+			errorChan <- &CustomError{"Failed to fetch meals", err}
+			return
+		}
+
+		// Calculate top 3 meals
+		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3)
+		numCourses := len(topMeals)
+		// Prepare recommendation with all 3 top meals
+		var scoreRecommendation models.Recommended
+		if len(topMeals) > 0 {
+			courses := make([]models.Course, len(topMeals))
+			for i, mealWithScore := range topMeals {
+
+				courses[i] = models.Course{
+					Meal:  mealWithScore.Meal,
+					Score: mealWithScore.Score,
+				}
+			}
+
+			// Set the first course's type based on the number of ingredients
+			scoreRecommendation = models.Recommended{
+				Type:    utils.GetCourseType(numCourses),
+				Courses: courses, // Assign all 3 top meals to the courses
+			}
+		}
+
+		resultChan <- scoreRecommendation
+	}()
+
+	// Wait for the result from the goroutine or handle errors
+	select {
+	case scoreRecommendation := <-resultChan:
+		response := &models.UserHealthInfoResponse{
+			User:                   userHealthInfo,
+			ScoreAndRecommendation: scoreRecommendation,
+		}
+		return response, nil
+	case err := <-errorChan:
 		return nil, err
 	}
-
-	topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3)
-
-	// Prepare response
-	var scoreRecommendations []models.Recommended
-	for _, mealWithScore := range topMeals {
-		numCourses := len(mealWithScore.Meal.Ingredients)
-
-		scoreRecommendations = append(scoreRecommendations, models.Recommended{
-			Type: utils.GetCourseType(numCourses),
-			Courses: []models.Course{ // Populate courses
-				{
-					MealName:    mealWithScore.Meal.Name,
-					Ingredients: mealWithScore.Meal.Ingredients,
-				},
-			},
-			Score: mealWithScore.Score,
-		})
-	}
-
-	response := &models.UserHealthInfoResponse{
-		User:                  userHealthInfo,
-		ScoreAndRecmensdtions: scoreRecommendations,
-	}
-
-	return response, nil
 }
 
 func (s *Service) DeleteUserUserId(userId int) error {
@@ -505,49 +526,70 @@ func (s *Service) DeleteUserUserId(userId int) error {
 }
 
 // get user with a meal
-func (s *Service) SearchMealUser(userId int, mealId int) (*models.UserHealthInfoResponse, error) {
+func (s *Service) SearchMealUser(userId int, mealType string, numCourses int) (*models.UserHealthInfoResponse, error) {
 	var userHealthInfo models.User
 	// Fetch user data with necessary preloads
-	if err := s.db.Preload("BodyMetrics").Preload("DietaryPreferences").Preload("HealthConditions").
-		Preload("MicrobiomeData").Preload("Goals").Preload("MealHistory").Preload("RecentMeals").
-		Preload("EnvironmentalFactors").Preload("LipidProfile").Where("id = ?", userId).First(&userHealthInfo).Error; err != nil {
+	if err := s.db.Preload("BodyMetrics").
+		Preload("DietaryPreferences").
+		Preload("HealthConditions").
+		Preload("MicrobiomeData").
+		Preload("Goals").
+		Preload("MealHistory").
+		Preload("RecentMeals").
+		Preload("EnvironmentalFactors").
+		Preload("LipidProfile").
+		Where("id = ?", userId).
+		First(&userHealthInfo).Error; err != nil {
 		return nil, err
 	}
 
-	// Fetch the specific meal by mealId
-	var meals []models.Meal
-	if err := s.db.Where("id = ?", mealId).Preload("Ingredients").Find(&meals).Error; err != nil {
-		return nil, err
-	}
+	resultChan := make(chan models.Recommended, 1)
+	errorChan := make(chan error, 1)
 
-	// Calculate top meals (if needed, for a broader recommendation)
-	topMeals := utils.GetTopMeals(userHealthInfo, meals, 1) // Fetch top 1 meals
-
-	// Prepare recommendations based on the specific meal
-	var mealRecommendations []models.Recommended
-	for _, mealWithScore := range topMeals {
-		numCourses := len(mealWithScore.Meal.Ingredients)
-		if mealWithScore.Meal.ID == uint(mealId) {
-			mealRecommendations = append(mealRecommendations, models.Recommended{
-				Type: utils.GetCourseType(numCourses),
-				Courses: []models.Course{ // Populate courses
-					{
-						MealName:    mealWithScore.Meal.Name,
-						Ingredients: mealWithScore.Meal.Ingredients,
-					},
-				},
-				Score: mealWithScore.Score,
-			})
+	go func() {
+		// Fetch meals
+		meals, err := s.GetMeal()
+		if err != nil {
+			errorChan <- &CustomError{"Failed to fetch meals", err}
+			return
 		}
-	}
 
-	// Prepare response
-	response := &models.UserHealthInfoResponse{
-		User:                  userHealthInfo,
-		ScoreAndRecmensdtions: mealRecommendations,
-	}
+		// Calculate top 3 meals
+		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3)
+		numCourses := len(topMeals)
+		// Prepare recommendation with all 3 top meals
+		var scoreRecommendation models.Recommended
+		if len(topMeals) > 0 {
+			courses := make([]models.Course, len(topMeals))
+			for i, mealWithScore := range topMeals {
 
-	return response, nil
+				courses[i] = models.Course{
+					Meal:  mealWithScore.Meal,
+					Score: mealWithScore.Score,
+				}
+			}
+
+			// Set the first course's type based on the number of ingredients
+			scoreRecommendation = models.Recommended{
+				Type:    utils.GetCourseType(numCourses),
+				Courses: courses, // Assign all 3 top meals to the courses
+			}
+		}
+
+		resultChan <- scoreRecommendation
+	}()
+
+	// Wait for the result from the goroutine or handle errors
+	select {
+	case scoreRecommendation := <-resultChan:
+		response := &models.UserHealthInfoResponse{
+			User:                   userHealthInfo,
+			ScoreAndRecommendation: scoreRecommendation,
+		}
+		return response, nil
+	case err := <-errorChan:
+		return nil, err
+	}
 }
 
 // =============== Meal ===============
@@ -567,6 +609,27 @@ func (s *Service) GetMeal() (*[]models.Meal, error) {
 	}
 	return &meals, nil
 }
+
+func (s *Service) GetMealsByCategory(category string) (*[]models.Meal, error) {
+	var meals []models.Meal
+	if err := s.db.Where("category = ?", category).Preload("Ingredients").Order("id DESC").Find(&meals).Error; err != nil {
+		return nil, err
+	}
+	return &meals, nil
+}
+
+func (s *Service) GetMealCategories() (*[]string, error) {
+	var categories []string
+	if err := s.db.Model(&models.Meal{}).
+		Select("DISTINCT category").
+		Order("category ASC"). // Optionally sort the categories alphabetically
+		Pluck("category", &categories).Error; err != nil {
+		return nil, err
+	}
+	return &categories, nil
+}
+
+
 
 func (s *Service) GetMealForOption() (*[]models.MealForOption, error) {
 	var factors []models.MealForOption

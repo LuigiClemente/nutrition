@@ -107,28 +107,6 @@ func (h *Handler) PutUserUserId(c *gin.Context) {
 	c.JSON(http.StatusOK, updatedInfo)
 }
 
-// PutUserUserId updates user health information by user ID
-func (h *Handler) SearchMealUser(c *gin.Context) {
-	userId, err := utils.ParseAndValidateID(c.Param("userId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
-		return
-	}
-
-	mealId, err := utils.ParseAndValidateID(c.Param("mealId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid meal ID"})
-		return
-	}
-
-	info, err := h.service.SearchMealUser(userId, mealId)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusOK, info)
-}
-
 // GetMeal returns all Meal
 func (h *Handler) GetMeal(c *gin.Context) {
 	items, err := h.service.GetMeal()
@@ -147,6 +125,16 @@ func (h *Handler) GetMealForOption(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, items)
+}
+
+// GetMealCategories returns all Meal for listing in options value
+func (h *Handler) GetMealCategories(c *gin.Context) {
+	categories, err := h.service.GetMealCategories()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, categories)
 }
 
 // PostMeal creates a new Meal record
