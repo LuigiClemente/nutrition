@@ -19,13 +19,11 @@ func CompareJSONFields(a, b datatypes.JSON) bool {
 func GetCourseType(numCourses int) string {
 	switch numCourses {
 	case 1:
-		return "single"
+		return "single-course"
 	case 2:
 		return "2-course"
 	case 3:
 		return "3-course"
-	case 4:
-		return "4-course"
 	default:
 		return "multi-course" // For any other number of courses
 	}
