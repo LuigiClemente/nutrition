@@ -1,6 +1,8 @@
 package api
 
 import (
+	"nutrition/handlers"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +20,7 @@ func SetupRouter() *gin.Engine {
 	// Register routes
 	infoRoutes := router.Group("api/user-health-info")
 	{
-		userHandler := NewHandler()
+		userHandler := handlers.NewHandler()
 		infoRoutes.POST("/", userHandler.PostUser)
 		infoRoutes.GET("/", userHandler.GetUser)
 		infoRoutes.GET("/:userId", userHandler.GetUserUserId)
@@ -28,7 +30,7 @@ func SetupRouter() *gin.Engine {
 
 	mealRoutes := router.Group("api/meals")
 	{
-		mealHandler := NewHandler()
+		mealHandler := handlers.NewHandler()
 		mealRoutes.POST("/", mealHandler.PostMeal)
 		mealRoutes.GET("/", mealHandler.GetMeal)
 		mealRoutes.GET("/options", mealHandler.GetMealForOption)
