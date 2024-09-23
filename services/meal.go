@@ -1,11 +1,10 @@
 package services
 
 import (
+	"fmt"
 	"nutrition/models"
 	"nutrition/utils"
 )
-
-// =============== Meal ===============
 
 func (s *Service) PostMeals(meals []models.Meal) (*[]models.Meal, error) {
 	if err := s.db.CreateInBatches(&meals, 100).Error; err != nil {
@@ -28,6 +27,7 @@ func (s *Service) GetMealsByCategory(category string) (*[]models.Meal, error) {
 	if err := s.db.Where("category = ?", category).Preload("Ingredients").Order("id DESC").Find(&meals).Error; err != nil {
 		return nil, err
 	}
+	fmt.Println(len(meals))
 	return &meals, nil
 }
 

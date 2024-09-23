@@ -1378,74 +1378,106 @@ Description: Get a specific meal's information by mealId.
 
 ```json
 {
-    "id": 12,
-    "name": "Oatmeal",
+    "id": 27,
+    "name": "Pasta alla Primavera",
     "ingredients": [
         {
-            "id": 45,
-            "meal_id": 12,
-            "name": "Oats",
+            "id": 95,
+            "meal_id": 27,
+            "name": "Pasta",
+            "amount": 200,
+            "unit": "g",
+            "nutritional": {
+                "fat": 1.5,
+                "carbs": 42.0,
+                "protein": 7.5,
+                "calories": 210
+            },
+            "percentage": 60
+        },
+        {
+            "id": 96,
+            "meal_id": 27,
+            "name": "Cherry Tomatoes",
+            "amount": 150,
+            "unit": "g",
+            "nutritional": {
+                "fat": 0.3,
+                "carbs": 6.0,
+                "protein": 1.0,
+                "calories": 27
+            },
+            "percentage": 15
+        },
+        {
+            "id": 97,
+            "meal_id": 27,
+            "name": "Zucchini",
             "amount": 100,
             "unit": "g",
             "nutritional": {
-                "fat": 6.9,
-                "carbs": 66.3,
-                "protein": 16.9,
-                "calories": 389
-            }
+                "fat": 0.3,
+                "carbs": 3.1,
+                "protein": 1.2,
+                "calories": 17
+            },
+            "percentage": 10
         },
         {
-            "id": 46,
-            "meal_id": 12,
-            "name": "Milk",
-            "amount": 200,
-            "unit": "ml",
-            "nutritional": {
-                "fat": 4.5,
-                "carbs": 12.0,
-                "protein": 8.0,
-                "calories": 122
-            }
-        },
-        {
-            "id": 47,
-            "meal_id": 12,
-            "name": "Banana",
+            "id": 98,
+            "meal_id": 27,
+            "name": "Bell Peppers",
             "amount": 80,
             "unit": "g",
             "nutritional": {
                 "fat": 0.2,
-                "carbs": 18.5,
+                "carbs": 5.5,
                 "protein": 0.9,
-                "calories": 72
-            }
+                "calories": 24
+            },
+            "percentage": 10
+        },
+        {
+            "id": 99,
+            "meal_id": 27,
+            "name": "Olive Oil",
+            "amount": 2,
+            "unit": "tbsp",
+            "nutritional": {
+                "fat": 27,
+                "carbs": 0,
+                "protein": 0,
+                "calories": 240
+            },
+            "percentage": 5
         }
     ],
     "nutritional_content": {
-        "fat": 11.6,
-        "carbs": 96.8,
-        "protein": 25.8,
-        "calories": 583
+        "fat": 29.3,
+        "carbs": 56.6,
+        "protein": 10.6,
+        "calories": 518
     },
-    "category": "Breakfast",
+    "category": "Pasta",
     "meal_type": [
-        "Breakfast"
+        "Lunch",
+        "Dinner"
     ],
-    "cuisine": "American",
+    "cuisine": "Italian",
     "tags": [
         "Vegetarian",
-        "High Fiber",
-        "Easy"
+        "Low Carb",
+        "Healthy"
     ],
     "health_scores": {
         "weight_loss": 75,
-        "heart_health": 90,
+        "heart_health": 85,
         "diabetes_friendly": 80
     },
-    "preparation_time": 10,
+    "preparation_time": 30,
     "difficulty": "Easy",
-    "serving_size": 1,
-    "instructions": "Cook oats in milk, top with banana slices. Serve warm."
+    "serving_size": 2,
+    "instructions": "Cook the pasta according to package instructions. Sauté cherry tomatoes, zucchini, and bell peppers in olive oil until tender. Toss with pasta and serve."
 }
 ```
 

@@ -147,7 +147,7 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 
 	go func() {
 		// Fetch meals
-		meals, err := s.GetMeal()
+		meals, err := s.GetMealsByCategory(userHealthInfo.RequestedMeal.MealCategory)
 		if err != nil {
 			errorChan <- &CustomError{"Failed to fetch meals", err}
 			return
@@ -201,6 +201,7 @@ func (s *Service) GetUser() (*[]models.User, error) {
 		Preload("MicrobiomeData").
 		Preload("Goals").
 		Preload("MealHistory").
+		Preload("RequestedMeal").
 		Preload("RecentMeals").
 		Preload("EnvironmentalFactors").
 		Preload("LipidProfile").
@@ -221,6 +222,7 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 		Preload("DietaryPreferences").
 		Preload("HealthConditions").
 		Preload("MicrobiomeData").
+		Preload("RequestedMeal").
 		Preload("Goals").
 		Preload("MealHistory").
 		Preload("RecentMeals").
@@ -238,7 +240,7 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 
 	go func() {
 		// Fetch meals
-		meals, err := s.GetMeal()
+		meals, err := s.GetMealsByCategory(userHealthInfo.RequestedMeal.MealCategory)
 		if err != nil {
 			errorChan <- &CustomError{"Failed to fetch meals", err}
 			return
@@ -453,7 +455,7 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 
 	go func() {
 		// Fetch meals
-		meals, err := s.GetMeal()
+		meals, err := s.GetMealsByCategory(userHealthInfo.RequestedMeal.MealCategory)
 		if err != nil {
 			errorChan <- &CustomError{"Failed to fetch meals", err}
 			return
@@ -513,6 +515,7 @@ func (s *Service) SearchMealUser(userId int, mealType string, numCourses int) (*
 		Preload("HealthConditions").
 		Preload("MicrobiomeData").
 		Preload("Goals").
+		Preload("RequestedMeal").
 		Preload("MealHistory").
 		Preload("RecentMeals").
 		Preload("EnvironmentalFactors").
