@@ -28,6 +28,7 @@ func (s *Service) GetMealsByCategory(category string) (*[]models.Meal, error) {
 		return nil, err
 	}
 	fmt.Println(len(meals))
+	fmt.Println(category)
 	return &meals, nil
 }
 

@@ -43,7 +43,7 @@ CREATE TABLE health_conditions (
 -- Last Requested  meal Category Table
 CREATE TABLE requested_meals (
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    category  VARCHAR(100),
+    meal_category  VARCHAR(100),
     timestamp TIMESTAMP,
     PRIMARY KEY(user_id)
 );
