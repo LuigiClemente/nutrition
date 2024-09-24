@@ -73,7 +73,6 @@ type LipidProfile struct {
 }
 
 type EnvironmentalFactors struct {
-	ID       uint   `json:"id" gorm:"primaryKey;autoIncrement"`
 	UserID   uint   `json:"user_id"`
 	Location string `json:"location"`
 	Climate  string `json:"climate"`
@@ -95,13 +94,12 @@ type MealHistory struct {
 }
 
 type RequestedMeal struct {
-	UserID       uint      `json:"user_id" gorm:"primaryKey"`
-	MealCategory string    `json:"meal_category" binding:"required"`
-	Timestamp    time.Time `json:"timestamp"`
+	UserID         uint   `json:"user_id" gorm:"primaryKey"`
+	MealCategory   string `json:"meal_category" binding:"required"`
+	NumberOfCourses int    `json:"number_of_courses" binding:"required"`
 }
 
 type UserPreferences struct {
-	ID                  uint           `json:"id" gorm:"primaryKey;autoIncrement"`
 	UserID              uint           `json:"user_id"`
 	PreferredCuisines   pq.StringArray `gorm:"type:text[]" json:"preferred_cuisines"`
 	MealTimings         pq.StringArray `gorm:"type:text[]" json:"meal_timings"`

@@ -136,6 +136,15 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 		return nil, &CustomError{"Failed to insert user preferences", err}
 	}
 
+	RequestedMealSQL := `INSERT INTO requested_meals (user_id, meal_category, number_of_courses)
+	VALUES (?, ?, ?)
+	ON CONFLICT (user_id) DO UPDATE
+	SET meal_category = EXCLUDED.meal_category, number_of_courses = EXCLUDED.number_of_courses`
+	if err := tx.Exec(RequestedMealSQL, userID, userHealthInfo.RequestedMeal.MealCategory, userHealthInfo.RequestedMeal.NumberOfCourses).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
 	// Commit the transaction
 	if err := tx.Commit().Error; err != nil {
 		return nil, &CustomError{"Failed to commit transaction", err}
@@ -197,6 +206,7 @@ func (s *Service) GetUser() (*[]models.User, error) {
 	// Fetch users with related data using Preload for eager loading
 	if err := s.db.Preload("BodyMetrics").
 		Preload("DietaryPreferences").
+		Preload("Preferences").
 		Preload("HealthConditions").
 		Preload("MicrobiomeData").
 		Preload("Goals").
@@ -220,6 +230,7 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 	// Fetch user health information with related data
 	if err := s.db.Preload("BodyMetrics").
 		Preload("DietaryPreferences").
+		Preload("Preferences").
 		Preload("HealthConditions").
 		Preload("MicrobiomeData").
 		Preload("RequestedMeal").
@@ -445,6 +456,15 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 		return nil, err
 	}
 
+	RequestedMealSQL := `INSERT INTO requested_meals (user_id, meal_category, number_of_courses)
+	                   VALUES (?, ?, ?)
+	                   ON CONFLICT (user_id) DO UPDATE
+	                   SET meal_category = EXCLUDED.meal_category, number_of_courses = EXCLUDED.number_of_courses`
+	if err := tx.Exec(RequestedMealSQL, userId, userHealthInfo.RequestedMeal.MealCategory, userHealthInfo.RequestedMeal.NumberOfCourses).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
 	// Commit the transaction
 	if err := tx.Commit().Error; err != nil {
 		return nil, err
@@ -512,6 +532,7 @@ func (s *Service) SearchMealUser(userId int, mealType string, numCourses int) (*
 	// Fetch user data with necessary preloads
 	if err := s.db.Preload("BodyMetrics").
 		Preload("DietaryPreferences").
+		Preload("Preferences").
 		Preload("HealthConditions").
 		Preload("MicrobiomeData").
 		Preload("Goals").

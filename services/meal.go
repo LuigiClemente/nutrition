@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"nutrition/models"
 	"nutrition/utils"
 )
@@ -27,8 +26,7 @@ func (s *Service) GetMealsByCategory(category string) (*[]models.Meal, error) {
 	if err := s.db.Where("category = ?", category).Preload("Ingredients").Order("id DESC").Find(&meals).Error; err != nil {
 		return nil, err
 	}
-	fmt.Println(len(meals))
-	fmt.Println(category)
+
 	return &meals, nil
 }
 
