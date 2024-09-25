@@ -163,7 +163,7 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 		}
 
 		// Calculate top 3 meals
-		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3)
+		topMeals := utils.GetTopMeals(userHealthInfo, *meals, userHealthInfo.RequestedMeal.NumberOfCourses)
 		numCourses := len(topMeals)
 		// Prepare recommendation with all 3 top meals
 		var scoreRecommendation models.Recommended
@@ -258,7 +258,7 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 		}
 
 		// Calculate top 3 meals
-		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3)
+		topMeals := utils.GetTopMeals(userHealthInfo, *meals, userHealthInfo.RequestedMeal.NumberOfCourses)
 		numCourses := len(topMeals)
 		// Prepare recommendation with all 3 top meals
 		var scoreRecommendation models.Recommended
@@ -482,7 +482,7 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 		}
 
 		// Calculate top 3 meals
-		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3)
+		topMeals := utils.GetTopMeals(userHealthInfo, *meals, userHealthInfo.RequestedMeal.NumberOfCourses)
 		numCourses := len(topMeals)
 		// Prepare recommendation with all 3 top meals
 		var scoreRecommendation models.Recommended
@@ -558,7 +558,7 @@ func (s *Service) SearchMealUser(userId int, mealType string, numCourses int) (*
 		}
 
 		// Calculate top 3 meals
-		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 3)
+		topMeals := utils.GetTopMeals(userHealthInfo, *meals, userHealthInfo.RequestedMeal.NumberOfCourses)
 		numCourses := len(topMeals)
 		// Prepare recommendation with all 3 top meals
 		var scoreRecommendation models.Recommended
