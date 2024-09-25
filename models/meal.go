@@ -14,21 +14,15 @@ type Meal struct {
 	MealType           pq.StringArray `gorm:"type:text[]" json:"meal_type"` // diner, breackfast, snack, luanch
 	Cuisine            string         `json:"cuisine"`
 	Tags               pq.StringArray `gorm:"type:text[]" json:"tags"`
-	HealthScores       datatypes.JSON `json:"health_scores"`
-	PreparationTime    int            `json:"preparation_time"`
-	Difficulty         string         `json:"difficulty"`
-	ServingSize        int            `json:"serving_size"`
-	Instructions       string         `json:"instructions"`
 }
 
 type Ingredient struct {
-	ID          uint           `json:"id" gorm:"primaryKey;autoIncrement"`
-	MealID      uint           `json:"meal_id"`
-	Name        string         `json:"name"`
-	Amount      float64        `json:"amount"`      // Total amount used
-	Unit        string         `json:"unit"`        // Measurement unit
-	Nutritional datatypes.JSON `json:"nutritional"` // Nutritional info as JSON
-	Percentage  float64        `json:"percentage"`  //The proportion of that ingredient in the dish
+	ID          uint    `json:"id" gorm:"primaryKey;autoIncrement"`
+	MealID      uint    `json:"meal_id"`
+	Name        string  `json:"name"`
+	Amount      float64 `json:"amount"` // Total amount used in grams 
+	Portion     string  `json:"portion"`
+	PortionUnit string  `json:"portion_unit"` // Measurement unit
 }
 
 type ScoredMeal struct {
@@ -39,6 +33,18 @@ type ScoredMeal struct {
 type Course struct {
 	Meal  Meal    `json:"meal"`
 	Score float64 `json:"score"`
+}
+
+type MealResponse struct {
+	ID          uint                `json:"id"`
+	Name        string              `json:"name" binding:"required"`
+	Ingredients []IngredientReponse `json:"ingredients" gorm:"foreignKey:MealID"`
+}
+
+type IngredientReponse struct {
+	Name    string  `json:"name"`
+	Amount  float64 `json:"amount"`  // Total amount used
+	Portion string  `json:"portion"` // Measurement unit
 }
 
 type Recommended struct {

@@ -28,3 +28,7 @@ func GetCourseType(numCourses int) string {
 		return "multi-course" // For any other number of courses
 	}
 }
+
+func GramsToOunces(grams float64) float64 {
+	return grams / 28.35
+}

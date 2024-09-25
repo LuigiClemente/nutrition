@@ -1,9 +1,9 @@
 -- User Table
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(64) NOT NULL,
     age INT NOT NULL,
-    gender VARCHAR(50),
+    gender VARCHAR(32),
     activity_level VARCHAR(50),
     blood_glucose FLOAT,
     health_score FLOAT,
@@ -34,7 +34,7 @@ CREATE TABLE dietary_preferences (
 CREATE TABLE health_conditions (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    name VARCHAR(255),
+    name VARCHAR(128),
     severity VARCHAR(50)
 );
 
@@ -43,7 +43,7 @@ CREATE TABLE health_conditions (
 -- Last Requested  meal Category Table
 CREATE TABLE requested_meals (
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    meal_category  VARCHAR(100),
+    meal_category  VARCHAR(64),
     number_of_courses INT,
     timestamp TIMESTAMP DEFAULT NOW(),
     PRIMARY KEY(user_id)
@@ -53,7 +53,7 @@ CREATE TABLE requested_meals (
 CREATE TABLE goals (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    type VARCHAR(255),
+    type VARCHAR(128),
     target FLOAT,
     duration INT
 );
@@ -79,8 +79,8 @@ CREATE TABLE lipid_profiles (
 -- Environmental Factors Table
 CREATE TABLE environmental_factors (
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    location VARCHAR(255),
-    climate VARCHAR(255),
+    location VARCHAR(128),
+    climate VARCHAR(64),
     season VARCHAR(50),
     PRIMARY KEY(user_id)
     
@@ -89,18 +89,12 @@ CREATE TABLE environmental_factors (
 -- Meals Table
 CREATE TABLE meals (
     id SERIAL PRIMARY KEY,  -- Auto-incrementing ID for the meal
-    name VARCHAR(255) UNIQUE NOT NULL,  -- Name of the meal
+    name VARCHAR(128) NOT NULL,  -- Name of the meal
     nutritional_content JSONB,  -- Nutritional content stored as JSONB
-    category VARCHAR(100),  -- Category (e.g., 'Salad')
+    category VARCHAR(64),  -- Category (e.g., 'Salad')
     meal_type TEXT[],  -- Meal type as a PostgreSQL array (e.g., ['Lunch', 'Dinner'])
-    cuisine VARCHAR(100),  -- Cuisine type (e.g., 'American')
-    tags TEXT[],  -- Tags as a PostgreSQL array (e.g., ['Healthy', 'Low-Carb'])
-    health_scores JSONB,  -- Health scores stored as JSONB (e.g., {"weight_loss": 8.5})
-    preparation_time INT,  -- Preparation time in minutes
-    difficulty VARCHAR(50),  -- Difficulty (e.g., 'Easy')
-    serving_size INT,  -- Number of servings
-    portion_size FLOAT,  -- Total portion size calculated
-    instructions TEXT  -- Instructions for preparation
+    cuisine VARCHAR(64),  -- Cuisine type (e.g., 'American')
+    tags TEXT[]  -- Tags as a PostgreSQL array (e.g., ['Healthy', 'Low-Carb'])
 );
 
 
@@ -127,12 +121,10 @@ CREATE TABLE recent_meals (
 CREATE TABLE ingredients (
     id SERIAL PRIMARY KEY,  -- Auto-incrementing ID for the ingredient
     meal_id INT REFERENCES meals(id) ON DELETE CASCADE,  -- Foreign key linking to the meal
-    name VARCHAR(255) NOT NULL,  -- Name of the ingredient
-    amount FLOAT,  -- Amount of the ingredient (e.g., 150)
-    unit VARCHAR(50),  -- Unit of measurement (e.g., 'grams')
-    portion_size_per_100g FLOAT,  -- portion size for each ingredient
-    nutritional JSONB,  -- Nutritional information stored as JSONB (e.g., {"calories": 200, "protein": 30})
-    percentage FLOAT DEFAULT 0.0 -- The proportion of that ingredient in the dish
+    name VARCHAR(128) NOT NULL,  -- Name of the ingredient
+    amount FLOAT,  -- Amount of the ingredient (e.g., 150) in grams
+    portion VARCHAR(64),  -- Total portion size calculated
+    portion_unit VARCHAR(64)  -- tbsp
 );
 
 
