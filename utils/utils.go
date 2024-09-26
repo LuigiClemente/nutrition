@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"reflect"
+	"strconv"
 
 	"gorm.io/datatypes"
 )
@@ -31,4 +32,8 @@ func GetCourseType(numCourses int) string {
 
 func GramsToOunces(grams float64) float64 {
 	return grams / 28.35
+}
+
+func FloatToString(value float64) string {
+	return strconv.FormatFloat(value, 'f', -1, 64)
 }

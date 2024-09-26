@@ -136,11 +136,11 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 		return nil, &CustomError{"Failed to insert user preferences", err}
 	}
 
-	RequestedMealSQL := `INSERT INTO requested_meals (user_id, meal_category, number_of_courses)
-	VALUES (?, ?, ?)
+	RequestedMealSQL := `INSERT INTO requested_meals (user_id, meal_category)
+	VALUES (?, ?)
 	ON CONFLICT (user_id) DO UPDATE
-	SET meal_category = EXCLUDED.meal_category, number_of_courses = EXCLUDED.number_of_courses`
-	if err := tx.Exec(RequestedMealSQL, userID, userHealthInfo.RequestedMeal.MealCategory, userHealthInfo.RequestedMeal.NumberOfCourses).Error; err != nil {
+	SET meal_category = EXCLUDED.meal_category`
+	if err := tx.Exec(RequestedMealSQL, userID, userHealthInfo.RequestedMeal.MealCategory).Error; err != nil {
 		tx.Rollback()
 		return nil, err
 	}
@@ -162,25 +162,20 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 			return
 		}
 
-		// Calculate top 3 meals
-		topMeals := utils.GetTopMeals(userHealthInfo, *meals, userHealthInfo.RequestedMeal.NumberOfCourses)
-		numCourses := len(topMeals)
-		// Prepare recommendation with all 3 top meals
+		// Calculate top 1 meals
+		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 1)
+
+		// Prepare recommendation
 		var scoreRecommendation models.Recommended
 		if len(topMeals) > 0 {
-			courses := make([]models.Course, len(topMeals))
-			for i, mealWithScore := range topMeals {
-
-				courses[i] = models.Course{
-					Meal:  mealWithScore.Meal,
-					Score: mealWithScore.Score,
-				}
-			}
-
-			// Set the first course's type based on the number of ingredients
+			topMeal := topMeals[0]
 			scoreRecommendation = models.Recommended{
-				Type:    utils.GetCourseType(numCourses),
-				Courses: courses, // Assign all 3 top meals to the courses
+				Score: topMeal.Score,
+				Meal: models.MealResponse{
+					ID:          topMeal.Meal.ID,
+					Name:        topMeal.Meal.Name,
+					Ingredients: mapIngredientsToResponse(topMeal.Meal.Ingredients),
+				},
 			}
 		}
 
@@ -235,8 +230,6 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 		Preload("MicrobiomeData").
 		Preload("RequestedMeal").
 		Preload("Goals").
-		Preload("MealHistory").
-		Preload("RecentMeals").
 		Preload("EnvironmentalFactors").
 		Preload("LipidProfile").
 		Where("id = ?", userId).
@@ -257,25 +250,20 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 			return
 		}
 
-		// Calculate top 3 meals
-		topMeals := utils.GetTopMeals(userHealthInfo, *meals, userHealthInfo.RequestedMeal.NumberOfCourses)
-		numCourses := len(topMeals)
-		// Prepare recommendation with all 3 top meals
+		// Calculate top 1 meals
+		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 1)
+
+		// Prepare recommendation
 		var scoreRecommendation models.Recommended
 		if len(topMeals) > 0 {
-			courses := make([]models.Course, len(topMeals))
-			for i, mealWithScore := range topMeals {
-
-				courses[i] = models.Course{
-					Meal:  mealWithScore.Meal,
-					Score: mealWithScore.Score,
-				}
-			}
-
-			// Set the first course's type based on the number of ingredients
+			topMeal := topMeals[0]
 			scoreRecommendation = models.Recommended{
-				Type:    utils.GetCourseType(numCourses),
-				Courses: courses, // Assign all 3 top meals to the courses
+				Score: topMeal.Score,
+				Meal: models.MealResponse{
+					ID:          topMeal.Meal.ID,
+					Name:        topMeal.Meal.Name,
+					Ingredients: mapIngredientsToResponse(topMeal.Meal.Ingredients),
+				},
 			}
 		}
 
@@ -456,11 +444,11 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 		return nil, err
 	}
 
-	RequestedMealSQL := `INSERT INTO requested_meals (user_id, meal_category, number_of_courses)
-	                   VALUES (?, ?, ?)
+	RequestedMealSQL := `INSERT INTO requested_meals (user_id, meal_category)
+	                   VALUES (?, ?)
 	                   ON CONFLICT (user_id) DO UPDATE
-	                   SET meal_category = EXCLUDED.meal_category, number_of_courses = EXCLUDED.number_of_courses`
-	if err := tx.Exec(RequestedMealSQL, userId, userHealthInfo.RequestedMeal.MealCategory, userHealthInfo.RequestedMeal.NumberOfCourses).Error; err != nil {
+	                   SET meal_category = EXCLUDED.meal_category`
+	if err := tx.Exec(RequestedMealSQL, userId, userHealthInfo.RequestedMeal.MealCategory).Error; err != nil {
 		tx.Rollback()
 		return nil, err
 	}
@@ -470,6 +458,7 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 		return nil, err
 	}
 
+	// Fetch meals and calculate recommendations concurrently
 	resultChan := make(chan models.Recommended, 1)
 	errorChan := make(chan error, 1)
 
@@ -481,25 +470,20 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 			return
 		}
 
-		// Calculate top 3 meals
-		topMeals := utils.GetTopMeals(userHealthInfo, *meals, userHealthInfo.RequestedMeal.NumberOfCourses)
-		numCourses := len(topMeals)
-		// Prepare recommendation with all 3 top meals
+		// Calculate top 1 meals
+		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 1)
+
+		// Prepare recommendation
 		var scoreRecommendation models.Recommended
 		if len(topMeals) > 0 {
-			courses := make([]models.Course, len(topMeals))
-			for i, mealWithScore := range topMeals {
-
-				courses[i] = models.Course{
-					Meal:  mealWithScore.Meal,
-					Score: mealWithScore.Score,
-				}
-			}
-
-			// Set the first course's type based on the number of ingredients
+			topMeal := topMeals[0]
 			scoreRecommendation = models.Recommended{
-				Type:    utils.GetCourseType(numCourses),
-				Courses: courses, // Assign all 3 top meals to the courses
+				Score: topMeal.Score,
+				Meal: models.MealResponse{
+					ID:          topMeal.Meal.ID,
+					Name:        topMeal.Meal.Name,
+					Ingredients: mapIngredientsToResponse(topMeal.Meal.Ingredients),
+				},
 			}
 		}
 
@@ -546,36 +530,32 @@ func (s *Service) SearchMealUser(userId int, mealType string, numCourses int) (*
 		return nil, err
 	}
 
+	// Fetch meals and calculate recommendations concurrently
 	resultChan := make(chan models.Recommended, 1)
 	errorChan := make(chan error, 1)
 
 	go func() {
 		// Fetch meals
-		meals, err := s.GetMeal()
+		meals, err := s.GetMealsByCategory(userHealthInfo.RequestedMeal.MealCategory)
 		if err != nil {
 			errorChan <- &CustomError{"Failed to fetch meals", err}
 			return
 		}
 
-		// Calculate top 3 meals
-		topMeals := utils.GetTopMeals(userHealthInfo, *meals, userHealthInfo.RequestedMeal.NumberOfCourses)
-		numCourses := len(topMeals)
-		// Prepare recommendation with all 3 top meals
+		// Calculate top 1 meals
+		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 1)
+
+		// Prepare recommendation
 		var scoreRecommendation models.Recommended
 		if len(topMeals) > 0 {
-			courses := make([]models.Course, len(topMeals))
-			for i, mealWithScore := range topMeals {
-
-				courses[i] = models.Course{
-					Meal:  mealWithScore.Meal,
-					Score: mealWithScore.Score,
-				}
-			}
-
-			// Set the first course's type based on the number of ingredients
+			topMeal := topMeals[0]
 			scoreRecommendation = models.Recommended{
-				Type:    utils.GetCourseType(numCourses),
-				Courses: courses, // Assign all 3 top meals to the courses
+				Score: topMeal.Score,
+				Meal: models.MealResponse{
+					ID:          topMeal.Meal.ID,
+					Name:        topMeal.Meal.Name,
+					Ingredients: mapIngredientsToResponse(topMeal.Meal.Ingredients),
+				},
 			}
 		}
 
@@ -593,4 +573,18 @@ func (s *Service) SearchMealUser(userId int, mealType string, numCourses int) (*
 	case err := <-errorChan:
 		return nil, err
 	}
+}
+
+// Helper function to map ingredients to response format
+func mapIngredientsToResponse(ingredients []models.Ingredient) []models.IngredientReponse {
+	var ingredientResponses []models.IngredientReponse
+	for _, ingredient := range ingredients {
+		ingredientResponses = append(ingredientResponses, models.IngredientReponse{
+			Name:    ingredient.Name,
+			Amount:  ingredient.Amount,
+			Portion: ingredient.Portion,
+			Ounces:  utils.FloatToString(utils.GramsToOunces(ingredient.Amount)),
+		})
+	}
+	return ingredientResponses
 }

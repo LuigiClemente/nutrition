@@ -25,23 +25,18 @@ func CalculateMealScore(user models.User, meals []models.Meal) []models.ScoredMe
 
 			fitScore := 0.0
 			nutritionalContent := map[string]float64{}
-			healthScores := map[string]float64{}
 
 			// Unmarshal JSON concurrently
 			if err := json.Unmarshal(meal.NutritionalContent, &nutritionalContent); err != nil {
 				handleError(fmt.Errorf("error unmarshaling nutritional content for meal %d: %w", meal.ID, err))
 				return
 			}
-			if err := json.Unmarshal(meal.HealthScores, &healthScores); err != nil {
-				handleError(fmt.Errorf("error unmarshaling health scores for meal %d: %w", meal.ID, err))
-				return
-			}
 
 			// Calculate the scores concurrently
 			fitScore += calculateDietaryMatch(user, meal)
-			fitScore += calculateNutritionalMatch(user, meal)
-			fitScore += calculateHealthGoalsAlignment(user, nutritionalContent, healthScores, userBMI)
-			fitScore += calculateNutritionalImpact(user, healthScores)
+
+			fitScore += calculateHealthGoalsAlignment(user, nutritionalContent, userBMI)
+
 			fitScore += calculateMicrobiomeCompatibility(user, meal)
 			fitScore += calculateEnvironmentalAdaptability(user, meal)
 			fitScore += calculateRecentConsumptionPenalty(user, meal)
@@ -93,19 +88,10 @@ func calculateDietaryMatch(user models.User, meal models.Meal) float64 {
 	return score
 }
 
-// calculateNutritionalMatch scores meals based on how well they match the user's nutritional deficiencies.
-func calculateNutritionalMatch(user models.User, meal models.Meal) float64 {
-	score := 0.0
-	for _, deficiency := range user.NutritionalDeficiencies {
-		if containsNutrient(meal.Ingredients, deficiency) {
-			score += 10.0 // Increase score for every deficiency matched
-		}
-	}
-	return score
-}
+
 
 // calculateHealthGoalsAlignment scores meals based on how well they align with user's health goals.
-func calculateHealthGoalsAlignment(user models.User, nutritionalContent, healthScores map[string]float64, bmi float64) float64 {
+func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[string]float64, bmi float64) float64 {
 	var wg sync.WaitGroup
 	scoreMap := sync.Map{}
 
@@ -153,9 +139,7 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent, healthS
 			}
 
 		case "Heart health":
-			if heartHealthy, ok := healthScores["heart_healthy"]; ok && heartHealthy >= 8.0 {
-				score += 30.0
-			}
+
 			if cholesterol, hasCholesterol := nutritionalContent["cholesterol"]; hasCholesterol && cholesterol <= 20.0 {
 				score += 10.0
 			}
@@ -167,9 +151,7 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent, healthS
 			}
 
 		case "Blood sugar management":
-			if diabetesFriendly, ok := healthScores["diabetes_friendly"]; ok && diabetesFriendly >= 8.0 {
-				score += 30.0
-			}
+
 			if hasSugar && sugar <= 5.0 {
 				score += 20.0
 			}
@@ -322,19 +304,6 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent, healthS
 	return totalScore
 }
 
-// calculateNutritionalImpact adjusts the score based on how meals impact the user's health monitoring (e.g., blood sugar, cholesterol).
-func calculateNutritionalImpact(user models.User, healthScores map[string]float64) float64 {
-
-	score := 0.0
-	if user.BloodGlucose > 100 && healthScores["diabetes_friendly"] >= 8.0 {
-		score += 15.0 // Prioritize meals that help with blood sugar management
-	}
-	if user.LipidProfile.LDL > 100 && healthScores["heart_healthy"] >= 8.0 {
-		score += 15.0 // Prioritize heart-healthy meals for users with high cholesterol
-	}
-	return score
-}
-
 // calculateMicrobiomeCompatibility scores meals based on how well they support the user's microbiome.
 func calculateMicrobiomeCompatibility(user models.User, meal models.Meal) float64 {
 	for _, recommendation := range user.MicrobiomeData.GutHealthRecommendations {
@@ -358,7 +327,7 @@ func calculateEnvironmentalAdaptability(user models.User, meal models.Meal) floa
 func calculateRecentConsumptionPenalty(user models.User, meal models.Meal) float64 {
 	for _, recentMeal := range user.RecentMeals {
 		if recentMeal.ID == meal.ID {
-			
+
 			return CalculateRecentMealPenalty(recentMeal.Timestamp)
 
 		}
@@ -396,34 +365,17 @@ func calculateAgeGenderScore(user models.User, meal models.Meal, nutritionalCont
 		if nutritionalContent["calories"] <= 500.0 {
 			score += 15.0
 		}
-		if containsNutrient(meal.Ingredients, "Calcium") || containsNutrient(meal.Ingredients, "Vitamin D") {
-			score += 10.0
-		}
+
 	}
 
 	// Gender factor: Protein for men, Iron for women
 	if user.Gender == "Male" && nutritionalContent["protein"] >= 25.0 {
 		score += 15.0
-	} else if user.Gender == "Female" && containsNutrient(meal.Ingredients, "Iron") {
+	} else if user.Gender == "Female" {
 		score += 10.0
 	}
 
 	return score
-}
-
-// Utility function to check if a meal contains a nutrient
-func containsNutrient(ingredients []models.Ingredient, nutrient string) bool {
-	for _, ingredient := range ingredients {
-		var nutritionalContent map[string]float64
-		if err := json.Unmarshal(ingredient.Nutritional, &nutritionalContent); err != nil {
-			// Handle error, possibly log it
-			continue
-		}
-		if _, ok := nutritionalContent[nutrient]; ok {
-			return true
-		}
-	}
-	return false
 }
 
 // Utility functions to check if a slice contains a string or nutrient

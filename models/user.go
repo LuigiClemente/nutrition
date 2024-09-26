@@ -94,9 +94,8 @@ type MealHistory struct {
 }
 
 type RequestedMeal struct {
-	UserID         uint   `json:"user_id" gorm:"primaryKey"`
-	MealCategory   string `json:"meal_category" binding:"required"`
-	NumberOfCourses int    `json:"number_of_courses" binding:"required"`
+	UserID       uint `json:"user_id" gorm:"primaryKey"`
+	MealCategory int  `json:"meal_category" binding:"required"`
 }
 
 type UserPreferences struct {

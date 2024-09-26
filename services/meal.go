@@ -2,7 +2,6 @@ package services
 
 import (
 	"nutrition/models"
-	"nutrition/utils"
 )
 
 func (s *Service) PostMeals(meals []models.Meal) (*[]models.Meal, error) {
@@ -21,9 +20,9 @@ func (s *Service) GetMeal() (*[]models.Meal, error) {
 	return &meals, nil
 }
 
-func (s *Service) GetMealsByCategory(category string) (*[]models.Meal, error) {
+func (s *Service) GetMealsByCategory(category int) (*[]models.Meal, error) {
 	var meals []models.Meal
-	if err := s.db.Where("category = ?", category).Preload("Ingredients").Order("id DESC").Find(&meals).Error; err != nil {
+	if err := s.db.Where("meal_category_id = ?", category).Preload("Ingredients").Order("id DESC").Find(&meals).Error; err != nil {
 		return nil, err
 	}
 
@@ -92,8 +91,7 @@ func (s *Service) PutMealMealId(mealId int, meal models.Meal) (*models.Meal, err
 			// Check if there's a change before updating
 			if newIngredient.Name != existingIngredient.Name ||
 				newIngredient.Amount != existingIngredient.Amount ||
-				newIngredient.Unit != existingIngredient.Unit ||
-				!utils.CompareJSONFields(newIngredient.Nutritional, existingIngredient.Nutritional) {
+				newIngredient.Portion != existingIngredient.Portion {
 				ingredientsToUpdate = append(ingredientsToUpdate, newIngredient)
 			}
 			// Mark ingredient as one to keep

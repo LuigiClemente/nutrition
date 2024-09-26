@@ -17,12 +17,11 @@ type Meal struct {
 }
 
 type Ingredient struct {
-	ID          uint    `json:"id" gorm:"primaryKey;autoIncrement"`
-	MealID      uint    `json:"meal_id"`
-	Name        string  `json:"name"`
-	Amount      float64 `json:"amount"` // Total amount used in grams 
-	Portion     string  `json:"portion"`
-	PortionUnit string  `json:"portion_unit"` // Measurement unit
+	ID      uint    `json:"id" gorm:"primaryKey;autoIncrement"`
+	MealID  uint    `json:"meal_id"`
+	Name    string  `json:"name"`
+	Amount  float64 `json:"amount"` // Total amount used in grams
+	Portion string  `json:"portion"`
 }
 
 type ScoredMeal struct {
@@ -30,9 +29,14 @@ type ScoredMeal struct {
 	Score float64 `json:"score"`
 }
 
-type Course struct {
-	Meal  Meal    `json:"meal"`
-	Score float64 `json:"score"`
+type MealType struct {
+	ID   uint   `json:"id" gorm:"primaryKey"`
+	Type string `json:"type"`
+}
+
+type MealTag struct {
+	ID  uint   `json:"id"`
+	Tag string `json:"tag"`
 }
 
 type MealResponse struct {
@@ -45,11 +49,7 @@ type IngredientReponse struct {
 	Name    string  `json:"name"`
 	Amount  float64 `json:"amount"`  // Total amount used
 	Portion string  `json:"portion"` // Measurement unit
-}
-
-type Recommended struct {
-	Type    string   `json:"type"`
-	Courses []Course `json:"courses"`
+	Ounces  string  `json:"ounces"`  // Measurement unit
 }
 
 type UserHealthInfoResponse struct {
@@ -61,4 +61,9 @@ type MealForOption struct {
 	ID       uint   `json:"id"`
 	Name     string `json:"name"`
 	Category string `json:"category"`
+}
+
+type Recommended struct {
+	Score float64      `json:"score"`
+	Meal  MealResponse `json:"meal"`
 }
