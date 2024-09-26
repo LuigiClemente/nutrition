@@ -145,11 +145,11 @@ VALUES
 -- Insert requested meals into requested_meals table
 INSERT INTO requested_meals (user_id, meal_category, timestamp)
 VALUES 
-(1, 'Pasta', NOW()),        -- John Doe
-(2, 'Salad', NOW()),        -- Jane Smith
-(3, 'Pizza', NOW()),        -- Emily Johnson
-(4, 'Steak', NOW()),        -- Michael Brown
-(5, 'Vegan Burger', NOW()); -- Sarah Davis
+(1, 13, NOW()),        -- John Doe
+(2, 10, NOW()),        -- Jane Smith
+(3, 12, NOW()),        -- Emily Johnson
+(4, 14, NOW()),        -- Michael Brown
+(5, 14, NOW()); -- Sarah Davis
 
 
 -- Insert goals into goals table

@@ -59,7 +59,7 @@ CREATE INDEX idx_health_conditions_user_id ON health_conditions(user_id);
 -- Last Requested Meal Category Table
 CREATE TABLE requested_meals (
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    meal_category VARCHAR(64),  -- Could consider ENUM for meal categories
+    meal_category INT,  
     timestamp TIMESTAMP DEFAULT NOW(),  -- Automatically logs the request time
     PRIMARY KEY(user_id)
 );
@@ -144,13 +144,20 @@ CREATE TABLE meal_tag_relationship (
     PRIMARY KEY(meal_id, tag_id)
 );
 
--- Recent Meals Table Consolidation
-CREATE TABLE meal_logs (
+-- Meal History Table
+CREATE TABLE meal_histories (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     meal_id INT REFERENCES meals(id) ON DELETE CASCADE,
-    timestamp TIMESTAMP DEFAULT NOW(),
-    is_recent BOOLEAN DEFAULT FALSE
+    timestamp TIMESTAMP DEFAULT NOW()
+);
+
+-- Meal History Table
+CREATE TABLE recent_meals (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    meal_id INT REFERENCES meals(id) ON DELETE CASCADE,
+    timestamp TIMESTAMP DEFAULT NOW()
 );
 
 -- Index for user_id and meal_id for faster lookups
