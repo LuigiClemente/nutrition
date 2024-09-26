@@ -1,23 +1,35 @@
+CREATE DATABASE nutrition;
+
+
+-- connect to database and create the tables
+
+
 -- User Table
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(64) NOT NULL,
-    age INT NOT NULL,
-    gender VARCHAR(32),
-    activity_level VARCHAR(50),
-    blood_glucose FLOAT,
-    health_score FLOAT,
-    nutritional_deficiencies TEXT[],
-    allergies TEXT[]
+    age INT NOT NULL CHECK (age > 0),  -- Ensuring positive age
+    gender VARCHAR(6) CHECK (gender IN ('Male', 'Female', 'Other')),  -- Enum-like constraint
+    activity_level VARCHAR(50),  -- Could consider ENUM for predefined levels
+    blood_glucose FLOAT CHECK (blood_glucose >= 0),  -- Non-negative check
+    health_score FLOAT CHECK (health_score >= 0),  -- Non-negative health score
+    nutritional_deficiencies TEXT[] DEFAULT '{}',  -- Empty array by default
+    allergies TEXT[] DEFAULT '{}'  -- Default empty array
 );
 
--- Body Metrics Table
+-- Adding Index on Foreign Keys for Optimization
+CREATE INDEX idx_users_name ON users(name);
+
+-- Optimized Body Metrics Table
 CREATE TABLE body_metrics (
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     weight FLOAT,
     height FLOAT,
     PRIMARY KEY(user_id)
 );
+
+-- Index for user_id for faster lookups
+CREATE INDEX idx_body_metrics_user_id ON body_metrics(user_id);
 
 -- Dietary Preferences Table
 CREATE TABLE dietary_preferences (
@@ -30,103 +42,132 @@ CREATE TABLE dietary_preferences (
     PRIMARY KEY(user_id)
 );
 
+-- Index for user_id for faster lookups
+CREATE INDEX idx_dietary_preferences_user_id ON dietary_preferences(user_id);
+
 -- Health Conditions Table
 CREATE TABLE health_conditions (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(128),
-    severity VARCHAR(50)
+    severity VARCHAR(50)  -- Consider ENUM for predefined severity levels
 );
 
+-- Index on user_id for optimization
+CREATE INDEX idx_health_conditions_user_id ON health_conditions(user_id);
 
-
--- Last Requested  meal Category Table
+-- Last Requested Meal Category Table
 CREATE TABLE requested_meals (
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    meal_category  VARCHAR(64),
-    number_of_courses INT,
-    timestamp TIMESTAMP DEFAULT NOW(),
+    meal_category VARCHAR(64),  -- Could consider ENUM for meal categories
+    timestamp TIMESTAMP DEFAULT NOW(),  -- Automatically logs the request time
     PRIMARY KEY(user_id)
 );
+
+-- Index for user_id and timestamp to optimize filtering
+CREATE INDEX idx_requested_meals_user_id_timestamp ON requested_meals(user_id, timestamp);
 
 -- Goals Table
 CREATE TABLE goals (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     type VARCHAR(128),
-    target FLOAT,
-    duration INT
+    target DECIMAL(10, 2),  -- Using DECIMAL for precise float values
+    duration INT  -- Duration in days or months (you can specify)
 );
+
+-- Index on user_id to speed up querying user goals
+CREATE INDEX idx_goals_user_id ON goals(user_id);
 
 -- Microbiome Data Table
 CREATE TABLE microbiome_data (
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    diversity_score FLOAT,
-    gut_health_recommendations TEXT[],
+    diversity_score DECIMAL(10, 2),  -- Using DECIMAL for precise scores
+    gut_health_recommendations TEXT[],  -- Array of recommendations
     PRIMARY KEY(user_id)
 );
 
--- Lipid Profile Table
-CREATE TABLE lipid_profiles (
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    cholesterol FLOAT,
-    hdl FLOAT,
-    ldl FLOAT,
-    triglycerides FLOAT,
-    PRIMARY KEY(user_id)
-);
+-- Index on user_id for faster lookups
+CREATE INDEX idx_microbiome_data_user_id ON microbiome_data(user_id);
 
 -- Environmental Factors Table
 CREATE TABLE environmental_factors (
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     location VARCHAR(128),
-    climate VARCHAR(64),
-    season VARCHAR(50),
+    climate VARCHAR(64),  -- Consider ENUM for predefined climates
+    season VARCHAR(50),  -- Consider ENUM for predefined seasons
     PRIMARY KEY(user_id)
-    
 );
 
--- Meals Table
+-- Index on user_id to speed up querying by environmental factors
+CREATE INDEX idx_environmental_factors_user_id ON environmental_factors(user_id);
+
+-- Suggested Meal Types Table
+CREATE TABLE meal_types (
+    id SERIAL PRIMARY KEY,
+    type VARCHAR(64) UNIQUE NOT NULL
+);
+
+-- Suggested Tags Table
+CREATE TABLE meal_tags (
+    id SERIAL PRIMARY KEY,
+    tag VARCHAR(64) UNIQUE NOT NULL
+);
+
+-- Meal Categories Table
+CREATE TABLE meal_categories (
+    id SERIAL PRIMARY KEY,
+    category VARCHAR(64) UNIQUE NOT NULL  -- Unique category name
+);
+
+
+-- Meals Table with Foreign Key Relationships
 CREATE TABLE meals (
-    id SERIAL PRIMARY KEY,  -- Auto-incrementing ID for the meal
-    name VARCHAR(128) NOT NULL,  -- Name of the meal
-    nutritional_content JSONB,  -- Nutritional content stored as JSONB
-    category VARCHAR(64),  -- Category (e.g., 'Salad')
-    meal_type TEXT[],  -- Meal type as a PostgreSQL array (e.g., ['Lunch', 'Dinner'])
-    cuisine VARCHAR(64),  -- Cuisine type (e.g., 'American')
-    tags TEXT[]  -- Tags as a PostgreSQL array (e.g., ['Healthy', 'Low-Carb'])
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(128) NOT NULL,
+    nutritional_content JSONB,  -- JSONB for flexible nutritional data
+    meal_category_id INT REFERENCES meal_categories(id) ON DELETE SET NULL,  -- Foreign key to meal types
+    meal_type_id INT REFERENCES meal_types(id) ON DELETE SET NULL,  -- Foreign key to meal types
+    cuisine VARCHAR(64)
 );
 
+-- Index on meal_category_id for faster lookups
+CREATE INDEX idx_meals_meal_category_id ON meals(meal_category_id);
 
-CREATE INDEX idx_category ON meals (category);
+-- Index on meal_type_id for faster lookups
+CREATE INDEX idx_meals_meal_type_id ON meals(meal_type_id);
 
+-- Separate Table for Meal Tag Relationships
+CREATE TABLE meal_tag_relationship (
+    meal_id INT REFERENCES meals(id) ON DELETE CASCADE,
+    tag_id INT REFERENCES meal_tags(id) ON DELETE CASCADE,
+    PRIMARY KEY(meal_id, tag_id)
+);
 
--- Meal History Table
-CREATE TABLE meal_histories (
+-- Recent Meals Table Consolidation
+CREATE TABLE meal_logs (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     meal_id INT REFERENCES meals(id) ON DELETE CASCADE,
-    timestamp TIMESTAMP
+    timestamp TIMESTAMP DEFAULT NOW(),
+    is_recent BOOLEAN DEFAULT FALSE
 );
 
--- Meal History Table
-CREATE TABLE recent_meals (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    meal_id INT REFERENCES meals(id) ON DELETE CASCADE,
-    timestamp TIMESTAMP
-);
+-- Index for user_id and meal_id for faster lookups
+CREATE INDEX idx_meal_logs_user_id_meal_id ON meal_logs(user_id, meal_id);
 
 -- Ingredients Table
 CREATE TABLE ingredients (
     id SERIAL PRIMARY KEY,  -- Auto-incrementing ID for the ingredient
     meal_id INT REFERENCES meals(id) ON DELETE CASCADE,  -- Foreign key linking to the meal
     name VARCHAR(128) NOT NULL,  -- Name of the ingredient
-    amount FLOAT,  -- Amount of the ingredient (e.g., 150) in grams
-    portion VARCHAR(64),  -- Total portion size calculated
-    portion_unit VARCHAR(64)  -- tbsp
+    amount DECIMAL(10, 2),  -- Amount of the ingredient (e.g., 150) in grams, using DECIMAL for precision
+    portion VARCHAR(64),  -- Portion description
+    portion_unit VARCHAR(64)  -- Unit (e.g., tbsp)
 );
 
+-- Index on meal_id for faster lookups
+CREATE INDEX idx_ingredients_meal_id ON ingredients(meal_id);
 
 -- User Preferences Table
 CREATE TABLE user_preferences (
@@ -142,5 +183,19 @@ CREATE TABLE scored_meals (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     meal_id INT REFERENCES meals(id) ON DELETE CASCADE,
-    score FLOAT
+    score FLOAT  -- Meal score
+);
+
+-- Index for user_id for optimization
+CREATE INDEX idx_scored_meals_user_id ON scored_meals(user_id);
+
+
+-- Lipid Profile Table
+CREATE TABLE lipid_profiles (
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    cholesterol FLOAT,
+    hdl FLOAT,
+    ldl FLOAT,
+    triglycerides FLOAT,
+    PRIMARY KEY(user_id)
 );

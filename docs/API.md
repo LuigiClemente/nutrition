@@ -1599,3 +1599,55 @@ Description: Delete a specific meal by mealId
  - "vitamin C"
  - "healthy fats"
  - "omega-3"
+
+
+
+# Possible Meal Categories
+- Breakfast
+- Lunch
+- Dinner
+- Snack
+- Brunch
+- Supper
+- Appetizer
+- Main Course
+- Dessert
+- Salad
+- Sandwich
+- Pizza
+- Pasta
+- Burger
+- Wraps
+- Tacos
+- Soups
+- Stir-fry
+- Grill
+- Seafood
+- Vegetarian
+- Vegan
+- Gluten-Free
+- Paleo
+- Keto
+- Mediterranean
+- Asian
+- Indian
+- Mexican
+- American
+- Italian
+- French
+- Comfort Food
+- Fusion
+- Street Food
+
+
+
+
+
+Explanation of the Tags
+Dietary Tags: Tags like Gluten-Free, Vegan, Vegetarian, Dairy-Free, and others are used to indicate specific dietary preferences or restrictions.
+Nutritional Tags: High-Protein, Low-Carb, Low-Fat, Keto, and Paleo help categorize meals based on their nutritional profile.
+Health-Related Tags: Tags like Heart-Healthy, Diabetic-Friendly, and Low-Sodium provide a focus on health-conscious eating.
+Cuisine Tags: These cover various cuisines, such as Mediterranean, Italian, Mexican, Asian, Indian, etc.
+Cooking Methods: Tags like Grilled, Baked, Fried, Slow-Cooked, Roasted, and Steamed indicate the preparation method.
+Meal Categories: Tags such as Breakfast, Lunch, Dinner, Appetizer, Main Course, and Dessert categorize the type of meal.
+Miscellaneous Tags: Tags like Kid-Friendly, Quick & Easy, Budget-Friendly, Comfort Food, Party Food, and Finger Food help with specific user preferences.
