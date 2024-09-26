@@ -88,6 +88,13 @@ VALUES
 
 
 
+INSERT INTO ingredients (meal_id, name, amount, portion)
+VALUES 
+(1, 'Oats', 50.0, '1/2 cup'), 
+(1, 'Berries', 100.0, '1 cup'),
+(2, 'Lettuce', 150.0, '1 bowl'), 
+(2, 'Tomatoes', 50.0, '1 medium'),
+(3, 'Chicken Breast', 200.0, '1 serving');
 
 
 
@@ -187,6 +194,16 @@ VALUES
 (3, 'Chicago', 'Continental', 'Winter'),   -- Emily Johnson
 (4, 'Houston', 'Humid Subtropical', 'Summer'), -- Michael Brown
 (5, 'Denver', 'Mountain', 'Winter');       -- Sarah Davis
+
+
+-- Insert user preferences into user_preferences table
+INSERT INTO user_preferences (user_id, preferred_cuisines, meal_timings, favorite_ingredients)
+VALUES 
+(1, ARRAY['Italian', 'American'], ARRAY['Lunch', 'Dinner'], ARRAY['Chicken', 'Broccoli']),  -- John Doe
+(2, ARRAY['Mexican', 'Japanese'], ARRAY['Breakfast', 'Dinner'], ARRAY['Avocado', 'Eggs']),  -- Jane Smith
+(3, ARRAY['Mediterranean'], ARRAY['Lunch'], ARRAY['Lentils', 'Quinoa']),                    -- Emily Johnson
+(4, ARRAY['American', 'Barbecue'], ARRAY['Dinner'], ARRAY['Beef', 'Potatoes']),             -- Michael Brown
+(5, ARRAY['Vegan'], ARRAY['Lunch', 'Dinner'], ARRAY['Tofu', 'Kale']);                       -- Sarah Davis
 
 
 

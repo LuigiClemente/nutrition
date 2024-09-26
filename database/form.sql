@@ -163,7 +163,6 @@ CREATE TABLE ingredients (
     name VARCHAR(128) NOT NULL,  -- Name of the ingredient
     amount DECIMAL(10, 2),  -- Amount of the ingredient (e.g., 150) in grams, using DECIMAL for precision
     portion VARCHAR(64),  -- Portion description
-    portion_unit VARCHAR(64)  -- Unit (e.g., tbsp)
 );
 
 -- Index on meal_id for faster lookups
