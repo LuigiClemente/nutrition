@@ -14,7 +14,7 @@ func (s *Service) PostMeals(meals []models.Meal) (*[]models.Meal, error) {
 
 func (s *Service) GetMeal() (*[]models.Meal, error) {
 	var meals []models.Meal
-	if err := s.db.Preload("Ingredients").Order("id DESC").Find(&meals).Error; err != nil {
+	if err := s.db.Preload("MealCategory").Preload("MealType").Preload("MealTags").Preload("Ingredients").Order("id DESC").Find(&meals).Error; err != nil {
 		return nil, err
 	}
 	return &meals, nil
@@ -22,19 +22,18 @@ func (s *Service) GetMeal() (*[]models.Meal, error) {
 
 func (s *Service) GetMealsByCategory(category int) (*[]models.Meal, error) {
 	var meals []models.Meal
-	if err := s.db.Where("meal_category_id = ?", category).Preload("Ingredients").Order("id DESC").Find(&meals).Error; err != nil {
+	if err := s.db.Where("meal_category_id = ?", category).Preload("MealCategory").Preload("MealType").Preload("MealTags").Preload("Ingredients").Order("id DESC").Find(&meals).Error; err != nil {
 		return nil, err
 	}
 
 	return &meals, nil
 }
 
-func (s *Service) GetMealCategories() (*[]string, error) {
-	var categories []string
-	if err := s.db.Model(&models.Meal{}).
-		Select("DISTINCT category").
-		Order("category ASC"). // Optionally sort the categories alphabetically
-		Pluck("category", &categories).Error; err != nil {
+func (s *Service) GetMealCategories() (*[]models.MealCategory, error) {
+	var categories []models.MealCategory
+	if err := s.db.
+		Order("category ASC").
+		Find(&categories).Error; err != nil {
 		return nil, err
 	}
 	return &categories, nil
@@ -50,9 +49,10 @@ func (s *Service) GetMealForOption() (*[]models.MealForOption, error) {
 
 func (s *Service) GetMealMealId(id int) (*models.Meal, error) {
 	var meal models.Meal
-	if err := s.db.Where("id = ?", id).Preload("Ingredients").First(&meal).Error; err != nil {
+	if err := s.db.Where("id = ?", id).Preload("MealCategory").Preload("MealType").Preload("Ingredients").Preload("MealTags").First(&meal).Error; err != nil {
 		return nil, err
 	}
+
 	return &meal, nil
 }
 

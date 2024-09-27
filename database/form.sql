@@ -108,11 +108,6 @@ CREATE TABLE meal_types (
     type VARCHAR(64) UNIQUE NOT NULL
 );
 
--- Suggested Tags Table
-CREATE TABLE meal_tags (
-    id SERIAL PRIMARY KEY,
-    tag VARCHAR(64) UNIQUE NOT NULL
-);
 
 -- Meal Categories Table
 CREATE TABLE meal_categories (
@@ -120,6 +115,11 @@ CREATE TABLE meal_categories (
     category VARCHAR(64) UNIQUE NOT NULL  -- Unique category name
 );
 
+-- Suggested Tags Table
+CREATE TABLE meal_tags (
+    id SERIAL PRIMARY KEY,
+    tag VARCHAR(64) UNIQUE NOT NULL
+);
 
 -- Meals Table with Foreign Key Relationships
 CREATE TABLE meals (

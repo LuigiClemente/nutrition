@@ -73,22 +73,25 @@ func calculateBMI(height, weight float64) float64 {
 // calculateDietaryMatch scores meals based on user's dietary preferences and avoidances.
 func calculateDietaryMatch(user models.User, meal models.Meal) float64 {
 	score := 0.0
+
+	// Create a map of dietary preferences
 	preferences := map[string]bool{
-		"vegetarian":  user.DietaryPreferences.Vegetarian,
-		"vegan":       user.DietaryPreferences.Vegan,
-		"gluten-free": user.DietaryPreferences.GlutenFree,
-		"dairy-free":  user.DietaryPreferences.DairyFree,
+		"Vegetarian":  user.DietaryPreferences.Vegetarian,
+		"Vegan":       user.DietaryPreferences.Vegan,
+		"Gluten-Free": user.DietaryPreferences.GlutenFree,
+		"Dairy-Free":  user.DietaryPreferences.DairyFree,
 	}
 
-	for _, tag := range meal.Tags {
-		if preferences[tag] {
-			score += 10.0
+	// Iterate over the tags of the meal
+	for _, tag := range meal.MealTags {
+		// Check if the tag's name matches any of the user preferences
+		if match, exists := preferences[tag.Tag]; exists && match {
+			score += 10.0 // Increase score for each matching tag
 		}
 	}
+
 	return score
 }
-
-
 
 // calculateHealthGoalsAlignment scores meals based on how well they align with user's health goals.
 func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[string]float64, bmi float64) float64 {
@@ -306,21 +309,46 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 
 // calculateMicrobiomeCompatibility scores meals based on how well they support the user's microbiome.
 func calculateMicrobiomeCompatibility(user models.User, meal models.Meal) float64 {
+	// Iterate over the gut health recommendations of the user
 	for _, recommendation := range user.MicrobiomeData.GutHealthRecommendations {
-		if contains(meal.Tags, recommendation) {
+		// Check if the meal contains the recommendation as a tag
+		if containsRecommendationTag(meal.MealTags, recommendation) {
 			return 10.0 // Increase score for gut-health-promoting meals
 		}
 	}
 	return 0.0
 }
 
+// Helper function to check if a recommendation is in the meal tags
+func containsRecommendationTag(tags []models.MealTag, recommendation string) bool {
+	for _, tag := range tags {
+		if tag.Tag == recommendation {
+			return true
+		}
+	}
+	return false
+}
+
 // calculateEnvironmentalAdaptability scores meals based on their environmental impact and user’s preferences.
 func calculateEnvironmentalAdaptability(user models.User, meal models.Meal) float64 {
 	score := 0.0
-	if user.EnvironmentalFactors.Season == "Winter" && contains(meal.Tags, "warm") {
+
+	// Check if the user's season is winter and the meal contains a warm tag
+	if user.EnvironmentalFactors.Season == "Winter" && containsWarmTag(meal.MealTags) {
 		score += 5.0 // Increase score for warm foods in cold seasons
 	}
+
 	return score
+}
+
+// Helper function to check for "warm" tag
+func containsWarmTag(tags []models.MealTag) bool {
+	for _, tag := range tags {
+		if tag.Tag == "warm" { // Assuming MealTag has a Name field
+			return true
+		}
+	}
+	return false
 }
 
 // calculateRecentConsumptionPenalty penalizes meals based on recent user consumption history.

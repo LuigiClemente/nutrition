@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/lib/pq"
 	"gorm.io/datatypes"
 )
 
@@ -10,10 +9,12 @@ type Meal struct {
 	Name               string         `json:"name" binding:"required"`
 	Ingredients        []Ingredient   `json:"ingredients" gorm:"foreignKey:MealID"`
 	NutritionalContent datatypes.JSON `json:"nutritional_content"`
-	Category           string         `json:"category"`                     // pasta, pizza, stew
-	MealType           pq.StringArray `gorm:"type:text[]" json:"meal_type"` // diner, breackfast, snack, luanch
+	MealCategoryID     uint           `json:"meal_category_id"`                               // Foreign key for MealCategory
+	MealCategory       MealCategory   `gorm:"foreignKey:MealCategoryID" json:"meal_category"` // Relationship to MealCategory
+	MealTypeID         uint           `json:"meal_type_id"`                                   // Foreign key for MealType
+	MealType           MealType       `gorm:"foreignKey:MealTypeID" json:"meal_type"`         // Relationship to MealType                     // diner, breackfast, snack, luanch
 	Cuisine            string         `json:"cuisine"`
-	Tags               pq.StringArray `gorm:"type:text[]" json:"tags"`
+	MealTags           []MealTag      `json:"tags" gorm:"many2many:meal_tag_relationship;joinForeignKey:MealID;JoinReferences:TagID"`
 }
 
 type Ingredient struct {
@@ -30,13 +31,23 @@ type ScoredMeal struct {
 }
 
 type MealType struct {
-	ID   uint   `json:"id" gorm:"primaryKey"`
+	ID   uint   `json:"id" gorm:"primaryKey;autoIncrement"`
 	Type string `json:"type"`
+}
+
+type MealCategory struct {
+	ID       uint   `json:"id" gorm:"primaryKey;autoIncrement"`
+	Category string `json:"category"`
 }
 
 type MealTag struct {
 	ID  uint   `json:"id"`
 	Tag string `json:"tag"`
+}
+
+type MealTagRelationship struct {
+	MealID uint `gorm:"primaryKey"`
+	TagID  uint `gorm:"primaryKey"`
 }
 
 type MealResponse struct {
