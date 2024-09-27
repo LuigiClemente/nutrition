@@ -297,15 +297,6 @@ VALUES
 
 
 
--- Insert health conditions into health_conditions table
-INSERT INTO health_conditions (user_id, name, severity)
-VALUES 
-(1, 'Hypertension', 'Moderate'),  -- John Doe
-(2, 'Asthma', 'Mild'),            -- Jane Smith
-(3, 'Diabetes', 'Severe'),        -- Emily Johnson
-(4, 'None', 'None'),              -- Michael Brown
-(5, 'Celiac Disease', 'Moderate');-- Sarah Davis
-
 
 -- Insert requested meals into requested_meals table
 INSERT INTO requested_meals (user_id, meal_category, timestamp)

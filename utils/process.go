@@ -15,7 +15,7 @@ func CalculateMealScore(user models.User, meals []models.Meal) []models.ScoredMe
 	var wg sync.WaitGroup
 	mealsWithScores := make([]models.ScoredMeal, len(meals))
 	userBMI := calculateBMI(user.BodyMetrics.Height, user.BodyMetrics.Weight)
-	const maxTotalScore = 155.0
+	const maxTotalScore = 120.0
 
 	// Use a WaitGroup to score meals concurrently
 	for i, meal := range meals {
@@ -99,9 +99,9 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 	scoreMap := sync.Map{}
 
 	// Cache frequently used values
-	calories, hasCalories := nutritionalContent["calories"]
-	sugar, hasSugar := nutritionalContent["sugar"]
-	fiber, hasFiber := nutritionalContent["fiber"]
+	calories, hasCalories := nutritionalContent["Calories"]
+	sugar, hasSugar := nutritionalContent["Sugar"]
+	fiber, hasFiber := nutritionalContent["Fiber"]
 
 	// Function to calculate score for a specific goal
 	calculateScore := func(goalType string) {
@@ -128,25 +128,25 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 			}
 
 		case "Muscle gain":
-			if protein, hasProtein := nutritionalContent["protein"]; hasProtein && protein >= 25.0 {
+			if protein, hasProtein := nutritionalContent["Protein"]; hasProtein && protein >= 25.0 {
 				score += 30.0
 			}
 			if hasCalories && calories >= 500.0 {
 				score += 20.0
 			}
-			if fat, hasFat := nutritionalContent["fat"]; hasFat && fat >= 10.0 {
+			if fat, hasFat := nutritionalContent["Fat"]; hasFat && fat >= 10.0 {
 				score += 10.0
 			}
-			if protein, hasProtein := nutritionalContent["protein"]; hasProtein && protein >= 25.0 && calories <= 600.0 {
+			if protein, hasProtein := nutritionalContent["Protein"]; hasProtein && protein >= 25.0 && calories <= 600.0 {
 				score += 30.0
 			}
 
 		case "Heart health":
 
-			if cholesterol, hasCholesterol := nutritionalContent["cholesterol"]; hasCholesterol && cholesterol <= 20.0 {
+			if cholesterol, hasCholesterol := nutritionalContent["Cholesterol"]; hasCholesterol && cholesterol <= 20.0 {
 				score += 10.0
 			}
-			if fat, hasFat := nutritionalContent["fat"]; hasFat && fat <= 10.0 {
+			if fat, hasFat := nutritionalContent["Fat"]; hasFat && fat <= 10.0 {
 				score += 10.0
 			}
 			if hasFiber && fiber >= 5.0 {
@@ -171,14 +171,14 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 			if hasSugar && sugar <= 5.0 && hasCalories && calories <= 500.0 {
 				score += 30.0
 			}
-			if protein, hasProtein := nutritionalContent["protein"]; hasProtein && protein >= 15.0 {
-				if fat, hasFat := nutritionalContent["fat"]; hasFat && fat <= 15.0 {
+			if protein, hasProtein := nutritionalContent["Protein"]; hasProtein && protein >= 15.0 {
+				if fat, hasFat := nutritionalContent["Fat"]; hasFat && fat <= 15.0 {
 					score += 20.0
 				}
 			}
 
 		case "Cholesterol reduction":
-			if cholesterol, hasCholesterol := nutritionalContent["cholesterol"]; hasCholesterol && cholesterol <= 20.0 {
+			if cholesterol, hasCholesterol := nutritionalContent["Cholesterol"]; hasCholesterol && cholesterol <= 20.0 {
 				score += 30.0
 			}
 			if hasFiber && fiber >= 5.0 {
@@ -189,15 +189,15 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 			if hasCalories && calories >= 400.0 && calories <= 600.0 {
 				score += 30.0
 			}
-			if fat, hasFat := nutritionalContent["fat"]; hasFat && fat <= 15.0 && hasSugar && sugar <= 5.0 {
+			if fat, hasFat := nutritionalContent["Fat"]; hasFat && fat <= 15.0 && hasSugar && sugar <= 5.0 {
 				score += 20.0
 			}
-			if protein, hasProtein := nutritionalContent["protein"]; hasProtein && protein >= 15.0 {
+			if protein, hasProtein := nutritionalContent["Protein"]; hasProtein && protein >= 15.0 {
 				score += 10.0
 			}
 
 		case "Lean muscle maintenance":
-			if protein, hasProtein := nutritionalContent["protein"]; hasProtein && protein >= 15.0 {
+			if protein, hasProtein := nutritionalContent["Protein"]; hasProtein && protein >= 15.0 {
 				score += 30.0
 			}
 			if hasFiber && fiber >= 5.0 {
@@ -205,7 +205,7 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 			}
 
 		case "Improved energy levels":
-			if carbs, hasCarbs := nutritionalContent["carbs"]; hasCarbs && carbs >= 40.0 {
+			if carbs, hasCarbs := nutritionalContent["Carbs"]; hasCarbs && carbs >= 40.0 {
 				score += 30.0
 			}
 			if hasCalories && calories >= 400.0 && calories <= 600.0 {
@@ -216,26 +216,26 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 			}
 
 		case "Endurance training support":
-			if carbs, hasCarbs := nutritionalContent["carbs"]; hasCarbs && carbs >= 40.0 {
+			if carbs, hasCarbs := nutritionalContent["Carbs"]; hasCarbs && carbs >= 40.0 {
 				score += 30.0
 			}
-			if protein, hasProtein := nutritionalContent["protein"]; hasProtein && protein >= 15.0 {
+			if protein, hasProtein := nutritionalContent["Protein"]; hasProtein && protein >= 15.0 {
 				score += 20.0
 			}
-			if fat, hasFat := nutritionalContent["fat"]; hasFat && fat <= 15.0 {
+			if fat, hasFat := nutritionalContent["Fat"]; hasFat && fat <= 15.0 {
 				score += 10.0
 			}
 
 		case "Cardiovascular fitness":
-			if sodium, hasSodium := nutritionalContent["sodium"]; hasSodium && sodium <= 200.0 {
+			if sodium, hasSodium := nutritionalContent["Sodium"]; hasSodium && sodium <= 200.0 {
 				score += 30.0
 			}
-			if cholesterol, hasCholesterol := nutritionalContent["cholesterol"]; hasCholesterol && cholesterol <= 20.0 {
-				if fat, hasFat := nutritionalContent["fat"]; hasFat && fat <= 10.0 {
+			if cholesterol, hasCholesterol := nutritionalContent["Cholesterol"]; hasCholesterol && cholesterol <= 20.0 {
+				if fat, hasFat := nutritionalContent["Fat"]; hasFat && fat <= 10.0 {
 					score += 20.0
 				}
 			}
-			if antioxidants, hasAntioxidants := nutritionalContent["antioxidants"]; hasAntioxidants && antioxidants >= 5.0 {
+			if antioxidants, hasAntioxidants := nutritionalContent["Antioxidants"]; hasAntioxidants && antioxidants >= 5.0 {
 				score += 10.0
 			}
 
@@ -245,13 +245,13 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 			}
 
 		case "Bone health":
-			if calcium, hasCalcium := nutritionalContent["calcium"]; hasCalcium && calcium >= 200.0 {
+			if calcium, hasCalcium := nutritionalContent["Calcium"]; hasCalcium && calcium >= 200.0 {
 				score += 30.0
 			}
 
 		case "Skin health":
-			if vitaminA, hasVitaminA := nutritionalContent["vitamin A"]; hasVitaminA {
-				if vitaminC, hasVitaminC := nutritionalContent["vitamin C"]; hasVitaminC && vitaminA >= 10.0 && vitaminC >= 20.0 {
+			if vitaminA, hasVitaminA := nutritionalContent["Vitamin A"]; hasVitaminA {
+				if vitaminC, hasVitaminC := nutritionalContent["Vitamin C"]; hasVitaminC && vitaminA >= 10.0 && vitaminC >= 20.0 {
 					score += 30.0
 				}
 			}
@@ -260,23 +260,23 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 			}
 
 		case "Anti-inflammatory diet":
-			if antioxidants, hasAntioxidants := nutritionalContent["antioxidants"]; hasAntioxidants && antioxidants >= 5.0 {
+			if antioxidants, hasAntioxidants := nutritionalContent["Antioxidants"]; hasAntioxidants && antioxidants >= 5.0 {
 				score += 30.0
 			}
 
 		case "Hormonal balance":
-			if omega3, hasOmega3 := nutritionalContent["omega-3"]; hasOmega3 && omega3 >= 10.0 {
+			if omega3, hasOmega3 := nutritionalContent["Omega-3"]; hasOmega3 && omega3 >= 10.0 {
 				score += 30.0
 			}
-			if protein, hasProtein := nutritionalContent["protein"]; hasProtein && protein >= 15.0 && hasFiber && fiber >= 5.0 {
+			if protein, hasProtein := nutritionalContent["Protein"]; hasProtein && protein >= 15.0 && hasFiber && fiber >= 5.0 {
 				score += 20.0
 			}
 
 		case "Improved mental clarity":
-			if omega3, hasOmega3 := nutritionalContent["omega-3"]; hasOmega3 && omega3 >= 10.0 {
+			if omega3, hasOmega3 := nutritionalContent["Omega-3"]; hasOmega3 && omega3 >= 10.0 {
 				score += 30.0
 			}
-			if antioxidants, hasAntioxidants := nutritionalContent["antioxidants"]; hasAntioxidants && antioxidants >= 5.0 {
+			if antioxidants, hasAntioxidants := nutritionalContent["Antioxidants"]; hasAntioxidants && antioxidants >= 5.0 {
 				score += 20.0
 			}
 
@@ -344,7 +344,7 @@ func calculateEnvironmentalAdaptability(user models.User, meal models.Meal) floa
 // Helper function to check for "warm" tag
 func containsWarmTag(tags []models.MealTag) bool {
 	for _, tag := range tags {
-		if tag.Tag == "warm" { // Assuming MealTag has a Name field
+		if tag.Tag == "Warm" { 
 			return true
 		}
 	}
@@ -390,14 +390,14 @@ func calculateAgeGenderScore(user models.User, meal models.Meal, nutritionalCont
 
 	// Age factor: Older users get lower-calorie and nutrient-specific recommendations
 	if user.Age > 50 {
-		if nutritionalContent["calories"] <= 500.0 {
+		if nutritionalContent["Calories"] <= 500.0 {
 			score += 15.0
 		}
 
 	}
 
 	// Gender factor: Protein for men, Iron for women
-	if user.Gender == "Male" && nutritionalContent["protein"] >= 25.0 {
+	if user.Gender == "Male" && nutritionalContent["Protein"] >= 25.0 {
 		score += 15.0
 	} else if user.Gender == "Female" {
 		score += 10.0
@@ -406,15 +406,7 @@ func calculateAgeGenderScore(user models.User, meal models.Meal, nutritionalCont
 	return score
 }
 
-// Utility functions to check if a slice contains a string or nutrient
-func contains(slice []string, item string) bool {
-	for _, v := range slice {
-		if v == item {
-			return true
-		}
-	}
-	return false
-}
+
 
 // handleError logs and handles errors.
 func handleError(err error) {
