@@ -228,7 +228,9 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 		Preload("Preferences").
 		Preload("HealthConditions").
 		Preload("MicrobiomeData").
+		Preload("MealHistory").
 		Preload("RequestedMeal").
+		Preload("RecentMeals").
 		Preload("Goals").
 		Preload("EnvironmentalFactors").
 		Preload("LipidProfile").

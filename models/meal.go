@@ -64,6 +64,6 @@ type MealForOption struct {
 }
 
 type Recommended struct {
-	Score float64      `json:"score"`
 	Meal  MealResponse `json:"meal"`
+	Score float64      `json:"score"`
 }

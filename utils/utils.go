@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"math"
 	"reflect"
 	"strconv"
 
@@ -31,7 +32,8 @@ func GetCourseType(numCourses int) string {
 }
 
 func GramsToOunces(grams float64) float64 {
-	return grams / 28.35
+	ounces := grams / 28.35
+	return math.Round(ounces*100) / 100
 }
 
 func FloatToString(value float64) string {
