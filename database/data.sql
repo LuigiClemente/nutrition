@@ -442,3 +442,215 @@ VALUES
 ('Party Food'),
 ('Finger Food');
 
+
+
+-- Insert meal tag relationships for meals with meal_id < 13
+INSERT INTO meal_tag_relationship (meal_id, tag_id)
+VALUES 
+-- Pancakes (Meal ID: 1)
+(1, 31),  -- American
+(1, 51),  -- Breakfast
+(1, 22),  -- Comfort Food
+(1, 19),  -- Kid-Friendly
+(1, 25),  -- Sweet
+
+-- Caesar Salad (Meal ID: 2)
+(2, 3),   -- Vegetarian
+(2, 27),  -- Italian
+(2, 43),  -- Salad
+(2, 19),  -- Kid-Friendly
+(2, 8),   -- Low-Calorie
+
+-- Spaghetti Bolognese (Meal ID: 3)
+(3, 5),   -- High-Protein
+(3, 27),  -- Italian
+(3, 45),  -- Main Course
+(3, 49),  -- Dinner
+(3, 22),  -- Comfort Food
+
+-- Margherita Pizza (Meal ID: 4)
+(4, 3),   -- Vegetarian
+(4, 5),   -- High-Protein
+(4, 27),  -- Italian
+(4, 45),  -- Main Course
+(4, 49),  -- Dinner
+(4, 22),  -- Comfort Food
+
+-- Veggie Burger (Meal ID: 5)
+(5, 9),   -- Vegan
+(5, 3),   -- Vegetarian
+(5, 1),   -- Gluten-Free
+(5, 31),  -- American
+(5, 45),  -- Main Course
+(5, 48),  -- Lunch
+(5, 20),  -- Quick & Easy
+(5, 19),  -- Kid-Friendly
+
+-- Chicken Tacos (Meal ID: 6)
+(6, 5),   -- High-Protein
+(6, 28),  -- Mexican
+(6, 45),  -- Main Course
+(6, 48),  -- Lunch
+(6, 22),  -- Comfort Food
+
+-- Chocolate Cake (Meal ID: 7)
+(7, 54),  -- Dessert
+(7, 25),  -- Sweet
+(7, 31),  -- American
+(7, 19),  -- Kid-Friendly
+(7, 63),  -- Party Food
+(7, 22),  -- Comfort Food
+
+-- Grilled Salmon (Meal ID: 8)
+(8, 5),   -- High-Protein
+(8, 38),  -- Seafood
+(8, 45),  -- Main Course
+(8, 49),  -- Dinner
+(8, 40),  -- Grilled
+(8, 16),  -- Heart-Healthy
+
+-- Fruit Salad (Meal ID: 9)
+(9, 3),   -- Vegetarian
+(9, 1),   -- Gluten-Free
+(9, 8),   -- Low-Calorie
+(9, 52),  -- Snack
+(9, 25),  -- Sweet
+(9, 20),  -- Quick & Easy
+
+-- Quinoa Bowl (Meal ID: 10)
+(10, 9),  -- Vegan
+(10, 3),  -- Vegetarian
+(10, 1),  -- Gluten-Free
+(10, 26), -- Mediterranean
+(10, 43), -- Salad
+(10, 5),  -- High-Fiber
+(10, 48), -- Lunch
+
+-- French Toast (Meal ID: 11)
+(11, 31), -- American
+(11, 51), -- Breakfast
+(11, 22), -- Comfort Food
+(11, 19), -- Kid-Friendly
+(11, 25), -- Sweet
+
+-- Chicken Stir-fry (Meal ID: 12)
+(12, 5),  -- High-Protein
+(12, 29), -- Asian
+(12, 45), -- Main Course
+(12, 47), -- Stir-Fried
+(12, 49); -- Dinner
+
+
+-- Insert meal tag relationships
+INSERT INTO meal_tag_relationship (meal_id, tag_id)
+VALUES 
+-- Greek Yogurt Parfait (Meal ID: 13)
+(13, 1),   -- Gluten-Free
+(13, 5),   -- High-Protein
+(13, 8),   -- Low-Calorie
+(13, 51),  -- Breakfast
+(13, 20),  -- Quick & Easy
+(13, 19),  -- Kid-Friendly
+(13, 52),  -- Snack
+
+-- Caprese Salad (Meal ID: 14)
+(14, 3),   -- Vegetarian
+(14, 1),   -- Gluten-Free
+(14, 27),  -- Italian
+(14, 43),  -- Salad
+(14, 19),  -- Kid-Friendly
+(14, 8),   -- Low-Calorie
+
+-- Chicken Alfredo (Meal ID: 15)
+(15, 27),  -- Italian
+(15, 45),  -- Main Course
+(15, 49),  -- Dinner
+(15, 5),   -- High-Protein
+(15, 22),  -- Comfort Food
+
+-- BBQ Chicken Pizza (Meal ID: 16)
+(16, 31),  -- American
+(16, 22),  -- Comfort Food
+(16, 49),  -- Dinner
+(16, 45),  -- Main Course
+(16, 20),  -- Quick & Easy
+
+-- Beef Tacos (Meal ID: 17)
+(17, 28),  -- Mexican
+(17, 5),   -- High-Protein
+(17, 45),  -- Main Course
+(17, 49),  -- Dinner
+(17, 22),  -- Comfort Food
+
+-- Mango Sticky Rice (Meal ID: 18)
+(18, 9),   -- Vegan
+(18, 3),   -- Vegetarian
+(18, 29),  -- Asian
+(18, 54),  -- Dessert
+(18, 25),  -- Sweet
+
+-- Shrimp Fried Rice (Meal ID: 19)
+(19, 5),   -- High-Protein
+(19, 29),  -- Asian
+(19, 48),  -- Lunch
+(19, 45),  -- Main Course
+(19, 47),  -- Stir-Fried
+
+-- Veggie Stir-fry (Meal ID: 20)
+(20, 9),   -- Vegan
+(20, 3),   -- Vegetarian
+(20, 1),   -- Gluten-Free
+(20, 29),  -- Asian
+(20, 19),  -- Kid-Friendly
+(20, 8),   -- Low-Calorie
+(20, 47),  -- Stir-Fried
+
+-- Peanut Butter Banana Smoothie (Meal ID: 21)
+(21, 5),   -- High-Protein
+(21, 52),  -- Snack
+(21, 56),  -- Smoothie
+(21, 20),  -- Quick & Easy
+(21, 51),  -- Breakfast
+(21, 31),  -- American
+
+-- Roasted Vegetable Quinoa (Meal ID: 22)
+(22, 9),   -- Vegan
+(22, 3),   -- Vegetarian
+(22, 1),   -- Gluten-Free
+(22, 8),   -- Low-Calorie
+(22, 43),  -- Salad
+(22, 26),  -- Mediterranean
+
+-- Omelette (Meal ID: 23)
+(23, 5),   -- High-Protein
+(23, 3),   -- Vegetarian
+(23, 8),   -- Low-Calorie
+(23, 51),  -- Breakfast
+(23, 31),  -- American
+(23, 19),  -- Kid-Friendly
+
+-- Chocolate Chip Cookies (Meal ID: 24)
+(24, 54),  -- Dessert
+(24, 25),  -- Sweet
+(24, 19),  -- Kid-Friendly
+(24, 22),  -- Comfort Food
+(24, 31),  -- American
+(24, 63),  -- Party Food
+
+-- Beef Stir-fry (Meal ID: 25)
+(25, 5),   -- High-Protein
+(25, 29),  -- Asian
+(25, 45),  -- Main Course
+(25, 49),  -- Dinner
+(25, 47),  -- Stir-Fried
+(25, 20),  -- Quick & Easy
+
+-- Lentil Soup (Meal ID: 26)
+(26, 3),   -- Vegetarian
+(26, 9),   -- Vegan
+(26, 43),  -- Salad
+(26, 25),  -- Heart-Healthy
+(26, 5),   -- High-Fiber
+(26, 45),  -- Main Course
+(26, 46),  -- Soup
+(26, 26);  -- Mediterranean
