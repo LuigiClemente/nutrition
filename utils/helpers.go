@@ -2,7 +2,9 @@ package utils
 
 import (
 	"encoding/json"
+	"log"
 	"math"
+	"nutrition/models"
 	"reflect"
 	"strconv"
 
@@ -38,4 +40,20 @@ func GramsToOunces(grams float64) float64 {
 
 func FloatToString(value float64) string {
 	return strconv.FormatFloat(value, 'f', -1, 64)
+}
+
+func handleError(err error) {
+	log.Printf("Error: %v", err)
+}
+
+// GetTopMeals recommends the top N meals based on their calculated scores.
+func GetTopMeals(user models.User, meals []models.Meal, topN int) []models.ScoredMeal {
+	// Calculate scores for all meals
+	mealsWithScores := calculateMealScore(user, meals)
+
+	// Return the top N meals
+	if topN > len(mealsWithScores) {
+		topN = len(mealsWithScores) // Handle the case where there are fewer meals than topN
+	}
+	return mealsWithScores[:topN]
 }

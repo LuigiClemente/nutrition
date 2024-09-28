@@ -6,12 +6,13 @@ import (
 	"math"
 	"nutrition/models"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 )
 
-// CalculateMealScore computes scores for meals based on user preferences and goals.
-func CalculateMealScore(user models.User, meals []models.Meal) []models.ScoredMeal {
+// calculateMealScore computes scores for meals based on user preferences and goals.
+func calculateMealScore(user models.User, meals []models.Meal) []models.ScoredMeal {
 	var wg sync.WaitGroup
 	mealsWithScores := make([]models.ScoredMeal, len(meals))
 	userBMI := calculateBMI(user.BodyMetrics.Height, user.BodyMetrics.Weight)
@@ -333,18 +334,28 @@ func containsRecommendationTag(tags []models.MealTag, recommendation string) boo
 func calculateEnvironmentalAdaptability(user models.User, meal models.Meal) float64 {
 	score := 0.0
 
-	// Check if the user's season is winter and the meal contains a warm tag
-	if user.EnvironmentalFactors.Season == "Winter" && containsWarmTag(meal.MealTags) {
-		score += 5.0 // Increase score for warm foods in cold seasons
+	// If the user's current season is Winter, increase score for warm meals
+	if user.EnvironmentalFactors.Season == "Winter" && containsTag(meal.MealTags, "Warm") {
+		score += 5.0
+	}
+
+	// Adapt the meal based on user location (example logic)
+	if user.EnvironmentalFactors.Location == "Tropical" && containsTag(meal.MealTags, "Cooling") {
+		score += 3.0
+	}
+
+	// Adapt to the user's climate (example: if the climate is hot, avoid heavy or warm meals)
+	if user.EnvironmentalFactors.Climate == "Hot" && containsTag(meal.MealTags, "Light") {
+		score += 4.0
 	}
 
 	return score
 }
 
-// Helper function to check for "warm" tag
-func containsWarmTag(tags []models.MealTag) bool {
+// Utility function to check if a meal has a specific tag (case-insensitive)
+func containsTag(tags []models.MealTag, targetTag string) bool {
 	for _, tag := range tags {
-		if tag.Tag == "Warm" { 
+		if strings.Contains(tag.Tag, targetTag) {
 			return true
 		}
 	}
@@ -404,24 +415,4 @@ func calculateAgeGenderScore(user models.User, meal models.Meal, nutritionalCont
 	}
 
 	return score
-}
-
-
-
-// handleError logs and handles errors.
-func handleError(err error) {
-	// Here you can log the error to a file, monitoring system, or simply print it
-	fmt.Printf("Error: %v\n", err)
-}
-
-// GetTopMeals recommends the top N meals based on their calculated scores.
-func GetTopMeals(user models.User, meals []models.Meal, topN int) []models.ScoredMeal {
-	// Calculate scores for all meals
-	mealsWithScores := CalculateMealScore(user, meals)
-
-	// Return the top N meals
-	if topN > len(mealsWithScores) {
-		topN = len(mealsWithScores) // Handle the case where there are fewer meals than topN
-	}
-	return mealsWithScores[:topN]
 }
