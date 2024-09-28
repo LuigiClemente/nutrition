@@ -3,7 +3,6 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"math"
 	"nutrition/models"
 	"sort"
 	"strings"
@@ -16,7 +15,7 @@ func calculateMealScore(user models.User, meals []models.Meal) []models.ScoredMe
 	var wg sync.WaitGroup
 	mealsWithScores := make([]models.ScoredMeal, len(meals))
 	userBMI := calculateBMI(user.BodyMetrics.Height, user.BodyMetrics.Weight)
-	const maxTotalScore = 120.0
+	const maxTotalScore = 110.0
 
 	// Use a WaitGroup to score meals concurrently
 	for i, meal := range meals {
@@ -35,13 +34,11 @@ func calculateMealScore(user models.User, meals []models.Meal) []models.ScoredMe
 
 			// Calculate the scores concurrently
 			fitScore += calculateDietaryMatch(user, meal)
-
 			fitScore += calculateHealthGoalsAlignment(user, nutritionalContent, userBMI)
-
 			fitScore += calculateMicrobiomeCompatibility(user, meal)
 			fitScore += calculateEnvironmentalAdaptability(user, meal)
 			fitScore += calculateRecentConsumptionPenalty(user, meal)
-			fitScore += calculateAgeGenderScore(user, meal, nutritionalContent)
+			fitScore += calculateAgeGenderScore(user, nutritionalContent)
 
 			// Normalize the score
 			normalizedScore := normalizeScore(fitScore, maxTotalScore)
@@ -58,17 +55,6 @@ func calculateMealScore(user models.User, meals []models.Meal) []models.ScoredMe
 	})
 
 	return mealsWithScores
-}
-
-// Normalize the score to a 0-100 scale.
-func normalizeScore(fitScore, maxPossibleScore float64) float64 {
-	return math.Max(0, math.Min(100, math.Round((fitScore/maxPossibleScore)*100*100)/100))
-}
-
-// calculateBMI calculates the BMI from height and weight.
-func calculateBMI(height, weight float64) float64 {
-	heightInMeters := height / 100
-	return weight / (heightInMeters * heightInMeters)
 }
 
 // calculateDietaryMatch scores meals based on user's dietary preferences and avoidances.
@@ -334,32 +320,42 @@ func containsRecommendationTag(tags []models.MealTag, recommendation string) boo
 func calculateEnvironmentalAdaptability(user models.User, meal models.Meal) float64 {
 	score := 0.0
 
-	// If the user's current season is Winter, increase score for warm meals
-	if user.EnvironmentalFactors.Season == "Winter" && containsTag(meal.MealTags, "Warm") {
-		score += 5.0
+	// Create a map for quick tag lookup
+	tagMap := make(map[string]bool)
+	for _, tag := range meal.MealTags {
+		tagMap[strings.ToLower(tag.Tag)] = true
 	}
 
-	// Adapt the meal based on user location (example logic)
-	if user.EnvironmentalFactors.Location == "Tropical" && containsTag(meal.MealTags, "Cooling") {
-		score += 3.0
+	// Score adjustments based on user season
+	if strings.ToLower(user.EnvironmentalFactors.Season) == "winter" && tagMap["warm"] {
+		score += 5.0 // Favor warm meals in winter
 	}
 
-	// Adapt to the user's climate (example: if the climate is hot, avoid heavy or warm meals)
-	if user.EnvironmentalFactors.Climate == "Hot" && containsTag(meal.MealTags, "Light") {
-		score += 4.0
+	// Score adjustments based on user location
+	switch strings.ToLower(user.EnvironmentalFactors.Location) {
+	case "tropical":
+		if tagMap["cooling"] {
+			score += 3.0 // Favor cooling meals in tropical locations
+		}
+		if tagMap["light"] {
+			score += 2.0 // Favor light meals in tropical locations
+		}
+	case "urban":
+		if tagMap["quick"] {
+			score += 3.0 // Favor quick meals for urban lifestyles
+		}
+	case "rural":
+		if tagMap["hearty"] {
+			score += 4.0 // Favor hearty meals for rural settings
+		}
+	}
+
+	// Score adjustments based on user climate
+	if strings.ToLower(user.EnvironmentalFactors.Climate) == "hot" && tagMap["light"] {
+		score += 4.0 // Favor light meals in hot climates
 	}
 
 	return score
-}
-
-// Utility function to check if a meal has a specific tag (case-insensitive)
-func containsTag(tags []models.MealTag, targetTag string) bool {
-	for _, tag := range tags {
-		if strings.Contains(tag.Tag, targetTag) {
-			return true
-		}
-	}
-	return false
 }
 
 // calculateRecentConsumptionPenalty penalizes meals based on recent user consumption history.
@@ -396,22 +392,50 @@ func CalculateRecentMealPenalty(mealDate time.Time) float64 {
 }
 
 // calculateAgeGenderScore adjusts the meal score based on age and gender.
-func calculateAgeGenderScore(user models.User, meal models.Meal, nutritionalContent map[string]float64) float64 {
+func calculateAgeGenderScore(user models.User, nutritionalContent map[string]float64) float64 {
 	score := 0.0
 
-	// Age factor: Older users get lower-calorie and nutrient-specific recommendations
-	if user.Age > 50 {
-		if nutritionalContent["Calories"] <= 500.0 {
-			score += 15.0
-		}
+	// Define thresholds for nutrients based on user age
+	var calorieThreshold float64
+	var proteinThreshold float64
 
+	// Set thresholds based on age
+	switch {
+	case user.Age < 18:
+		calorieThreshold = 600.0
+		proteinThreshold = 0 // Not emphasized for teens in this logic
+	case user.Age <= 50:
+		proteinThreshold = 20.0
+		// No specific calorie threshold for this age range
+	default: // user.Age > 50
+		calorieThreshold = 500.0
 	}
 
-	// Gender factor: Protein for men, Iron for women
-	if user.Gender == "Male" && nutritionalContent["Protein"] >= 25.0 {
-		score += 15.0
-	} else if user.Gender == "Female" {
+	// Age-based scoring
+	if user.Age < 18 && nutritionalContent["Calories"] >= calorieThreshold {
 		score += 10.0
+	} else if user.Age > 50 && nutritionalContent["Calories"] <= calorieThreshold {
+		score += 15.0
+	} else if user.Age >= 18 && user.Age <= 50 && nutritionalContent["Protein"] >= proteinThreshold {
+		score += 10.0
+	}
+
+	// Gender-based scoring
+	switch user.Gender {
+	case "Male":
+		if nutritionalContent["Protein"] >= 25.0 {
+			score += 15.0
+		}
+		if nutritionalContent["Zinc"] >= 11.0 {
+			score += 5.0
+		}
+	case "Female":
+		if nutritionalContent["Iron"] >= 18.0 {
+			score += 15.0
+		}
+		if nutritionalContent["Calcium"] >= 1000.0 {
+			score += 5.0
+		}
 	}
 
 	return score
