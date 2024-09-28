@@ -23,7 +23,7 @@ type User struct {
 	BloodGlucose            float64              `json:"blood_glucose"`
 	LipidProfile            LipidProfile         `json:"lipid_profiles" gorm:"foreignKey:UserID"`
 	EnvironmentalFactors    EnvironmentalFactors `json:"environmental_factors" gorm:"foreignKey:UserID"`
-	RequestedMeal           RequestedMeal        `json:"requested_meals" binding:"required" gorm:"foreignKey:UserID"`
+	RequestedMeal           RequestedMeal        `json:"requested_meal" binding:"required" gorm:"foreignKey:UserID"`
 	MealHistory             []MealHistory        `json:"meal_histories" gorm:"foreignKey:UserID"`
 	HealthScore             float64              `json:"health_score"`
 	Preferences             UserPreferences      `json:"preferences" gorm:"foreignKey:UserID"`
