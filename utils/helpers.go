@@ -11,6 +11,18 @@ import (
 	"gorm.io/datatypes"
 )
 
+
+// Normalize the score to a 0-100 scale.
+func normalizeScore(fitScore, maxPossibleScore float64) float64 {
+	return math.Max(0, math.Min(100, math.Round((fitScore/maxPossibleScore)*100*100)/100))
+}
+
+// calculateBMI calculates the BMI from height and weight.
+func calculateBMI(height, weight float64) float64 {
+	heightInMeters := height / 100
+	return weight / (heightInMeters * heightInMeters)
+}
+
 // Helper function to compare JSON fields
 func CompareJSONFields(a, b datatypes.JSON) bool {
 	var aMap, bMap map[string]interface{}
