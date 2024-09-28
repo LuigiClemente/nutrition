@@ -10,12 +10,24 @@ import (
 	"time"
 )
 
+const (
+	/* 
+	MaxAgeGenderScore           = 20.0
+	MaxRecentConsumptionPenalty = 10.0
+	MaxEnvironmentalAdaptability = 15.0
+	MaxMicrobiomeCompatibility  = 10.0
+	MaxDietaryMatch             = 25.0
+	MaxHealthGoalsAlignment     = 30.0
+	*/
+	maxTotalScore = 110.0
+)
+
 // calculateMealScore computes scores for meals based on user preferences and goals.
 func calculateMealScore(user models.User, meals []models.Meal) []models.ScoredMeal {
 	var wg sync.WaitGroup
 	mealsWithScores := make([]models.ScoredMeal, len(meals))
 	userBMI := calculateBMI(user.BodyMetrics.Height, user.BodyMetrics.Weight)
-	const maxTotalScore = 110.0
+	
 
 	// Use a WaitGroup to score meals concurrently
 	for i, meal := range meals {
