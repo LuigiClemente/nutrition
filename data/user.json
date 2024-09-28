@@ -1,0 +1,87 @@
+{
+    "name": "Ahmad",
+    "age": 30,
+    "gender": "Male",
+    "activity_level": "Moderate",
+    "blood_glucose": 90,
+    "health_score": 85,
+    "nutritional_deficiencies": [
+        "Vitamin D",
+        "Iron"
+    ],
+    "allergies": [
+        "Peanuts"
+    ],
+    "body_metrics": {
+        "weight": 70,
+        "height": 175
+    },
+    "dietary_preferences": {
+        "vegetarian": false,
+        "vegan": false,
+        "gluten_free": false,
+        "dairy_free": false,
+        "specific_avoidances": [
+            "Shellfish"
+        ]
+    },
+    "health_conditions": [
+        {
+            "name": "Hypertension",
+            "severity": "Moderate"
+        }
+    ],
+    "goals": [
+        {
+            "type": "Weight loss",
+            "target": 5,
+            "duration": 90
+        }
+    ],
+    "microbiome_data": {
+        "diversity_score": 75,
+        "gut_health_recommendations": [
+            "Increase fiber intake"
+        ]
+    },
+    "lipid_profile": {
+        "cholesterol": 180,
+        "hdl": 60,
+        "ldl": 100,
+        "triglycerides": 150
+    },
+    "environmental_factors": {
+        "location": "Urban",
+        "climate": "Temperate",
+        "season": "Fall"
+    },
+    "meal_history": [
+        {
+            "meal_id": 1,
+            "timestamp": "2024-09-28T12:00:00Z"
+        }
+    ],
+    "recent_meals": [
+        {
+            "meal_id": 2,
+            "timestamp": "2024-09-27T18:00:00Z"
+        }
+    ],
+    "preferences": {
+        "preferred_cuisines": [
+            "Italian",
+            "Asian"
+        ],
+        "meal_timings": [
+            "Lunch",
+            "Dinner"
+        ],
+        "favorite_ingredients": [
+            "Chicken",
+            "Broccoli"
+        ]
+    },
+    "requested_meal": {
+        "meal_category": 1
+    }
+}
