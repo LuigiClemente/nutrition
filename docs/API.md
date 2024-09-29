@@ -13,396 +13,98 @@ Description: Add a new user's health information.
 
 ```json
 {
-        "name": "John Doe",
-        "age": 30,
-        "gender": "Male",
-        "activity_level": "Moderate",
-        "blood_glucose": 90.5,
-        "health_score": 75.3,
-        "nutritional_deficiencies": [
-            "Vitamin D",
-            "Iron"
-        ],
-        "allergies": [
-            "Peanuts",
+    "name": "Ahmad",
+    "age": 30,
+    "gender": "Male",
+    "activity_level": "Moderate",
+    "blood_glucose": 90,
+    "health_score": 85,
+    "nutritional_deficiencies": [
+        "Vitamin D",
+        "Iron"
+    ],
+    "allergies": [
+        "Peanuts"
+    ],
+    "body_metrics": {
+        "weight": 70,
+        "height": 175
+    },
+    "dietary_preferences": {
+        "vegetarian": false,
+        "vegan": false,
+        "gluten_free": false,
+        "dairy_free": false,
+        "specific_avoidances": [
             "Shellfish"
-        ],
-        "body_metrics": {
-            "weight": 75.5,
-            "height": 175,
-            "bmi": 24.6
-        },
-        "dietary_preferences": {
-            "vegetarian": false,
-            "vegan": false,
-            "gluten_free": true,
-            "dairy_free": false,
-            "specific_avoidances": [
-                "Processed Foods",
-                "Sugar"
-            ]
-        },
-        "health_conditions": [
-            {
-                "name": "Hypertension",
-                "severity": "Mild"
-            },
-            {
-                "name": "Diabetes",
-                "severity": "Moderate"
-            }
-        ],
-        "goals": [
-            {
-                "type": "Weight Loss",
-                "target": 5.0,
-                "duration": 30
-            },
-            {
-                "type": "Improve Cardio",
-                "target": 10.0,
-                "duration": 60
-            }
-        ],
-        "microbiome_data": {
-            "diversity_score": 8.5,
-            "gut_health_recommendations": [
-                "Increase fiber intake",
-                "Reduce red meat consumption"
-            ]
-        },
-        "lipid_profiles": {
-            "cholesterol": 180.0,
-            "hdl": 60.0,
-            "ldl": 100.0,
-            "triglycerides": 150.0
-        },
-        "environmental_factors": {
-            "location": "New York",
-            "climate": "Temperate",
-            "season": "Fall"
-        },
-        "meal_histories": [
-            {
-                "meal_id": 1,
-                "timestamp": "2024-09-07T12:30:00Z"
-            },
-            {
-                "meal_id": 2,
-                "timestamp": "2024-09-06T19:00:00Z"
-            }
-        ],
-        "recent_meals": [
-            {
-                "meal_id": 3,
-                "timestamp": "2024-09-07T18:00:00Z"
-            }
-        ],
-        "preferences": {
-            "preferred_cuisines": [
-                "Italian",
-                "Japanese"
-            ],
-            "meal_timings": [
-                "Breakfast",
-                "Lunch",
-                "Dinner"
-            ],
-            "favorite_ingredients": [
-                "Chicken",
-                "Broccoli",
-                "Garlic"
-            ]
+        ]
+    },
+    "health_conditions": [
+        {
+            "name": "Hypertension",
+            "severity": "Moderate"
         }
+    ],
+    "goals": [
+        {
+            "type": "Weight loss",
+            "target": 5,
+            "duration": 90
+        }
+    ],
+    "microbiome_data": {
+        "diversity_score": 75,
+        "gut_health_recommendations": [
+            "Increase fiber intake"
+        ]
+    },
+    "lipid_profile": {
+        "cholesterol": 180,
+        "hdl": 60,
+        "ldl": 100,
+        "triglycerides": 150
+    },
+    "environmental_factors": {
+        "location": "Urban",
+        "climate": "Temperate",
+        "season": "Fall"
+    },
+    "meal_history": [
+        {
+            "meal_id": 1,
+            "timestamp": "2024-09-28T12:00:00Z"
+        }
+    ],
+    "recent_meals": [
+        {
+            "meal_id": 2,
+            "timestamp": "2024-09-27T18:00:00Z"
+        }
+    ],
+    "preferences": {
+        "preferred_cuisines": [
+            "Italian",
+            "Asian"
+        ],
+        "meal_timings": [
+            "Lunch",
+            "Dinner"
+        ],
+        "favorite_ingredients": [
+            "Chicken",
+            "Broccoli"
+        ]
+    },
+    "requested_meal": {
+        "meal_category": 1
     }
+}
 ```
 
 #####  Response:
 
 ```json
-{
-    "user_info": {
-        "id": 4,
-        "name": "Ahmad",
-        "age": 25,
-        "gender": "Male",
-        "body_metrics": {
-            "user_id": 4,
-            "weight": 78,
-            "height": 175,
-            "bmi": 24.6
-        },
-        "activity_level": "Moderate",
-        "dietary_preferences": {
-            "user_id": 4,
-            "vegetarian": false,
-            "vegan": false,
-            "gluten_free": true,
-            "dairy_free": false,
-            "specific_avoidances": [
-                "Processed Foods",
-                "Sugar"
-            ]
-        },
-        "health_conditions": [
-            {
-                "user_id": 4,
-                "name": "Hypertension",
-                "severity": "Mild"
-            },
-            {
-                "user_id": 4,
-                "name": "Diabetes",
-                "severity": "Moderate"
-            }
-        ],
-        "nutritional_deficiencies": [
-            "Vitamin A"
-        ],
-        "allergies": [
-            "Shellfish"
-        ],
-        "recent_meals": [
-            {
-                "id": 6,
-                "user_id": 4,
-                "meal_id": 3,
-                "timestamp": "2024-09-07T18:00:00Z"
-            }
-        ],
-        "goals": [
-            {
-                "id": 11,
-                "user_id": 4,
-                "type": "Muscle gain",
-                "target": 5,
-                "duration": 90
-            },
-            {
-                "id": 12,
-                "user_id": 4,
-                "type": "Improve Cardio",
-                "target": 10,
-                "duration": 60
-            }
-        ],
-        "microbiome_data": {
-            "user_id": 4,
-            "diversity_score": 8.5,
-            "gut_health_recommendations": [
-                "Increase fiber intake",
-                "Reduce red meat consumption"
-            ]
-        },
-        "blood_glucose": 80.5,
-        "lipid_profiles": {
-            "user_id": 4,
-            "cholesterol": 180,
-            "hdl": 60,
-            "ldl": 100,
-            "triglycerides": 150
-        },
-        "environmental_factors": {
-            "id": 0,
-            "user_id": 4,
-            "location": "New York",
-            "climate": "Temperate",
-            "season": "Fall"
-        },
-        "meal_histories": [
-            {
-                "id": 3,
-                "user_id": 4,
-                "meal_id": 1,
-                "timestamp": "2024-09-07T12:30:00Z"
-            },
-            {
-                "id": 4,
-                "user_id": 4,
-                "meal_id": 2,
-                "timestamp": "2024-09-06T19:00:00Z"
-            }
-        ],
-        "health_score": 75.3,
-        "preferences": {
-            "id": 0,
-            "user_id": 0,
-            "preferred_cuisines": null,
-            "meal_timings": null,
-            "favorite_ingredients": null
-        }
-    },
-    "recommendations": [
-        {
-            "meal_name": "Oatmeal",
-            "ingredients": [
-                {
-                    "id": 37,
-                    "meal_id": 10,
-                    "name": "Oats",
-                    "amount": 100,
-                    "unit": "g",
-                    "nutritional": {
-                        "fat": 6.9,
-                        "carbs": 66.3,
-                        "protein": 16.9,
-                        "calories": 389
-                    }
-                },
-                {
-                    "id": 38,
-                    "meal_id": 10,
-                    "name": "Milk",
-                    "amount": 200,
-                    "unit": "ml",
-                    "nutritional": {
-                        "fat": 4.5,
-                        "carbs": 12.0,
-                        "protein": 8.0,
-                        "calories": 122
-                    }
-                },
-                {
-                    "id": 39,
-                    "meal_id": 10,
-                    "name": "Banana",
-                    "amount": 80,
-                    "unit": "g",
-                    "nutritional": {
-                        "fat": 0.2,
-                        "carbs": 18.5,
-                        "protein": 0.9,
-                        "calories": 72
-                    }
-                }
-            ],
-            "score": 67.74,
-            "Tags": [
-                "Vegetarian",
-                "High Fiber",
-                "Easy"
-            ],
-            "nutritional_content": {
-                "fat": 11.6,
-                "carbs": 96.8,
-                "protein": 25.8,
-                "calories": 583
-            }
-        },
-        {
-            "meal_name": "Grilled Salmon",
-            "ingredients": [
-                {
-                    "id": 75,
-                    "meal_id": 22,
-                    "name": "Salmon Fillet",
-                    "amount": 200,
-                    "unit": "g",
-                    "nutritional": {
-                        "fat": 20.0,
-                        "carbs": 0,
-                        "protein": 25.0,
-                        "calories": 280
-                    }
-                },
-                {
-                    "id": 76,
-                    "meal_id": 22,
-                    "name": "Lemon Juice",
-                    "amount": 1,
-                    "unit": "tbsp",
-                    "nutritional": {
-                        "fat": 0,
-                        "carbs": 1.3,
-                        "protein": 0.1,
-                        "calories": 4
-                    }
-                },
-                {
-                    "id": 77,
-                    "meal_id": 22,
-                    "name": "Olive Oil",
-                    "amount": 1,
-                    "unit": "tbsp",
-                    "nutritional": {
-                        "fat": 14.0,
-                        "carbs": 0,
-                        "protein": 0,
-                        "calories": 120
-                    }
-                }
-            ],
-            "score": 54.84,
-            "Tags": [
-                "High Protein",
-                "Gluten-Free",
-                "Low Carb"
-            ],
-            "nutritional_content": {
-                "fat": 34.0,
-                "carbs": 1.3,
-                "protein": 25.1,
-                "calories": 404
-            }
-        },
-        {
-            "meal_name": "Grilled Salmon",
-            "ingredients": [
-                {
-                    "id": 43,
-                    "meal_id": 12,
-                    "name": "Salmon Fillet",
-                    "amount": 200,
-                    "unit": "g",
-                    "nutritional": {
-                        "fat": 20.0,
-                        "carbs": 0,
-                        "protein": 25.0,
-                        "calories": 280
-                    }
-                },
-                {
-                    "id": 44,
-                    "meal_id": 12,
-                    "name": "Lemon Juice",
-                    "amount": 1,
-                    "unit": "tbsp",
-                    "nutritional": {
-                        "fat": 0,
-                        "carbs": 1.3,
-                        "protein": 0.1,
-                        "calories": 4
-                    }
-                },
-                {
-                    "id": 45,
-                    "meal_id": 12,
-                    "name": "Olive Oil",
-                    "amount": 1,
-                    "unit": "tbsp",
-                    "nutritional": {
-                        "fat": 14.0,
-                        "carbs": 0,
-                        "protein": 0,
-                        "calories": 120
-                    }
-                }
-            ],
-            "score": 54.84,
-            "Tags": [
-                "High Protein",
-                "Gluten-Free",
-                "Low Carb"
-            ],
-            "nutritional_content": {
-                "fat": 34.0,
-                "carbs": 1.3,
-                "protein": 25.1,
-                "calories": 404
-            }
-        }
-    ]
-}
+
 ```
 
 
@@ -424,286 +126,127 @@ Description: Get a specific user’s health information by their userId.
 ```json
 {
     "user_info": {
-        "id": 4,
-        "name": "Ahmad",
+        "id": 2,
+        "name": "Jane Smith",
         "age": 25,
-        "gender": "Male",
+        "gender": "Female",
         "body_metrics": {
-            "user_id": 4,
-            "weight": 78,
-            "height": 175,
-            "bmi": 24.6
+            "user_id": 2,
+            "weight": 60,
+            "height": 165
         },
-        "activity_level": "Moderate",
+        "activity_level": "Active",
         "dietary_preferences": {
-            "user_id": 4,
-            "vegetarian": false,
+            "user_id": 2,
+            "vegetarian": true,
             "vegan": false,
             "gluten_free": true,
             "dairy_free": false,
             "specific_avoidances": [
-                "Processed Foods",
-                "Sugar"
+                "Processed sugar"
             ]
         },
         "health_conditions": [
             {
-                "user_id": 4,
-                "name": "Hypertension",
+                "user_id": 2,
+                "name": "Asthma",
                 "severity": "Mild"
-            },
-            {
-                "user_id": 4,
-                "name": "Diabetes",
-                "severity": "Moderate"
             }
         ],
-        "nutritional_deficiencies": [
-            "Vitamin A"
-        ],
-        "allergies": [
-            "Shellfish"
-        ],
-        "recent_meals": [
-            {
-                "id": 6,
-                "user_id": 4,
-                "meal_id": 3,
-                "timestamp": "2024-09-07T18:00:00Z"
-            }
-        ],
+        "nutritional_deficiencies": [],
+        "allergies": [],
+        "recent_meals": [],
         "goals": [
             {
-                "id": 11,
-                "user_id": 4,
+                "id": 2,
+                "user_id": 2,
                 "type": "Muscle gain",
-                "target": 5,
-                "duration": 90
-            },
-            {
-                "id": 12,
-                "user_id": 4,
-                "type": "Improve Cardio",
-                "target": 10,
+                "target": 3,
                 "duration": 60
             }
         ],
         "microbiome_data": {
-            "user_id": 4,
-            "diversity_score": 8.5,
+            "user_id": 2,
+            "diversity_score": 80,
             "gut_health_recommendations": [
-                "Increase fiber intake",
-                "Reduce red meat consumption"
+                "Increase plant-based foods"
             ]
         },
-        "blood_glucose": 80.5,
+        "blood_glucose": 85.3,
         "lipid_profiles": {
-            "user_id": 4,
-            "cholesterol": 180,
-            "hdl": 60,
-            "ldl": 100,
-            "triglycerides": 150
+            "user_id": 2,
+            "cholesterol": 200,
+            "hdl": 70,
+            "ldl": 120,
+            "triglycerides": 130
         },
         "environmental_factors": {
-            "id": 0,
-            "user_id": 4,
-            "location": "New York",
-            "climate": "Temperate",
-            "season": "Fall"
+            "user_id": 2,
+            "location": "Los Angeles",
+            "climate": "Mediterranean",
+            "season": "Summer"
         },
-        "meal_histories": [
-            {
-                "id": 3,
-                "user_id": 4,
-                "meal_id": 1,
-                "timestamp": "2024-09-07T12:30:00Z"
-            },
-            {
-                "id": 4,
-                "user_id": 4,
-                "meal_id": 2,
-                "timestamp": "2024-09-06T19:00:00Z"
-            }
-        ],
-        "health_score": 75.3,
+        "requested_meal": {
+            "user_id": 2,
+            "meal_category": 10
+        },
+        "meal_histories": [],
+        "health_score": 90,
         "preferences": {
-            "id": 0,
-            "user_id": 0,
-            "preferred_cuisines": null,
-            "meal_timings": null,
-            "favorite_ingredients": null
+            "user_id": 2,
+            "preferred_cuisines": [
+                "Mexican",
+                "Japanese"
+            ],
+            "meal_timings": [
+                "Breakfast",
+                "Dinner"
+            ],
+            "favorite_ingredients": [
+                "Avocado",
+                "Eggs"
+            ]
         }
     },
-    "recommendations": [
-        {
-            "meal_name": "Oatmeal",
+    "recommendation": {
+        "meal": {
+            "id": 22,
+            "name": "Roasted Vegetable Quinoa",
             "ingredients": [
                 {
-                    "id": 37,
-                    "meal_id": 10,
-                    "name": "Oats",
+                    "name": "Quinoa",
                     "amount": 100,
-                    "unit": "g",
-                    "nutritional": {
-                        "fat": 6.9,
-                        "carbs": 66.3,
-                        "protein": 16.9,
-                        "calories": 389
-                    }
+                    "portion": "1/2 cup",
+                    "ounces": "3.53"
                 },
                 {
-                    "id": 38,
-                    "meal_id": 10,
-                    "name": "Milk",
-                    "amount": 200,
-                    "unit": "ml",
-                    "nutritional": {
-                        "fat": 4.5,
-                        "carbs": 12.0,
-                        "protein": 8.0,
-                        "calories": 122
-                    }
+                    "name": "Zucchini",
+                    "amount": 50,
+                    "portion": "1/2 cup",
+                    "ounces": "1.76"
                 },
                 {
-                    "id": 39,
-                    "meal_id": 10,
-                    "name": "Banana",
-                    "amount": 80,
-                    "unit": "g",
-                    "nutritional": {
-                        "fat": 0.2,
-                        "carbs": 18.5,
-                        "protein": 0.9,
-                        "calories": 72
-                    }
-                }
-            ],
-            "score": 67.74,
-            "Tags": [
-                "Vegetarian",
-                "High Fiber",
-                "Easy"
-            ],
-            "nutritional_content": {
-                "fat": 11.6,
-                "carbs": 96.8,
-                "protein": 25.8,
-                "calories": 583
-            }
-        },
-        {
-            "meal_name": "Grilled Salmon",
-            "ingredients": [
-                {
-                    "id": 75,
-                    "meal_id": 22,
-                    "name": "Salmon Fillet",
-                    "amount": 200,
-                    "unit": "g",
-                    "nutritional": {
-                        "fat": 20.0,
-                        "carbs": 0,
-                        "protein": 25.0,
-                        "calories": 280
-                    }
+                    "name": "Bell Peppers",
+                    "amount": 50,
+                    "portion": "1/2 cup",
+                    "ounces": "1.76"
                 },
                 {
-                    "id": 76,
-                    "meal_id": 22,
-                    "name": "Lemon Juice",
-                    "amount": 1,
-                    "unit": "tbsp",
-                    "nutritional": {
-                        "fat": 0,
-                        "carbs": 1.3,
-                        "protein": 0.1,
-                        "calories": 4
-                    }
-                },
-                {
-                    "id": 77,
-                    "meal_id": 22,
                     "name": "Olive Oil",
-                    "amount": 1,
-                    "unit": "tbsp",
-                    "nutritional": {
-                        "fat": 14.0,
-                        "carbs": 0,
-                        "protein": 0,
-                        "calories": 120
-                    }
-                }
-            ],
-            "score": 54.84,
-            "Tags": [
-                "High Protein",
-                "Gluten-Free",
-                "Low Carb"
-            ],
-            "nutritional_content": {
-                "fat": 34.0,
-                "carbs": 1.3,
-                "protein": 25.1,
-                "calories": 404
-            }
-        },
-        {
-            "meal_name": "Grilled Salmon",
-            "ingredients": [
-                {
-                    "id": 43,
-                    "meal_id": 12,
-                    "name": "Salmon Fillet",
-                    "amount": 200,
-                    "unit": "g",
-                    "nutritional": {
-                        "fat": 20.0,
-                        "carbs": 0,
-                        "protein": 25.0,
-                        "calories": 280
-                    }
+                    "amount": 15,
+                    "portion": "1 tbsp",
+                    "ounces": "0.53"
                 },
                 {
-                    "id": 44,
-                    "meal_id": 12,
                     "name": "Lemon Juice",
-                    "amount": 1,
-                    "unit": "tbsp",
-                    "nutritional": {
-                        "fat": 0,
-                        "carbs": 1.3,
-                        "protein": 0.1,
-                        "calories": 4
-                    }
-                },
-                {
-                    "id": 45,
-                    "meal_id": 12,
-                    "name": "Olive Oil",
-                    "amount": 1,
-                    "unit": "tbsp",
-                    "nutritional": {
-                        "fat": 14.0,
-                        "carbs": 0,
-                        "protein": 0,
-                        "calories": 120
-                    }
+                    "amount": 10,
+                    "portion": "1 tbsp",
+                    "ounces": "0.35"
                 }
-            ],
-            "score": 54.84,
-            "Tags": [
-                "High Protein",
-                "Gluten-Free",
-                "Low Carb"
-            ],
-            "nutritional_content": {
-                "fat": 34.0,
-                "carbs": 1.3,
-                "protein": 25.1,
-                "calories": 404
-            }
-        }
-    ]
+            ]
+        },
+        "score": 18.18
+    }
 }
 ```
 
@@ -717,108 +260,92 @@ Description: Update a specific user's health information by userId.
 
 ```json
 {
-        "name": "John Doe",
-        "age": 30,
-        "gender": "Male",
-        "activity_level": "Moderate",
-        "blood_glucose": 90.5,
-        "health_score": 75.3,
-        "nutritional_deficiencies": [
-            "Vitamin D",
-            "Iron"
-        ],
-        "allergies": [
-            "Peanuts",
+    "name": "Ahmad",
+    "age": 30,
+    "gender": "Male",
+    "activity_level": "Moderate",
+    "blood_glucose": 90,
+    "health_score": 85,
+    "nutritional_deficiencies": [
+        "Vitamin D",
+        "Iron"
+    ],
+    "allergies": [
+        "Peanuts"
+    ],
+    "body_metrics": {
+        "weight": 70,
+        "height": 175
+    },
+    "dietary_preferences": {
+        "vegetarian": false,
+        "vegan": false,
+        "gluten_free": false,
+        "dairy_free": false,
+        "specific_avoidances": [
             "Shellfish"
-        ],
-        "body_metrics": {
-            "weight": 75.5,
-            "height": 175,
-            "bmi": 24.6
-        },
-        "dietary_preferences": {
-            "vegetarian": false,
-            "vegan": false,
-            "gluten_free": true,
-            "dairy_free": false,
-            "specific_avoidances": [
-                "Processed Foods",
-                "Sugar"
-            ]
-        },
-        "health_conditions": [
-            {
-                "name": "Hypertension",
-                "severity": "Mild"
-            },
-            {
-                "name": "Diabetes",
-                "severity": "Moderate"
-            }
-        ],
-        "goals": [
-            {
-                "type": "Weight Loss",
-                "target": 5.0,
-                "duration": 30
-            },
-            {
-                "type": "Improve Cardio",
-                "target": 10.0,
-                "duration": 60
-            }
-        ],
-        "microbiome_data": {
-            "diversity_score": 8.5,
-            "gut_health_recommendations": [
-                "Increase fiber intake",
-                "Reduce red meat consumption"
-            ]
-        },
-        "lipid_profiles": {
-            "cholesterol": 180.0,
-            "hdl": 60.0,
-            "ldl": 100.0,
-            "triglycerides": 150.0
-        },
-        "environmental_factors": {
-            "location": "New York",
-            "climate": "Temperate",
-            "season": "Fall"
-        },
-        "meal_histories": [
-            {
-                "meal_id": 1,
-                "timestamp": "2024-09-07T12:30:00Z"
-            },
-            {
-                "meal_id": 2,
-                "timestamp": "2024-09-06T19:00:00Z"
-            }
-        ],
-        "recent_meals": [
-            {
-                "meal_id": 3,
-                "timestamp": "2024-09-07T18:00:00Z"
-            }
-        ],
-        "preferences": {
-            "preferred_cuisines": [
-                "Italian",
-                "Japanese"
-            ],
-            "meal_timings": [
-                "Breakfast",
-                "Lunch",
-                "Dinner"
-            ],
-            "favorite_ingredients": [
-                "Chicken",
-                "Broccoli",
-                "Garlic"
-            ]
+        ]
+    },
+    "health_conditions": [
+        {
+            "name": "Hypertension",
+            "severity": "Moderate"
         }
+    ],
+    "goals": [
+        {
+            "type": "Weight loss",
+            "target": 5,
+            "duration": 90
+        }
+    ],
+    "microbiome_data": {
+        "diversity_score": 75,
+        "gut_health_recommendations": [
+            "Increase fiber intake"
+        ]
+    },
+    "lipid_profile": {
+        "cholesterol": 180,
+        "hdl": 60,
+        "ldl": 100,
+        "triglycerides": 150
+    },
+    "environmental_factors": {
+        "location": "Urban",
+        "climate": "Temperate",
+        "season": "Fall"
+    },
+    "meal_history": [
+        {
+            "meal_id": 1,
+            "timestamp": "2024-09-28T12:00:00Z"
+        }
+    ],
+    "recent_meals": [
+        {
+            "meal_id": 2,
+            "timestamp": "2024-09-27T18:00:00Z"
+        }
+    ],
+    "preferences": {
+        "preferred_cuisines": [
+            "Italian",
+            "Asian"
+        ],
+        "meal_timings": [
+            "Lunch",
+            "Dinner"
+        ],
+        "favorite_ingredients": [
+            "Chicken",
+            "Broccoli"
+        ]
+    },
+    "requested_meal": {
+        "meal_category": 1
     }
+}
 ```
 
 #### Response:
@@ -826,181 +353,127 @@ Description: Update a specific user's health information by userId.
 ```json
 {
     "user_info": {
-        "id": 13,
-        "name": "John Doe",
-        "age": 30,
-        "gender": "Male",
+        "id": 2,
+        "name": "Jane Smith",
+        "age": 25,
+        "gender": "Female",
         "body_metrics": {
-            "user_id": 13,
-            "weight": 75.5,
-            "height": 1.75,
-            "bmi": 24.6
+            "user_id": 2,
+            "weight": 60,
+            "height": 165
         },
-        "activity_level": "Moderate",
+        "activity_level": "Active",
         "dietary_preferences": {
-            "user_id": 13,
-            "vegetarian": false,
+            "user_id": 2,
+            "vegetarian": true,
             "vegan": false,
             "gluten_free": true,
             "dairy_free": false,
             "specific_avoidances": [
-                "Processed Foods",
-                "Sugar"
+                "Processed sugar"
             ]
         },
         "health_conditions": [
             {
-                "user_id": 13,
-                "name": "Hypertension",
+                "user_id": 2,
+                "name": "Asthma",
                 "severity": "Mild"
-            },
-            {
-                "user_id": 13,
-                "name": "Diabetes",
-                "severity": "Moderate"
             }
         ],
-        "nutritional_deficiencies": [
-            "Vitamin D",
-            "Iron"
-        ],
-        "allergies": [
-            "Peanuts",
-            "Shellfish"
-        ],
-        "recent_meals": [
-            {
-                "id": 8,
-                "user_id": 13,
-                "meal_id": 3,
-                "timestamp": "2024-09-07T18:00:00Z"
-            }
-        ],
+        "nutritional_deficiencies": [],
+        "allergies": [],
+        "recent_meals": [],
         "goals": [
             {
-                "id": 19,
-                "user_id": 13,
-                "type": "Weight Loss",
-                "target": 5,
-                "duration": 30
-            },
-            {
-                "id": 20,
-                "user_id": 13,
-                "type": "Improve Cardio",
-                "target": 10,
+                "id": 2,
+                "user_id": 2,
+                "type": "Muscle gain",
+                "target": 3,
                 "duration": 60
             }
         ],
         "microbiome_data": {
-            "id": 10,
-            "user_id": 13,
-            "diversity_score": 8.5,
+            "user_id": 2,
+            "diversity_score": 80,
             "gut_health_recommendations": [
-                "Increase fiber intake",
-                "Reduce red meat consumption"
+                "Increase plant-based foods"
             ]
         },
-        "blood_glucose": 90.5,
+        "blood_glucose": 85.3,
         "lipid_profiles": {
-            "id": 10,
-            "user_id": 13,
-            "cholesterol": 180,
-            "hdl": 60,
-            "ldl": 100,
-            "triglycerides": 150
+            "user_id": 2,
+            "cholesterol": 200,
+            "hdl": 70,
+            "ldl": 120,
+            "triglycerides": 130
         },
         "environmental_factors": {
-            "id": 10,
-            "user_id": 13,
-            "location": "New York",
-            "climate": "Temperate",
-            "season": "Fall"
+            "user_id": 2,
+            "location": "Los Angeles",
+            "climate": "Mediterranean",
+            "season": "Summer"
         },
-        "meal_histories": [
-            {
-                "id": 7,
-                "user_id": 13,
-                "meal_id": 7,
-                "timestamp": "2024-09-07T12:30:00Z"
-            },
-            {
-                "id": 8,
-                "user_id": 13,
-                "meal_id": 12,
-                "timestamp": "2024-09-06T19:00:00Z"
-            }
-        ],
-        "health_score": 75.3,
+        "requested_meal": {
+            "user_id": 2,
+            "meal_category": 10
+        },
+        "meal_histories": [],
+        "health_score": 90,
         "preferences": {
-            "id": 0,
-            "user_id": 0,
-            "preferred_cuisines": null,
-            "meal_timings": null,
-            "favorite_ingredients": null
+            "user_id": 2,
+            "preferred_cuisines": [
+                "Mexican",
+                "Japanese"
+            ],
+            "meal_timings": [
+                "Breakfast",
+                "Dinner"
+            ],
+            "favorite_ingredients": [
+                "Avocado",
+                "Eggs"
+            ]
         }
     },
-    "recommendations": [
-        {
-            "meal": "Chicken Caesar Salad",
-            "score": 9.68,
-            "Tags": [
-                "High Protein",
-                "Low Carb"
-            ],
-            "nutritional_content": {
-                "fat": 22.8,
-                "carbs": 18.1,
-                "protein": 43.7,
-                "calories": 487
-            },
-            "health_scores": {
-                "weight_loss": 70,
-                "heart_health": 80,
-                "diabetes_friendly": 75
-            }
+    "recommendation": {
+        "meal": {
+            "id": 22,
+            "name": "Roasted Vegetable Quinoa",
+            "ingredients": [
+                {
+                    "name": "Quinoa",
+                    "amount": 100,
+                    "portion": "1/2 cup",
+                    "ounces": "3.53"
+                },
+                {
+                    "name": "Zucchini",
+                    "amount": 50,
+                    "portion": "1/2 cup",
+                    "ounces": "1.76"
+                },
+                {
+                    "name": "Bell Peppers",
+                    "amount": 50,
+                    "portion": "1/2 cup",
+                    "ounces": "1.76"
+                },
+                {
+                    "name": "Olive Oil",
+                    "amount": 15,
+                    "portion": "1 tbsp",
+                    "ounces": "0.53"
+                },
+                {
+                    "name": "Lemon Juice",
+                    "amount": 10,
+                    "portion": "1 tbsp",
+                    "ounces": "0.35"
+                }
+            ]
         },
-        {
-            "meal": "Grilled Chicken Salad",
-            "score": 9.68,
-            "Tags": [
-                "High Protein",
-                "Low Carb",
-                "Gluten-Free"
-            ],
-            "nutritional_content": {
-                "fat": 4.4,
-                "carbs": 8.4,
-                "protein": 34.1,
-                "calories": 212
-            },
-            "health_scores": {
-                "weight_loss": 90,
-                "heart_health": 85,
-                "diabetes_friendly": 90
-            }
-        },
-        {
-            "meal": "Mushroom Risotto",
-            "score": 9.68,
-            "Tags": [
-                "Vegetarian",
-                "Comfort Food",
-                "Rich"
-            ],
-            "nutritional_content": {
-                "fat": 25.3,
-                "carbs": 165.5,
-                "protein": 25.0,
-                "calories": 993
-            },
-            "health_scores": {
-                "weight_loss": 40,
-                "heart_health": 60,
-                "diabetes_friendly": 55
-            }
-        }
-    ]
+        "score": 18.18
+    }
 }
 ```
 
@@ -1026,156 +499,45 @@ Description: Add a new meal.
 
 ```json
 [
-    {
-        "name": "Chickpea Curry",
-        "ingredients": [
-            {
-                "name": "Chickpeas",
-                "amount": 200,
-                "unit": "g",
-                "nutritional": {
-                    "calories": 364,
-                    "protein": 19.0,
-                    "fat": 6.0,
-                    "carbs": 61.0
-                }
-            },
-            {
-                "name": "Coconut Milk",
-                "amount": 100,
-                "unit": "ml",
-                "nutritional": {
-                    "calories": 200,
-                    "protein": 2.0,
-                    "fat": 20.0,
-                    "carbs": 5.0
-                }
-            },
-            {
-                "name": "Onion",
-                "amount": 80,
-                "unit": "g",
-                "nutritional": {
-                    "calories": 32,
-                    "protein": 0.9,
-                    "fat": 0.1,
-                    "carbs": 7.6
-                }
-            },
-            {
-                "name": "Curry Powder",
-                "amount": 1,
-                "unit": "tbsp",
-                "nutritional": {
-                    "calories": 20,
-                    "protein": 1.0,
-                    "fat": 0.5,
-                    "carbs": 4.0
-                }
-            }
-        ],
-        "nutritional_content": {
-            "calories": 616,
-            "protein": 23.0,
-            "fat": 26.6,
-            "carbs": 77.6
-        },
-        "category": "Main Dish",
-        "meal_type": [
-            "Lunch",
-            "Dinner"
-        ],
-        "cuisine": "Indian",
-        "tags": [
-            "Vegan",
-            "High Protein",
-            "Gluten-Free"
-        ],
-        "health_scores": {
-            "heart_health": 80,
-            "diabetes_friendly": 75,
-            "weight_loss": 70
-        },
-        "preparation_time": 30,
-        "difficulty": "Medium",
-        "serving_size": 2,
-        "instructions": "Simmer chickpeas with coconut milk, onion, and curry powder. Serve with rice."
+  {
+    "name": "Grilled Chicken Salad",
+    "ingredients": [
+      {
+        "name": "Chicken Breast",
+        "amount": 150,
+        "portion": "1 cup"
+      },
+      {
+        "name": "Lettuce",
+        "amount": 50,
+        "portion": "2 cups"
+      },
+      {
+        "name": "Tomatoes",
+        "amount": 30,
+        "portion": "1/2 cup"
+      }
+    ],
+    "nutritional_content": {
+      "calories": 400,
+      "protein": 35,
+      "fat": 10,
+      "carbohydrates": 20
     },
-    {
-        "name": "Mushroom Risotto",
-        "ingredients": [
-            {
-                "name": "Arborio Rice",
-                "amount": 200,
-                "unit": "g",
-                "nutritional": {
-                    "calories": 720,
-                    "protein": 13.0,
-                    "fat": 3.0,
-                    "carbs": 158.0
-                }
-            },
-            {
-                "name": "Mushrooms",
-                "amount": 150,
-                "unit": "g",
-                "nutritional": {
-                    "calories": 33,
-                    "protein": 4.0,
-                    "fat": 0.3,
-                    "carbs": 6.5
-                }
-            },
-            {
-                "name": "Parmesan",
-                "amount": 30,
-                "unit": "g",
-                "nutritional": {
-                    "calories": 120,
-                    "protein": 8.0,
-                    "fat": 8.0,
-                    "carbs": 1.0
-                }
-            },
-            {
-                "name": "Olive Oil",
-                "amount": 1,
-                "unit": "tbsp",
-                "nutritional": {
-                    "calories": 120,
-                    "protein": 0,
-                    "fat": 14.0,
-                    "carbs": 0
-                }
-            }
-        ],
-        "nutritional_content": {
-            "calories": 993,
-            "protein": 25.0,
-            "fat": 25.3,
-            "carbs": 165.5
-        },
-        "category": "Main Dish",
-        "meal_type": [
-            "Lunch",
-            "Dinner"
-        ],
-        "cuisine": "Italian",
-        "tags": [
-            "Vegetarian",
-            "Comfort Food",
-            "Rich"
-        ],
-        "health_scores": {
-            "heart_health": 60,
-            "diabetes_friendly": 55,
-            "weight_loss": 40
-        },
-        "preparation_time": 40,
-        "difficulty": "Hard",
-        "serving_size": 3,
-        "instructions": "Cook rice with mushrooms and Parmesan, stirring constantly until creamy."
-    }
+    "meal_category_id": 10,
+    "meal_type_id": 2,
+    "cuisine": "American",
+    "tags": [
+      {
+        "id": 6,
+        "tag": "Low-Carb"
+      },
+      {
+        "id": 49,
+        "tag": "Salad"
+      }
+    ]
+  }
 ]
 ```
 
@@ -1191,156 +553,45 @@ Description: Retrieve all meals.
 
 ```json
 [
-    {
-        "name": "Chickpea Curry",
-        "ingredients": [
-            {
-                "name": "Chickpeas",
-                "amount": 200,
-                "unit": "g",
-                "nutritional": {
-                    "calories": 364,
-                    "protein": 19.0,
-                    "fat": 6.0,
-                    "carbs": 61.0
-                }
-            },
-            {
-                "name": "Coconut Milk",
-                "amount": 100,
-                "unit": "ml",
-                "nutritional": {
-                    "calories": 200,
-                    "protein": 2.0,
-                    "fat": 20.0,
-                    "carbs": 5.0
-                }
-            },
-            {
-                "name": "Onion",
-                "amount": 80,
-                "unit": "g",
-                "nutritional": {
-                    "calories": 32,
-                    "protein": 0.9,
-                    "fat": 0.1,
-                    "carbs": 7.6
-                }
-            },
-            {
-                "name": "Curry Powder",
-                "amount": 1,
-                "unit": "tbsp",
-                "nutritional": {
-                    "calories": 20,
-                    "protein": 1.0,
-                    "fat": 0.5,
-                    "carbs": 4.0
-                }
-            }
-        ],
-        "nutritional_content": {
-            "calories": 616,
-            "protein": 23.0,
-            "fat": 26.6,
-            "carbs": 77.6
-        },
-        "category": "Main Dish",
-        "meal_type": [
-            "Lunch",
-            "Dinner"
-        ],
-        "cuisine": "Indian",
-        "tags": [
-            "Vegan",
-            "High Protein",
-            "Gluten-Free"
-        ],
-        "health_scores": {
-            "heart_health": 80,
-            "diabetes_friendly": 75,
-            "weight_loss": 70
-        },
-        "preparation_time": 30,
-        "difficulty": "Medium",
-        "serving_size": 2,
-        "instructions": "Simmer chickpeas with coconut milk, onion, and curry powder. Serve with rice."
+  {
+    "name": "Grilled Chicken Salad",
+    "ingredients": [
+      {
+        "name": "Chicken Breast",
+        "amount": 150,
+        "portion": "1 cup"
+      },
+      {
+        "name": "Lettuce",
+        "amount": 50,
+        "portion": "2 cups"
+      },
+      {
+        "name": "Tomatoes",
+        "amount": 30,
+        "portion": "1/2 cup"
+      }
+    ],
+    "nutritional_content": {
+      "calories": 400,
+      "protein": 35,
+      "fat": 10,
+      "carbohydrates": 20
     },
-    {
-        "name": "Mushroom Risotto",
-        "ingredients": [
-            {
-                "name": "Arborio Rice",
-                "amount": 200,
-                "unit": "g",
-                "nutritional": {
-                    "calories": 720,
-                    "protein": 13.0,
-                    "fat": 3.0,
-                    "carbs": 158.0
-                }
-            },
-            {
-                "name": "Mushrooms",
-                "amount": 150,
-                "unit": "g",
-                "nutritional": {
-                    "calories": 33,
-                    "protein": 4.0,
-                    "fat": 0.3,
-                    "carbs": 6.5
-                }
-            },
-            {
-                "name": "Parmesan",
-                "amount": 30,
-                "unit": "g",
-                "nutritional": {
-                    "calories": 120,
-                    "protein": 8.0,
-                    "fat": 8.0,
-                    "carbs": 1.0
-                }
-            },
-            {
-                "name": "Olive Oil",
-                "amount": 1,
-                "unit": "tbsp",
-                "nutritional": {
-                    "calories": 120,
-                    "protein": 0,
-                    "fat": 14.0,
-                    "carbs": 0
-                }
-            }
-        ],
-        "nutritional_content": {
-            "calories": 993,
-            "protein": 25.0,
-            "fat": 25.3,
-            "carbs": 165.5
-        },
-        "category": "Main Dish",
-        "meal_type": [
-            "Lunch",
-            "Dinner"
-        ],
-        "cuisine": "Italian",
-        "tags": [
-            "Vegetarian",
-            "Comfort Food",
-            "Rich"
-        ],
-        "health_scores": {
-            "heart_health": 60,
-            "diabetes_friendly": 55,
-            "weight_loss": 40
-        },
-        "preparation_time": 40,
-        "difficulty": "Hard",
-        "serving_size": 3,
-        "instructions": "Cook rice with mushrooms and Parmesan, stirring constantly until creamy."
-    }
+    "meal_category_id": 10,
+    "meal_type_id": 2,
+    "cuisine": "American",
+    "tags": [
+      {
+        "id": 6,
+        "tag": "Low-Carb"
+      },
+      {
+        "id": 49,
+        "tag": "Salad"
+      }
+    ]
+  }
 ]
 ```
 
@@ -1354,18 +605,18 @@ Description: Retrieve meal options based on user preferences.
 [
     {
         "id": 5,
-        "name": "Lentil Soup",
-        "category": "Soup"
+        "name": "Lentil Soup"
+        
     },
     {
         "id": 4,
-        "name": "Quinoa Salad",
-        "category": "Salad"
+        "name": "Quinoa Salad"
+       
     },
     {
         "id": 3,
-        "name": "Vegetable Stir Fry",
-        "category": "Main Dish"
+        "name": "Vegetable Stir Fry"
+       
     }
 ]
 ```
@@ -1378,106 +629,58 @@ Description: Get a specific meal's information by mealId.
 
 ```json
 {
-    "id": 27,
-    "name": "Pasta alla Primavera",
+    "id": 47,
+    "name": "Grilled Chicken Salad",
     "ingredients": [
         {
-            "id": 95,
-            "meal_id": 27,
-            "name": "Pasta",
-            "amount": 200,
-            "unit": "g",
-            "nutritional": {
-                "fat": 1.5,
-                "carbs": 42.0,
-                "protein": 7.5,
-                "calories": 210
-            },
-            "percentage": 60
-        },
-        {
-            "id": 96,
-            "meal_id": 27,
-            "name": "Cherry Tomatoes",
+            "id": 215,
+            "meal_id": 47,
+            "name": "Chicken Breast",
             "amount": 150,
-            "unit": "g",
-            "nutritional": {
-                "fat": 0.3,
-                "carbs": 6.0,
-                "protein": 1.0,
-                "calories": 27
-            },
-            "percentage": 15
+            "portion": "1 cup"
         },
         {
-            "id": 97,
-            "meal_id": 27,
-            "name": "Zucchini",
-            "amount": 100,
-            "unit": "g",
-            "nutritional": {
-                "fat": 0.3,
-                "carbs": 3.1,
-                "protein": 1.2,
-                "calories": 17
-            },
-            "percentage": 10
+            "id": 216,
+            "meal_id": 47,
+            "name": "Lettuce",
+            "amount": 50,
+            "portion": "2 cups"
         },
         {
-            "id": 98,
-            "meal_id": 27,
-            "name": "Bell Peppers",
-            "amount": 80,
-            "unit": "g",
-            "nutritional": {
-                "fat": 0.2,
-                "carbs": 5.5,
-                "protein": 0.9,
-                "calories": 24
-            },
-            "percentage": 10
-        },
-        {
-            "id": 99,
-            "meal_id": 27,
-            "name": "Olive Oil",
-            "amount": 2,
-            "unit": "tbsp",
-            "nutritional": {
-                "fat": 27,
-                "carbs": 0,
-                "protein": 0,
-                "calories": 240
-            },
-            "percentage": 5
+            "id": 217,
+            "meal_id": 47,
+            "name": "Tomatoes",
+            "amount": 30,
+            "portion": "1/2 cup"
         }
     ],
     "nutritional_content": {
-        "fat": 29.3,
-        "carbs": 56.6,
-        "protein": 10.6,
-        "calories": 518
+        "fat": 10,
+        "protein": 35,
+        "calories": 400,
+        "carbohydrates": 20
     },
-    "category": "Pasta",
-    "meal_type": [
-        "Lunch",
-        "Dinner"
-    ],
-    "cuisine": "Italian",
+    "meal_category_id": 10,
+    "meal_category": {
+        "id": 10,
+        "category": "Salad"
+    },
+    "meal_type_id": 2,
+    "meal_type": {
+        "id": 2,
+        "type": "Lunch"
+    },
+    "cuisine": "American",
     "tags": [
-        "Vegetarian",
-        "Low Carb",
-        "Healthy"
-    ],
-    "health_scores": {
-        "weight_loss": 75,
-        "heart_health": 85,
-        "diabetes_friendly": 80
-    },
-    "preparation_time": 30,
-    "difficulty": "Easy",
-    "serving_size": 2,
-    "instructions": "Cook the pasta according to package instructions. Sauté cherry tomatoes, zucchini, and bell peppers in olive oil until tender. Toss with pasta and serve."
+        {
+            "id": 6,
+            "tag": "Low-Carb"
+        },
+        {
+            "id": 49,
+            "tag": "Salad"
+        }
+    ]
 }
 ```
 
@@ -1488,75 +691,42 @@ Description: Update a specific meal's information by mealId.
 #### Request Body:
 
 ```json
-{
-    "name": "Oatmeal",
-    "ingredients": [
-        {
-            "id": 45,
-            "meal_id": 12,
-            "name": "Oats",
-            "amount": 100,
-            "unit": "g",
-            "nutritional": {
-                "fat": 6.9,
-                "carbs": 66.3,
-                "protein": 16.9,
-                "calories": 389
+    {
+        "name": "Grilled Chicken Salad",
+        "ingredients": [
+            {
+                "name": "Chicken Breast",
+                "amount": 150,
+                "portion": "1 cup"
+            },
+            {
+                "name": "Lettuce",
+                "amount": 50,
+                "portion": "2 cups"
+            },
+            {
+                "name": "Tomatoes",
+                "amount": 30,
+                "portion": "1/2 cup"
             }
+        ],
+        "nutritional_content": {
+            "calories": 400,
+            "protein": 35,
+            "fat": 10,
+            "carbohydrates": 20
         },
-        {
-            "id": 46,
-            "meal_id": 12,
-            "name": "Milk",
-            "amount": 200,
-            "unit": "ml",
-            "nutritional": {
-                "fat": 4.5,
-                "carbs": 12.0,
-                "protein": 8.0,
-                "calories": 122
+        "meal_category_id": 10,
+        "meal_type_id": 1,
+        "cuisine": "American",
+        "tags": [
+            {
+                
+                "id": 22,
+                "tag": "Comfort Food"
             }
-        },
-        {
-            "id": 47,
-            "meal_id": 12,
-            "name": "Banana",
-            "amount": 80,
-            "unit": "g",
-            "nutritional": {
-                "fat": 0.2,
-                "carbs": 18.5,
-                "protein": 0.9,
-                "calories": 72
-            }
-        }
-    ],
-    "nutritional_content": {
-        "fat": 11.6,
-        "carbs": 96.8,
-        "protein": 25.8,
-        "calories": 583
-    },
-    "category": "Breakfast",
-    "meal_type": [
-        "Breakfast"
-    ],
-    "cuisine": "American",
-    "tags": [
-        "Vegetarian",
-        "High Fiber",
-        "Easy"
-    ],
-    "health_scores": {
-        "weight_loss": 75,
-        "heart_health": 90,
-        "diabetes_friendly": 80
-    },
-    "preparation_time": 10,
-    "difficulty": "Easy",
-    "serving_size": 1,
-    "instructions": "Cook oats in milk, top with banana slices. Serve warm."
-}
+        ]
+    }
 ```
 
 
