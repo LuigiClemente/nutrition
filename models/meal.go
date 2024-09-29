@@ -14,7 +14,7 @@ type Meal struct {
 	MealTypeID         uint           `json:"meal_type_id"`                                   // Foreign key for MealType
 	MealType           MealType       `gorm:"foreignKey:MealTypeID" json:"meal_type"`         // Relationship to MealType                     // diner, breackfast, snack, luanch
 	Cuisine            string         `json:"cuisine"`
-	MealTags           []MealTag      `json:"tags" gorm:"many2many:meal_tag_relationship;joinForeignKey:MealID;JoinReferences:TagID"`
+	MealTags           []MealTag      `json:"tags" gorm:"many2many:meal_tag_relationships;joinForeignKey:MealID;JoinReferences:TagID"`
 }
 
 type Ingredient struct {
@@ -46,8 +46,8 @@ type MealTag struct {
 }
 
 type MealTagRelationship struct {
-	MealID uint `gorm:"primaryKey"`
-	TagID  uint `gorm:"primaryKey"`
+	MealID uint `json:"meal_id" gorm:"primaryKey"`
+	TagID  uint `json:"tag_id" gorm:"primaryKey"`
 }
 
 type MealResponse struct {

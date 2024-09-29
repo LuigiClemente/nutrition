@@ -132,6 +132,30 @@ func (s *Service) PutMealMealId(mealId int, meal models.Meal) (*models.Meal, err
 		}
 	}
 
+	// Manage tags
+	// Delete all existing tags for the meal
+	if err := tx.Where("meal_id = ?", mealId).Delete(&models.MealTagRelationship{}).Error; err != nil {
+		tx.Rollback() // Rollback on error
+		return nil, err
+	}
+
+	// Insert new tags
+	var tagsToInsert []models.MealTagRelationship
+	for _, tag := range meal.MealTags {
+		// Create new tag relationship
+		tagsToInsert = append(tagsToInsert, models.MealTagRelationship{
+			MealID: uint(mealId),
+			TagID:  tag.ID, // Assuming tag.ID is the identifier for existing tags
+		})
+	}
+
+	if len(tagsToInsert) > 0 {
+		if err := tx.Create(&tagsToInsert).Error; err != nil {
+			tx.Rollback() // Rollback on error
+			return nil, err
+		}
+	}
+
 	// Commit the transaction
 	if err := tx.Commit().Error; err != nil {
 		return nil, err

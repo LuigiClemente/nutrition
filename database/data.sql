@@ -431,7 +431,8 @@ VALUES
 ('Barbecue'),
 ('Holiday'),
 ('Party Food'),
-('Finger Food');
+('Finger Food'),
+('Healthy');
 
 
 

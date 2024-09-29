@@ -138,7 +138,7 @@ CREATE INDEX idx_meals_meal_category_id ON meals(meal_category_id);
 CREATE INDEX idx_meals_meal_type_id ON meals(meal_type_id);
 
 -- Separate Table for Meal Tag Relationships
-CREATE TABLE meal_tag_relationship (
+CREATE TABLE meal_tag_relationships (
     meal_id INT REFERENCES meals(id) ON DELETE CASCADE,
     tag_id INT REFERENCES meal_tags(id) ON DELETE CASCADE,
     PRIMARY KEY(meal_id, tag_id)
