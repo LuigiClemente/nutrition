@@ -1,13 +1,9 @@
 package utils
 
 import (
-	"fmt"
 	"log"
 	"nutrition/database"
-	"nutrition/models"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 // ScheduleDeletion starts the deletion process once and schedules it to run every day at 12 PM.
@@ -16,7 +12,7 @@ func ScheduleDeletion() {
 	db := database.GetDatabaseInstance().DB
 
 	// Run deletion process immediately when the application starts
-	if err := deleteOldRecentMeals(db); err != nil {
+	if err := DeleteOldRecentMeals(db); err != nil {
 		log.Printf("Error during initial deletion: %v", err)
 	}
 
@@ -42,23 +38,9 @@ func ScheduleDeletion() {
 
 			// Execute the deletion process
 			log.Println("Running deletion process at 12 PM")
-			if err := deleteOldRecentMeals(db); err != nil {
+			if err := DeleteOldRecentMeals(db); err != nil {
 				log.Printf("Error during scheduled deletion: %v", err)
 			}
 		}
 	}()
-}
-
-// deleteOldRecentMeals deletes meal records older than 7 days from the recent meals table.
-func deleteOldRecentMeals(db *gorm.DB) error {
-	// Calculate the cutoff date (7 days ago from now)
-	cutoffDate := time.Now().AddDate(0, 0, -7)
-
-	// Perform the delete operation
-	if err := db.Where("timestamp < ?", cutoffDate).Delete(&models.RecentMeals{}).Error; err != nil {
-		return fmt.Errorf("failed to delete old recent meals: %w", err)
-	}
-
-	log.Println("Deleted old recent meals successfully")
-	return nil
 }

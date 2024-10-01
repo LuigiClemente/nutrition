@@ -2,15 +2,17 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"math"
 	"nutrition/models"
 	"reflect"
 	"strconv"
+	"time"
 
 	"gorm.io/datatypes"
+	"gorm.io/gorm"
 )
-
 
 // Normalize the score to a 0-100 scale.
 func normalizeScore(fitScore, maxPossibleScore float64) float64 {
@@ -68,4 +70,18 @@ func GetTopMeals(user models.User, meals []models.Meal, topN int) []models.Score
 		topN = len(mealsWithScores) // Handle the case where there are fewer meals than topN
 	}
 	return mealsWithScores[:topN]
+}
+
+// deleteOldRecentMeals deletes meal records older than 7 days from the recent meals table.
+func DeleteOldRecentMeals(db *gorm.DB) error {
+	// Calculate the cutoff date (7 days ago from now)
+	cutoffDate := time.Now().AddDate(0, 0, -7)
+
+	// Perform the delete operation
+	if err := db.Where("timestamp < ?", cutoffDate).Delete(&models.RecentMeals{}).Error; err != nil {
+		return fmt.Errorf("failed to delete old recent meals: %w", err)
+	}
+
+	log.Println("Deleted old recent meals successfully")
+	return nil
 }
