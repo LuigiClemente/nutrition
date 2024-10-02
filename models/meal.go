@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/lib/pq"
 	"gorm.io/datatypes"
 )
 
@@ -9,10 +10,10 @@ type Meal struct {
 	Name               string         `json:"name" binding:"required"`
 	Ingredients        []Ingredient   `json:"ingredients" gorm:"foreignKey:MealID"`
 	NutritionalContent datatypes.JSON `json:"nutritional_content"`
-	MealCategoryID     uint           `json:"meal_category_id"`                               // Foreign key for MealCategory
-	MealCategory       MealCategory   `gorm:"foreignKey:MealCategoryID" json:"meal_category"` // Relationship to MealCategory
-	MealTypeID         uint           `json:"meal_type_id"`                                   // Foreign key for MealType
-	MealType           MealType       `gorm:"foreignKey:MealTypeID" json:"meal_type"`         // Relationship to MealType                     // diner, breackfast, snack, luanch
+	Course             string         `json:"course"`
+	MeaTimings         pq.StringArray `gorm:"type:text[]" json:"meal_timings"` // diner, breackfast, snack, luanch
+	MealTypeID         uint           `json:"meal_type_id"`                    // Foreign key for MealType
+	MealType           MealType       `gorm:"foreignKey:MealTypeID" json:"meal_type"`
 	Cuisine            string         `json:"cuisine"`
 	MealTags           []MealTag      `json:"tags" gorm:"many2many:meal_tag_relationships;joinForeignKey:MealID;JoinReferences:TagID"`
 }
@@ -35,11 +36,6 @@ type MealType struct {
 	Type string `json:"type"`
 }
 
-type MealCategory struct {
-	ID       uint   `json:"id" gorm:"primaryKey;autoIncrement"`
-	Category string `json:"category"`
-}
-
 type MealTag struct {
 	ID  uint   `json:"id"`
 	Tag string `json:"tag"`
@@ -52,25 +48,26 @@ type MealTagRelationship struct {
 
 type MealResponse struct {
 	ID          uint                `json:"id"`
+	Course      string              `json:"course"`
 	Name        string              `json:"name" binding:"required"`
 	Ingredients []IngredientReponse `json:"ingredients" gorm:"foreignKey:MealID"`
 }
 
 type IngredientReponse struct {
 	Name    string  `json:"name"`
-	Amount  float64 `json:"amount"`  // Total amount used
+	Amount  float64 `json:"amount"`  // Total amount used in grams
 	Portion string  `json:"portion"` // Measurement unit
 	Ounces  string  `json:"ounces"`  // Measurement unit
 }
 
 type UserHealthInfoResponse struct {
-	User                   User        `json:"user_info"`
-	ScoreAndRecommendation Recommended `json:"recommendation"`
+	User                   User          `json:"user_info"`
+	ScoreAndRecommendation []Recommended `json:"recommendation"`
 }
 
 type MealForOption struct {
-	ID       uint   `json:"id"`
-	Name     string `json:"name"`
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
 }
 
 type Recommended struct {
