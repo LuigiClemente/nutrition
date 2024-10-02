@@ -1,4 +1,4 @@
-CREATE DATABASE nutrition;
+CREATE DATABASE nutrition_app;
 
 
 -- connect to database and create the tables
@@ -59,7 +59,8 @@ CREATE INDEX idx_health_conditions_user_id ON health_conditions(user_id);
 -- Last Requested Meal Category Table
 CREATE TABLE requested_meals (
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    meal_category INT,  
+    meal_type INT,  
+    number_of_course INT,  
     timestamp TIMESTAMP DEFAULT NOW(),  -- Automatically logs the request time
     PRIMARY KEY(user_id)
 );
@@ -108,13 +109,6 @@ CREATE TABLE meal_types (
     type VARCHAR(64) UNIQUE NOT NULL
 );
 
-
--- Meal Categories Table
-CREATE TABLE meal_categories (
-    id SERIAL PRIMARY KEY,
-    category VARCHAR(64) UNIQUE NOT NULL  -- Unique category name
-);
-
 -- Suggested Tags Table
 CREATE TABLE meal_tags (
     id SERIAL PRIMARY KEY,
@@ -126,16 +120,16 @@ CREATE TABLE meals (
     id SERIAL PRIMARY KEY,
     name VARCHAR(128) NOT NULL,
     nutritional_content JSONB,  -- JSONB for flexible nutritional data
-    meal_category_id INT REFERENCES meal_categories(id) ON DELETE SET NULL,  -- Foreign key to meal types
+    meal_timings TEXT[] DEFAULT '{}',  -- Default empty array
     meal_type_id INT REFERENCES meal_types(id) ON DELETE SET NULL,  -- Foreign key to meal types
+    course VARCHAR(7) CHECK (course IN ('Starter', 'Main', 'Dessert')),  -- Enum-like constraint,
     cuisine VARCHAR(64)
 );
 
--- Index on meal_category_id for faster lookups
-CREATE INDEX idx_meals_meal_category_id ON meals(meal_category_id);
-
 -- Index on meal_type_id for faster lookups
 CREATE INDEX idx_meals_meal_type_id ON meals(meal_type_id);
+
+CREATE INDEX idx_meals_course ON meals(course);
 
 -- Separate Table for Meal Tag Relationships
 CREATE TABLE meal_tag_relationships (
