@@ -60,7 +60,7 @@ CREATE INDEX idx_health_conditions_user_id ON health_conditions(user_id);
 CREATE TABLE requested_meals (
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     meal_type INT,  
-    number_of_course INT,  
+    number_of_courses INT,  
     timestamp TIMESTAMP DEFAULT NOW(),  -- Automatically logs the request time
     PRIMARY KEY(user_id)
 );
@@ -122,7 +122,7 @@ CREATE TABLE meals (
     nutritional_content JSONB,  -- JSONB for flexible nutritional data
     meal_timings TEXT[] DEFAULT '{}',  -- Default empty array
     meal_type_id INT REFERENCES meal_types(id) ON DELETE SET NULL,  -- Foreign key to meal types
-    course VARCHAR(7) CHECK (course IN ('Starter', 'Main', 'Dessert')),  -- Enum-like constraint,
+    course VARCHAR(8) CHECK (course IN ('Starter', 'Main', 'Dessert')),  -- Enum-like constraint,
     cuisine VARCHAR(64)
 );
 
@@ -154,8 +154,6 @@ CREATE TABLE recent_meals (
     timestamp TIMESTAMP DEFAULT NOW()
 );
 
--- Index for user_id and meal_id for faster lookups
-CREATE INDEX idx_meal_logs_user_id_meal_id ON meal_logs(user_id, meal_id);
 
 -- Ingredients Table
 CREATE TABLE ingredients (
@@ -163,7 +161,7 @@ CREATE TABLE ingredients (
     meal_id INT REFERENCES meals(id) ON DELETE CASCADE,  -- Foreign key linking to the meal
     name VARCHAR(128) NOT NULL,  -- Name of the ingredient
     amount DECIMAL(10, 2),  -- Amount of the ingredient (e.g., 150) in grams, using DECIMAL for precision
-    portion VARCHAR(64),  -- Portion description
+    portion VARCHAR(64)  -- Portion description
 );
 
 -- Index on meal_id for faster lookups
