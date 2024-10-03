@@ -160,7 +160,8 @@ CREATE TABLE ingredients (
     id SERIAL PRIMARY KEY,  -- Auto-incrementing ID for the ingredient
     meal_id INT REFERENCES meals(id) ON DELETE CASCADE,  -- Foreign key linking to the meal
     name VARCHAR(128) NOT NULL,  -- Name of the ingredient
-    amount DECIMAL(10, 2),  -- Amount of the ingredient (e.g., 150) in grams, using DECIMAL for precision
+    amount DECIMAL(10, 2),  -- Amount of the ingredient (e.g., 150) 
+    unit VARCHAR(8), 
     portion VARCHAR(64)  -- Portion description
 );
 

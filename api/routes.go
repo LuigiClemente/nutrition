@@ -35,7 +35,7 @@ func SetupRouter() *gin.Engine {
 		mealRoutes.GET("/", mealHandler.GetMeal)
 		mealRoutes.GET("/options", mealHandler.GetMealForOption)
 		mealRoutes.GET("/:mealId", mealHandler.GetMealMealId)
-		mealRoutes.GET("/categories", mealHandler.GetMealCategories)
+		mealRoutes.GET("/types", mealHandler.GetMealTypes)
 		mealRoutes.PUT("/:mealId", mealHandler.PutMealMealId)
 		mealRoutes.DELETE("/:mealId", mealHandler.DeleteMealMealId)
 	}

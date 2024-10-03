@@ -22,8 +22,9 @@ type Ingredient struct {
 	ID      uint    `json:"id" gorm:"primaryKey;autoIncrement"`
 	MealID  uint    `json:"meal_id"`
 	Name    string  `json:"name"`
-	Amount  float64 `json:"amount"` // Total amount used in grams
-	Portion string  `json:"portion"`
+	Amount  float64 `json:"amount"`  // Total amount used
+	Unit    string  `json:"unit"`    // Measurement unit
+	Portion string  `json:"portion"` // Measurement unit (e.g. "2 tbsp", "1/2 cup")
 }
 
 type ScoredMeal struct {
@@ -47,22 +48,24 @@ type MealTagRelationship struct {
 }
 
 type MealResponse struct {
-	ID          uint                `json:"id"`
-	Course      string              `json:"course"`
-	Name        string              `json:"name" binding:"required"`
-	Ingredients []IngredientReponse `json:"ingredients" gorm:"foreignKey:MealID"`
+	ID          uint                 `json:"meal_id"`
+	Course      string               `json:"course"`
+	Name        string               `json:"meal_name" binding:"required"`
+	Ingredients []IngredientResponse `json:"ingredients" gorm:"foreignKey:MealID"`
+	Score       float64              `json:"score"` // Score for this meal
 }
 
-type IngredientReponse struct {
+type IngredientResponse struct {
 	Name    string  `json:"name"`
-	Amount  float64 `json:"amount"`  // Total amount used in grams
+	Amount  float64 `json:"amount"`  // Total amount used
+	Unit    string  `json:"unit"`    // Measurement unit
 	Portion string  `json:"portion"` // Measurement unit
 	Ounces  string  `json:"ounces"`  // Measurement unit
 }
 
 type UserHealthInfoResponse struct {
-	User                   User          `json:"user_info"`
-	ScoreAndRecommendation []Recommended `json:"recommendation"`
+	User                   User             `json:"user_info"`
+	ScoreAndRecommendation []Recommendation `json:"recommendations"`
 }
 
 type MealForOption struct {
@@ -70,7 +73,8 @@ type MealForOption struct {
 	Name string `json:"name"`
 }
 
-type Recommended struct {
-	Meal  MealResponse `json:"meal"`
-	Score float64      `json:"score"`
+type Recommendation struct {
+	Combination string         `json:"combination"` // One Course, Two Courses, etc.
+	Courses     []MealResponse `json:"courses"`     // List of courses in this recommendation
+
 }

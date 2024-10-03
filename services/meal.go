@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"nutrition/models"
 )
 
@@ -14,29 +15,68 @@ func (s *Service) PostMeals(meals []models.Meal) (*[]models.Meal, error) {
 
 func (s *Service) GetMeal() (*[]models.Meal, error) {
 	var meals []models.Meal
-	if err := s.db.Preload("MealCategory").Preload("MealType").Preload("MealTags").Preload("Ingredients").Order("id DESC").Find(&meals).Error; err != nil {
+	if err := s.db.Preload("MealType").
+		Preload("MealTags").
+		Preload("Ingredients").
+		Order("id DESC").Find(&meals).Error; err != nil {
 		return nil, err
 	}
 	return &meals, nil
 }
 
-func (s *Service) GetMealsByCategory(category int) (*[]models.Meal, error) {
+func (s *Service) GetMealsByType(typeId int) (*[]models.Meal, error) {
 	var meals []models.Meal
-	if err := s.db.Where("meal_category_id = ?", category).Preload("MealCategory").Preload("MealType").Preload("MealTags").Preload("Ingredients").Order("id DESC").Find(&meals).Error; err != nil {
+	if err := s.db.Where("meal_type_id = ?", typeId).
+		Preload("MealType").
+		Preload("MealTags").
+		Preload("Ingredients").Order("id DESC").Find(&meals).Error; err != nil {
 		return nil, err
 	}
 
 	return &meals, nil
 }
 
-func (s *Service) GetMealCategories() (*[]models.MealCategory, error) {
-	var categories []models.MealCategory
-	if err := s.db.
-		Order("category ASC").
-		Find(&categories).Error; err != nil {
+func (s *Service) GetMealsByTypeAndCourse(typeId, numberOfCourses int) (*[]models.Meal, error) {
+	var meals []models.Meal
+	var courses []string
+
+	// Determine which courses to filter by based on the number of courses
+	switch numberOfCourses {
+	case 1:
+		courses = []string{"Starter"}
+	case 2:
+		// You could have combinations of courses for two courses
+		courses = []string{"Starter", "Main", "Dessert"} // or {"Starter", "Dessert"}
+	case 3:
+		courses = []string{"Starter", "Main", "Dessert"}
+	default:
+		return nil, fmt.Errorf("invalid number of courses: %d", numberOfCourses)
+	}
+
+	// Adjust the query to handle multiple courses
+	query := s.db.Where("meal_type_id = ? AND course IN ?", typeId, courses)
+
+	// Only preload related models if needed
+	query = query.Preload("MealType").
+		Preload("MealTags").
+		Preload("Ingredients")
+
+	// Add pagination and sorting
+	if err := query.Order("id DESC").Find(&meals).Error; err != nil {
 		return nil, err
 	}
-	return &categories, nil
+
+	return &meals, nil
+}
+
+func (s *Service) GetMealTypes() (*[]models.MealType, error) {
+	var types []models.MealType
+	if err := s.db.
+		Order("type ASC").
+		Find(&types).Error; err != nil {
+		return nil, err
+	}
+	return &types, nil
 }
 
 func (s *Service) GetMealForOption() (*[]models.MealForOption, error) {
@@ -49,7 +89,10 @@ func (s *Service) GetMealForOption() (*[]models.MealForOption, error) {
 
 func (s *Service) GetMealMealId(id int) (*models.Meal, error) {
 	var meal models.Meal
-	if err := s.db.Where("id = ?", id).Preload("MealCategory").Preload("MealType").Preload("Ingredients").Preload("MealTags").First(&meal).Error; err != nil {
+	if err := s.db.Where("id = ?", id).
+		Preload("MealType").
+		Preload("Ingredients").
+		Preload("MealTags").First(&meal).Error; err != nil {
 		return nil, err
 	}
 
@@ -91,6 +134,7 @@ func (s *Service) PutMealMealId(mealId int, meal models.Meal) (*models.Meal, err
 			// Check if there's a change before updating
 			if newIngredient.Name != existingIngredient.Name ||
 				newIngredient.Amount != existingIngredient.Amount ||
+				newIngredient.Unit != existingIngredient.Unit ||
 				newIngredient.Portion != existingIngredient.Portion {
 				ingredientsToUpdate = append(ingredientsToUpdate, newIngredient)
 			}

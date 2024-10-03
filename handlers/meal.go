@@ -28,9 +28,9 @@ func (h *Handler) GetMealForOption(c *gin.Context) {
 	c.JSON(http.StatusOK, items)
 }
 
-// GetMealCategories returns all Meal for listing in options value
-func (h *Handler) GetMealCategories(c *gin.Context) {
-	categories, err := h.service.GetMealCategories()
+// GetMealTypes returns all Meal for listing in options value
+func (h *Handler) GetMealTypes(c *gin.Context) {
+	categories, err := h.service.GetMealTypes()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

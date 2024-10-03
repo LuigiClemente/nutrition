@@ -11,13 +11,13 @@ import (
 )
 
 const (
-	/* 
-	MaxAgeGenderScore           = 20.0
-	MaxRecentConsumptionPenalty = 10.0
-	MaxEnvironmentalAdaptability = 15.0
-	MaxMicrobiomeCompatibility  = 10.0
-	MaxDietaryMatch             = 25.0
-	MaxHealthGoalsAlignment     = 30.0
+	/*
+		MaxAgeGenderScore           = 20.0
+		MaxRecentConsumptionPenalty = 10.0
+		MaxEnvironmentalAdaptability = 15.0
+		MaxMicrobiomeCompatibility  = 10.0
+		MaxDietaryMatch             = 25.0
+		MaxHealthGoalsAlignment     = 30.0
 	*/
 	maxTotalScore = 110.0
 )
@@ -27,7 +27,6 @@ func calculateMealScore(user models.User, meals []models.Meal) []models.ScoredMe
 	var wg sync.WaitGroup
 	mealsWithScores := make([]models.ScoredMeal, len(meals))
 	userBMI := calculateBMI(user.BodyMetrics.Height, user.BodyMetrics.Weight)
-	
 
 	// Use a WaitGroup to score meals concurrently
 	for i, meal := range meals {
@@ -37,7 +36,6 @@ func calculateMealScore(user models.User, meals []models.Meal) []models.ScoredMe
 
 			fitScore := 0.0
 			nutritionalContent := map[string]float64{}
-
 			// Unmarshal JSON concurrently
 			if err := json.Unmarshal(meal.NutritionalContent, &nutritionalContent); err != nil {
 				handleError(fmt.Errorf("error unmarshaling nutritional content for meal %d: %w", meal.ID, err))
@@ -54,6 +52,7 @@ func calculateMealScore(user models.User, meals []models.Meal) []models.ScoredMe
 
 			// Normalize the score
 			normalizedScore := normalizeScore(fitScore, maxTotalScore)
+
 			mealsWithScores[i] = models.ScoredMeal{Meal: meal, Score: normalizedScore}
 		}(i, meal)
 	}
@@ -90,6 +89,12 @@ func calculateDietaryMatch(user models.User, meal models.Meal) float64 {
 	}
 
 	return score
+}
+
+// Helper function to get a value from the nutritionalContent map in a case-insensitive way
+func getNutritionalValue(nutritionalContent map[string]float64, key string) (float64, bool) {
+	value, ok := nutritionalContent[strings.ToLower(key)]
+	return value, ok
 }
 
 // calculateHealthGoalsAlignment scores meals based on how well they align with user's health goals.
@@ -433,6 +438,7 @@ func calculateAgeGenderScore(user models.User, nutritionalContent map[string]flo
 	}
 
 	// Gender-based scoring
+	// Gender-based scoring
 	switch user.Gender {
 	case "Male":
 		if nutritionalContent["Protein"] >= 25.0 {
@@ -448,6 +454,20 @@ func calculateAgeGenderScore(user models.User, nutritionalContent map[string]flo
 		if nutritionalContent["Calcium"] >= 1000.0 {
 			score += 5.0
 		}
+
+	case "Other":
+		// Implement scoring criteria for "Other" gender
+		if nutritionalContent["Iron"] >= 15.0 { // Example criteria
+			score += 10.0
+		}
+		if nutritionalContent["Calcium"] >= 800.0 { // Example criteria
+			score += 5.0
+		}
+		if nutritionalContent["Vitamin D"] >= 20.0 { // Example criteria for general health
+			score += 10.0
+		}
+	default:
+		handleError(fmt.Errorf("unknown gender type: %s", user.Gender))
 	}
 
 	return score

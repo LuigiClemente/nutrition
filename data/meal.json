@@ -5,6 +5,7 @@
       {
         "name": "Chicken Breast",
         "amount": 150,
+        "unit": "grams",
         "portion": "1 cup"
       },
       {

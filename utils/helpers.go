@@ -72,6 +72,27 @@ func GetTopMeals(user models.User, meals []models.Meal, topN int) []models.Score
 	return mealsWithScores[:topN]
 }
 
+
+// GenerateCourseCombinations generates course combinations based on the number of courses
+func GenerateCourseCombinations(courseNames []string, numberOfCourses int) [][]string {
+	var combinations [][]string
+
+	switch numberOfCourses {
+	case 1:
+		for _, course := range courseNames {
+			combinations = append(combinations, []string{course}) // Single course: e.g., [Starter]
+		}
+	case 2:
+		combinations = append(combinations, []string{courseNames[0], courseNames[1]}) // [Starter + Main]
+		combinations = append(combinations, []string{courseNames[0], courseNames[2]}) // [Starter + Dessert]
+		combinations = append(combinations, []string{courseNames[1], courseNames[2]}) // [Main + Dessert]
+	case 3:
+		combinations = append(combinations, []string{courseNames[0], courseNames[1], courseNames[2]}) // [Starter + Main + Dessert]
+	}
+	
+	return combinations
+}
+
 // deleteOldRecentMeals deletes meal records older than 7 days from the recent meals table.
 func DeleteOldRecentMeals(db *gorm.DB) error {
 	// Calculate the cutoff date (7 days ago from now)

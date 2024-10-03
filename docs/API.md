@@ -755,20 +755,20 @@ Description: Delete a specific meal by mealId
    - "Improved mental clarity"
 
 ### Nutritional and Health-related Keys:
- - "calories"
- - "sugar"
- - "fiber"
- - "protein"
- - "fat"
- - "cholesterol"
- - "sodium"
- - "carbs"
- - "antioxidants"
- - "calcium"
- - "vitamin A"
- - "vitamin C"
- - "healthy fats"
- - "omega-3"
+ - "Calories"
+ - "Sugar"
+ - "Fiber"
+ - "Protein"
+ - "Fat"
+ - "Cholesterol"
+ - "Sodium"
+ - "Carbs"
+ - "Antioxidants"
+ - "Calcium"
+ - "Vitamin A"
+ - "Vitamin C"
+ - "Healthy fats"
+ - "Omega-3"
 
 
 
@@ -821,3 +821,13 @@ Cuisine Tags: These cover various cuisines, such as Mediterranean, Italian, Mexi
 Cooking Methods: Tags like Grilled, Baked, Fried, Slow-Cooked, Roasted, and Steamed indicate the preparation method.
 Meal Categories: Tags such as Breakfast, Lunch, Dinner, Appetizer, Main Course, and Dessert categorize the type of meal.
 Miscellaneous Tags: Tags like Kid-Friendly, Quick & Easy, Budget-Friendly, Comfort Food, Party Food, and Finger Food help with specific user preferences.
+
+
+# Meal Types
+
+ - Breakfast
+ - Lunch
+ - Dinner
+ - Snack
+ - Brunch
+ - Supper

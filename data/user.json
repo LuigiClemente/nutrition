@@ -82,6 +82,7 @@
         ]
     },
     "requested_meal": {
-        "meal_category": 1
+        "meal_type": 3,
+        "number_of_courses": 1
     }
 }

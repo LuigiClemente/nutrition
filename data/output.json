@@ -1,0 +1,203 @@
+{
+    "recommendations": [
+        {
+            "combination": "One Course",
+            "courses": [
+                {
+                    "id": 14,
+                    "name": "Caprese Salad",
+                    "course": "Starter",
+                    "ingredients": [
+                        {
+                            "name": "Tomato",
+                            "amount": 100,
+                            "unit": "grams",
+                            "portion": "1/2 cup"
+                        },
+                        {
+                            "name": "Fresh Mozzarella",
+                            "amount": 100,
+                            "portion": "1/2 cup"
+                        },
+                        {
+                            "name": "Basil",
+                            "amount": 10,
+                            "portion": "1 tbsp"
+                        },
+                        {
+                            "name": "Olive Oil",
+                            "amount": 1,
+                            "portion": "2 tbsp"
+                        },
+                        {
+                            "name": "Balsamic Vinegar",
+                            "amount": 1,
+                            "portion": "1 tbsp"
+                        }
+                    ],
+                    "score": 0
+                }
+            ]
+        },
+        {
+            "combination": "Two Courses",
+            "courses": [
+                {
+                    "id": 14,
+                    "name": "Caprese Salad",
+                    "course": "Starter",
+                    "ingredients": [
+                        {
+                            "name": "Tomato",
+                            "amount": 100,
+                            "portion": "1/2 cup"
+                        },
+                        {
+                            "name": "Fresh Mozzarella",
+                            "amount": 100,
+                            "portion": "1/2 cup"
+                        },
+                        {
+                            "name": "Basil",
+                            "amount": 10,
+                            "portion": "1 tbsp"
+                        },
+                        {
+                            "name": "Olive Oil",
+                            "amount": 1,
+                            "portion": "2 tbsp"
+                        },
+                        {
+                            "name": "Balsamic Vinegar",
+                            "amount": 1,
+                            "portion": "1 tbsp"
+                        }
+                    ],
+                    "score": 0
+                },
+                {
+                    "id": 1,
+                    "name": "Grilled Chicken Salad",
+                    "course": "Main",
+                    "ingredients": [
+                        {
+                            "name": "Chicken Breast",
+                            "amount": 150,
+                            "portion": "2 pcs"
+                        },
+                        {
+                            "name": "Mixed Greens",
+                            "amount": 100,
+                            "portion": "1 cup"
+                        },
+                        {
+                            "name": "Olive Oil",
+                            "amount": 10,
+                            "portion": "2 tbsp"
+                        },
+                        {
+                            "name": "Balsamic Vinegar",
+                            "amount": 5,
+                            "portion": "1 tbsp"
+                        }
+                    ],
+                    "score": 9.09
+                }
+            ]
+        },
+        {
+            "combination": "Three Courses",
+            "courses": [
+                {
+                    "id": 14,
+                    "name": "Caprese Salad",
+                    "course": "Starter",
+                    "ingredients": [
+                        {
+                            "name": "Tomato",
+                            "amount": 100,
+                            "portion": "1/2 cup"
+                        },
+                        {
+                            "name": "Fresh Mozzarella",
+                            "amount": 100,
+                            "portion": "1/2 cup"
+                        },
+                        {
+                            "name": "Basil",
+                            "amount": 10,
+                            "portion": "1 tbsp"
+                        },
+                        {
+                            "name": "Olive Oil",
+                            "amount": 1,
+                            "portion": "2 tbsp"
+                        },
+                        {
+                            "name": "Balsamic Vinegar",
+                            "amount": 1,
+                            "portion": "1 tbsp"
+                        }
+                    ],
+                    "score": 0
+                },
+                {
+                    "id": 1,
+                    "name": "Grilled Chicken Salad",
+                    "course": "Main",
+                    "ingredients": [
+                        {
+                            "name": "Chicken Breast",
+                            "amount": 150,
+                            "portion": "2 pcs"
+                        },
+                        {
+                            "name": "Mixed Greens",
+                            "amount": 100,
+                            "portion": "1 cup"
+                        },
+                        {
+                            "name": "Olive Oil",
+                            "amount": 10,
+                            "portion": "2 tbsp"
+                        },
+                        {
+                            "name": "Balsamic Vinegar",
+                            "amount": 5,
+                            "portion": "1 tbsp"
+                        }
+                    ],
+                    "score": 9.09
+                },
+                {
+                    "id": 3,
+                    "name": "Fruit Salad",
+                    "course": "Dessert",
+                    "ingredients": [
+                        {
+                            "name": "Strawberries",
+                            "amount": 100,
+                            "portion": "1/2 cup"
+                        },
+                        {
+                            "name": "Blueberries",
+                            "amount": 50,
+                            "portion": "1/4 cup"
+                        },
+                        {
+                            "name": "Greek Yogurt",
+                            "amount": 100,
+                            "portion": "1/2 cup"
+                        },
+                        {
+                            "name": "Honey",
+                            "amount": 1,
+                            "portion": "1 tbsp"
+                        }
+                    ],
+                    "score": 8.75
+                }
+            ]
+        }
+    ]
+}
