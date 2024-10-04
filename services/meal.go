@@ -36,23 +36,21 @@ func (s *Service) GetMealsByType(typeId int) (*[]models.Meal, error) {
 	return &meals, nil
 }
 
-func (s *Service) GetMealsByTypeAndCourse(typeId, numberOfCourses int) (*[]models.Meal, error) {
+func (s *Service) GetMealsByTypeAndCourse(typeId, numberOfStarter, numberOfMain, numberOfDessert int) (*[]models.Meal, error) {
 	var meals []models.Meal
 	var courses []string
 
-	// Determine which courses to filter by based on the number of courses
-	switch numberOfCourses {
-	case 1:
-		courses = []string{"Starter"}
-	case 2:
-		// You could have combinations of courses for two courses
-		courses = []string{"Starter", "Main", "Dessert"} // or {"Starter", "Dessert"}
-	case 3:
-		courses = []string{"Starter", "Main", "Dessert"}
-	default:
-		return nil, fmt.Errorf("invalid number of courses: %d", numberOfCourses)
+	if numberOfStarter > 0 {
+		courses = append(courses, "Starter")
+	}
+	if numberOfMain > 0 {
+		courses = append(courses, "Main")
+	}
+	if numberOfDessert > 0 {
+		courses = append(courses, "Dessert")
 	}
 
+	fmt.Println("number of dessert: ", numberOfDessert)
 	// Adjust the query to handle multiple courses
 	query := s.db.Where("meal_type_id = ? AND course IN ?", typeId, courses)
 

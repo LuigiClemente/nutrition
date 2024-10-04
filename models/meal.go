@@ -28,7 +28,7 @@ type Ingredient struct {
 }
 
 type ScoredMeal struct {
-	Meal  Meal    `json:"meal" gorm:"foreignKey:MealID"`
+	Meal  *Meal    `json:"meal" gorm:"foreignKey:MealID"`
 	Score float64 `json:"score"`
 }
 
@@ -78,3 +78,4 @@ type Recommendation struct {
 	Courses     []MealResponse `json:"courses"`     // List of courses in this recommendation
 
 }
+

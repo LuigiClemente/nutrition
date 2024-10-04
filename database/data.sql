@@ -51,17 +51,17 @@ INSERT INTO health_conditions (user_id, name, severity) VALUES
 (10, 'Peanut Allergy', 'Severe');
 
 -- Requested Meals for Users
-INSERT INTO requested_meals (user_id, meal_type, number_of_courses) VALUES
-(1, 2, 3),
-(2, 1, 2),
-(3, 3, 1),
-(4, 2, 2),
-(5, 1, 3),
-(6, 2, 2),
-(7, 3, 1),
-(8, 1, 3),
-(9, 2, 2),
-(10, 3, 1);
+INSERT INTO requested_meals (user_id, meal_type, number_of_starter, number_of_main, number_of_dessert) VALUES
+(1, 2, 1, 1, 2),
+(2, 1, 1, 1, 2),
+(3, 3, 1, 1, 2),
+(4, 2, 1, 1, 2),
+(5, 1, 1, 1, 2),
+(6, 2, 1, 1, 2),
+(7, 3, 1, 1, 2),
+(8, 1, 1, 1, 2),
+(9, 2, 1, 1, 2),
+(10, 3, 1, 2, 1);
 
 -- Goals for Users
 INSERT INTO goals (user_id, type, target, duration) VALUES
@@ -238,3 +238,54 @@ INSERT INTO ingredients (meal_id, name, amount, unit, portion) VALUES
 INSERT INTO meal_tag_relationships (meal_id, tag_id) VALUES
 (11, 1),  -- Bruschetta, Healthy
 (12, 1);  -- Stuffed Mushrooms, Healthy
+
+
+
+-- Insert into meal_types for Dessert
+INSERT INTO meal_types (type) VALUES ('Dessert');
+
+-- Insert some dessert meals into the meals table
+INSERT INTO meals (name, nutritional_content, meal_timings, meal_type_id, course, cuisine)
+VALUES 
+    ('Chocolate Mousse', '{"Calories": 250, "Protein": 4, "Fat": 20, "Carbohydrates": 22}', 
+        ARRAY['Evening'], 1, 'Dessert', 'French'),
+    
+    ('Fruit Salad', '{"Calories": 120, "Protein": 2, "Fat": 0.5, "Carbohydrates": 30}', 
+        ARRAY['Afternoon'], 1, 'Dessert', 'Global'),
+    
+    ('Cheesecake', '{"Calories": 300, "Protein": 5, "Fat": 22, "Carbohydrates": 25}', 
+        ARRAY['Evening'], 1, 'Dessert', 'American'),
+
+    ('Apple Pie', '{"Calories": 240, "Protein": 3, "Fat": 10, "Carbohydrates": 36}', 
+        ARRAY['Evening'], 1, 'Dessert', 'American'),
+
+    ('Tiramisu', '{"Calories": 320, "Protein": 6, "Fat": 15, "Carbohydrates": 40}', 
+        ARRAY['Evening'], 1, 'Dessert', 'Italian');
+
+-- Optionally, you can also insert ingredient details for the desserts
+INSERT INTO ingredients (meal_id, name, amount, unit, portion)
+VALUES 
+    (13, 'Dark Chocolate', 200, 'grams', '4 pcs'),
+    (13, 'Eggs', 3, 'pieces', '3 pcs'),
+    (14, 'Mixed Fruits', 300, 'grams', '1/2'),
+    (15, 'Cream Cheese', 250, 'grams', '2 pcs'),
+    (16, 'Apples', 4, 'pieces', 'Sliced'),
+    (17, 'Mascarpone Cheese', 250, 'grams', '1 pcs'),
+    (17, 'Ladyfingers', 200, 'grams', '2');
+
+-- Insert meal tag relationships for the dessert meals
+INSERT INTO meal_tag_relationships (meal_id, tag_id)
+VALUES 
+    (13, 5),  -- Chocolate Mousse - Dessert
+    (13, 1),  -- Chocolate Mousse - Healthy (optional)
+    (14, 5),  -- Fruit Salad - Dessert
+    (14, 1),  -- Fruit Salad - Healthy
+    (14, 2),  -- Fruit Salad - Vegan
+    (15, 5),  -- Cheesecake - Dessert
+    (15, 1),  -- Cheesecake - Healthy (optional)
+    (15, 8),  -- Cheesecake - Low Calorie (optional)
+    (16, 5),  -- Apple Pie - Dessert
+    (16, 1),  -- Apple Pie - Healthy (optional)
+    (17, 5),  -- Tiramisu - Dessert
+    (17, 1),  -- Tiramisu - Healthy (optional)
+    (17, 7);  -- Tiramisu - Low Carb

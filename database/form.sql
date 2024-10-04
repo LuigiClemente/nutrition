@@ -60,7 +60,9 @@ CREATE INDEX idx_health_conditions_user_id ON health_conditions(user_id);
 CREATE TABLE requested_meals (
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     meal_type INT,  
-    number_of_courses INT,  
+    number_of_starter INT,  
+    number_of_main INT,  
+    number_of_dessert  INT,  
     timestamp TIMESTAMP DEFAULT NOW(),  -- Automatically logs the request time
     PRIMARY KEY(user_id)
 );

@@ -7,6 +7,7 @@ import (
 	"math"
 	"nutrition/models"
 	"reflect"
+	"sort"
 	"strconv"
 	"time"
 
@@ -33,19 +34,7 @@ func CompareJSONFields(a, b datatypes.JSON) bool {
 	return reflect.DeepEqual(aMap, bMap)
 }
 
-// Helper function to determine the course type based on the number of courses
-func GetCourseType(numCourses int) string {
-	switch numCourses {
-	case 1:
-		return "single-course"
-	case 2:
-		return "2-course"
-	case 3:
-		return "3-course"
-	default:
-		return "multi-course" // For any other number of courses
-	}
-}
+
 
 func GramsToOunces(grams float64) float64 {
 	ounces := grams / 28.35
@@ -60,37 +49,52 @@ func handleError(err error) {
 	log.Printf("Error: %v", err)
 }
 
-// GetTopMeals recommends the top N meals based on their calculated scores.
-func GetTopMeals(user models.User, meals []models.Meal, topN int) []models.ScoredMeal {
-	// Calculate scores for all meals
-	mealsWithScores := calculateMealScore(user, meals)
+// GenerateCourseCombinations combines top-scored meals for requested courses.
+func GenerateCourseCombinations(scoredMeals []models.ScoredMeal, numStarter, numMain, numDessert int) []models.ScoredMeal {
+	// Group meals by course
+	starters, mains, desserts := groupScoredMealsByCourse(scoredMeals)
 
-	// Return the top N meals
-	if topN > len(mealsWithScores) {
-		topN = len(mealsWithScores) // Handle the case where there are fewer meals than topN
-	}
-	return mealsWithScores[:topN]
+	// Select top meals for each course
+	topStarters := getTopMeals(starters, numStarter)
+	topMains := getTopMeals(mains, numMain)
+	topDesserts := getTopMeals(desserts, numDessert)
+
+	// Combine the selected top meals into a flat list
+	return combineMeals(topStarters, topMains, topDesserts)
 }
 
-
-// GenerateCourseCombinations generates course combinations based on the number of courses
-func GenerateCourseCombinations(courseNames []string, numberOfCourses int) [][]string {
-	var combinations [][]string
-
-	switch numberOfCourses {
-	case 1:
-		for _, course := range courseNames {
-			combinations = append(combinations, []string{course}) // Single course: e.g., [Starter]
+// groupScoredMealsByCourse groups scored meals by their "Course" field.
+func groupScoredMealsByCourse(scoredMeals []models.ScoredMeal) (starters, mains, desserts []models.ScoredMeal) {
+	for _, scoredMeal := range scoredMeals {
+		switch scoredMeal.Meal.Course {
+		case "Starter":
+			starters = append(starters, scoredMeal)
+		case "Main":
+			mains = append(mains, scoredMeal)
+		case "Dessert":
+			desserts = append(desserts, scoredMeal)
 		}
-	case 2:
-		combinations = append(combinations, []string{courseNames[0], courseNames[1]}) // [Starter + Main]
-		combinations = append(combinations, []string{courseNames[0], courseNames[2]}) // [Starter + Dessert]
-		combinations = append(combinations, []string{courseNames[1], courseNames[2]}) // [Main + Dessert]
-	case 3:
-		combinations = append(combinations, []string{courseNames[0], courseNames[1], courseNames[2]}) // [Starter + Main + Dessert]
 	}
-	
-	return combinations
+	return
+}
+
+// getTopMeals returns the top-scored meals up to the requested number.
+func getTopMeals(meals []models.ScoredMeal, num int) []models.ScoredMeal {
+	// Sort meals by score in descending order
+	sort.Slice(meals, func(i, j int) bool {
+		return meals[i].Score > meals[j].Score
+	})
+
+	// Return only the top requested number of meals
+	if num > len(meals) {
+		num = len(meals)
+	}
+	return meals[:num]
+}
+
+// combineMeals combines the selected top meals from starters, mains, and desserts into a single flat list.
+func combineMeals(starters, mains, desserts []models.ScoredMeal) []models.ScoredMeal {
+	return append(append(starters, mains...), desserts...)
 }
 
 // deleteOldRecentMeals deletes meal records older than 7 days from the recent meals table.

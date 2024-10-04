@@ -23,49 +23,45 @@ const (
 )
 
 // calculateMealScore computes scores for meals based on user preferences and goals.
-func calculateMealScore(user models.User, meals []models.Meal) []models.ScoredMeal {
-	var wg sync.WaitGroup
-	mealsWithScores := make([]models.ScoredMeal, len(meals))
-	userBMI := calculateBMI(user.BodyMetrics.Height, user.BodyMetrics.Weight)
+func CalculateMealScore(user models.User, meals []models.Meal) []models.ScoredMeal {
+    var wg sync.WaitGroup
+    mealsWithScores := make([]models.ScoredMeal, len(meals))
+    userBMI := calculateBMI(user.BodyMetrics.Height, user.BodyMetrics.Weight)
 
-	// Use a WaitGroup to score meals concurrently
-	for i, meal := range meals {
-		wg.Add(1)
-		go func(i int, meal models.Meal) {
-			defer wg.Done()
+    for i, meal := range meals {
+        nutritionalContent := map[string]float64{}
+        // Unmarshal JSON before launching goroutine
+        if err := json.Unmarshal(meal.NutritionalContent, &nutritionalContent); err != nil {
+            handleError(fmt.Errorf("error unmarshaling nutritional content for meal %d: %w", meal.ID, err))
+            continue
+        }
 
-			fitScore := 0.0
-			nutritionalContent := map[string]float64{}
-			// Unmarshal JSON concurrently
-			if err := json.Unmarshal(meal.NutritionalContent, &nutritionalContent); err != nil {
-				handleError(fmt.Errorf("error unmarshaling nutritional content for meal %d: %w", meal.ID, err))
-				return
-			}
+        wg.Add(1)
+        go func(i int, meal models.Meal) {
+            defer wg.Done()
 
-			// Calculate the scores concurrently
-			fitScore += calculateDietaryMatch(user, meal)
-			fitScore += calculateHealthGoalsAlignment(user, nutritionalContent, userBMI)
-			fitScore += calculateMicrobiomeCompatibility(user, meal)
-			fitScore += calculateEnvironmentalAdaptability(user, meal)
-			fitScore += calculateRecentConsumptionPenalty(user, meal)
-			fitScore += calculateAgeGenderScore(user, nutritionalContent)
+            fitScore := 0.0
+            fitScore += calculateDietaryMatch(user, meal)
+            fitScore += calculateHealthGoalsAlignment(user, nutritionalContent, userBMI)
+            fitScore += calculateMicrobiomeCompatibility(user, meal)
+            fitScore += calculateEnvironmentalAdaptability(user, meal)
+            fitScore += calculateRecentConsumptionPenalty(user, meal)
+            fitScore += calculateAgeGenderScore(user, nutritionalContent)
 
-			// Normalize the score
-			normalizedScore := normalizeScore(fitScore, maxTotalScore)
+            // Normalize the score
+            normalizedScore := normalizeScore(fitScore, maxTotalScore)
+            mealsWithScores[i] = models.ScoredMeal{Meal: &meal, Score: normalizedScore}
+        }(i, meal)
+    }
 
-			mealsWithScores[i] = models.ScoredMeal{Meal: meal, Score: normalizedScore}
-		}(i, meal)
-	}
+    wg.Wait()
 
-	// Wait for all goroutines to finish
-	wg.Wait()
+    // Sort meals by normalized score in descending order
+    sort.Slice(mealsWithScores, func(i, j int) bool {
+        return mealsWithScores[i].Score > mealsWithScores[j].Score
+    })
 
-	// Sort meals by normalized score in descending order
-	sort.Slice(mealsWithScores, func(i, j int) bool {
-		return mealsWithScores[i].Score > mealsWithScores[j].Score
-	})
-
-	return mealsWithScores
+    return mealsWithScores
 }
 
 // calculateDietaryMatch scores meals based on user's dietary preferences and avoidances.
@@ -91,11 +87,7 @@ func calculateDietaryMatch(user models.User, meal models.Meal) float64 {
 	return score
 }
 
-// Helper function to get a value from the nutritionalContent map in a case-insensitive way
-func getNutritionalValue(nutritionalContent map[string]float64, key string) (float64, bool) {
-	value, ok := nutritionalContent[strings.ToLower(key)]
-	return value, ok
-}
+
 
 // calculateHealthGoalsAlignment scores meals based on how well they align with user's health goals.
 func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[string]float64, bmi float64) float64 {

@@ -136,11 +136,11 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 		return nil, &CustomError{"Failed to insert user preferences", err}
 	}
 
-	RequestedMealSQL := `INSERT INTO requested_meals (user_id, meal_type, number_of_courses)
-	VALUES (?, ?, ?)
+	RequestedMealSQL := `INSERT INTO requested_meals (user_id, meal_type, number_of_starter, number_of_main, number_of_dessert)
+	VALUES (?, ?, ?, ?, ?)
 	ON CONFLICT (user_id) DO UPDATE
-	SET meal_type = EXCLUDED.meal_type, number_of_courses = EXCLUDED.number_of_courses`
-	if err := tx.Exec(RequestedMealSQL, userID, userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfCourses).Error; err != nil {
+	SET meal_type = EXCLUDED.meal_type, number_of_starter = EXCLUDED.number_of_starter, number_of_main = EXCLUDED.number_of_main, number_of_dessert = EXCLUDED.number_of_dessert`
+	if err := tx.Exec(RequestedMealSQL, userID, userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert).Error; err != nil {
 		tx.Rollback()
 		return nil, err
 	}
@@ -156,42 +156,45 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 
 	go func() {
 		// Fetch meals based on the requested meal type and number of courses
-		meals, err := s.GetMealsByTypeAndCourse(userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfCourses)
+		meals, err := s.GetMealsByTypeAndCourse(userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
 		if err != nil {
 			errorChan <- &CustomError{"Failed to fetch meals", err}
 			return
 		}
 
-		// Calculate top meals, specifying the number of courses needed
-		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 9)
+		// Calculate  meals, specifying the number of courses needed
+		calculateMeals := utils.CalculateMealScore(userHealthInfo, *meals)
 
 		// Prepare recommendations based on the number of courses
 		var scoreRecommendations []models.Recommendation
 
-		// Group meals into recommendations based on the number of courses
-		for i := 0; i < len(topMeals); i += userHealthInfo.RequestedMeal.NumberOfCourses {
-			// Create a recommendation with the specified number of courses
-			var courses []models.MealResponse
+		// Generate course combinations based on the requested number of courses
+		courseCombinations := utils.GenerateCourseCombinations(calculateMeals, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
 
-			// Add the correct number of courses for this recommendation
-			for j := 0; j < userHealthInfo.RequestedMeal.NumberOfCourses && (i+j) < len(topMeals); j++ {
-				topMeal := topMeals[i+j]
-				courses = append(courses, models.MealResponse{
-					ID:          topMeal.Meal.ID,
-					Course:      topMeal.Meal.Course,
-					Name:        topMeal.Meal.Name,
-					Score:       topMeal.Score,
-					Ingredients: mapIngredientsToResponse(topMeal.Meal.Ingredients),
-				})
-			}
+		// Check for valid number of course combinations
+		totalCourses := userHealthInfo.RequestedMeal.NumberOfStarter + userHealthInfo.RequestedMeal.NumberOfMain + userHealthInfo.RequestedMeal.NumberOfDessert
 
-			// Create the recommendation and add it to the list
-			recommendation := models.Recommendation{
-				Combination: fmt.Sprintf("%d Course(s)", len(courses)), // e.g. "1 Course", "2 Courses"
-				Courses:     courses,
-			}
-			scoreRecommendations = append(scoreRecommendations, recommendation)
+		// Create a recommendation with the specified number of courses
+		var courses []models.MealResponse
+
+		// Add the correct number of courses for this recommendation
+		for j := 0; j < totalCourses && (j) < len(courseCombinations); j++ {
+			topMeal := courseCombinations[j]
+			courses = append(courses, models.MealResponse{
+				ID:          topMeal.Meal.ID,
+				Course:      topMeal.Meal.Course,
+				Name:        topMeal.Meal.Name,
+				Score:       topMeal.Score,
+				Ingredients: mapIngredientsToResponse(topMeal.Meal.Ingredients),
+			})
 		}
+
+		// Create the recommendation and add it to the list
+		recommendation := models.Recommendation{
+			Combination: fmt.Sprintf("%d Meal(s)", len(courses)),
+			Courses:     courses,
+		}
+		scoreRecommendations = append(scoreRecommendations, recommendation)
 
 		// Send the result to the result channel
 		resultChan <- scoreRecommendations
@@ -261,54 +264,45 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 
 	go func() {
 		// Fetch meals based on the requested meal type and number of courses
-		meals, err := s.GetMealsByTypeAndCourse(userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfCourses)
+		meals, err := s.GetMealsByTypeAndCourse(userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
 		if err != nil {
 			errorChan <- &CustomError{"Failed to fetch meals", err}
 			return
 		}
 
-		// Calculate top meals, specifying the number of courses needed
-		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 9)
+		// Calculate  meals, specifying the number of courses needed
+		calculateMeals := utils.CalculateMealScore(userHealthInfo, *meals)
 
 		// Prepare recommendations based on the number of courses
 		var scoreRecommendations []models.Recommendation
 
-		// Define course names
-		courseNames := []string{"Starter", "Main", "Dessert"}
-
 		// Generate course combinations based on the requested number of courses
-		courseCombinations := utils.GenerateCourseCombinations(courseNames, userHealthInfo.RequestedMeal.NumberOfCourses)
+		courseCombinations := utils.GenerateCourseCombinations(calculateMeals, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
 
 		// Check for valid number of course combinations
-		if userHealthInfo.RequestedMeal.NumberOfCourses > len(courseCombinations) {
-			resultChan <- nil // Send nil for recommendations
-			return
+		totalCourses := userHealthInfo.RequestedMeal.NumberOfStarter + userHealthInfo.RequestedMeal.NumberOfMain + userHealthInfo.RequestedMeal.NumberOfDessert
+
+		// Create a recommendation with the specified number of courses
+		var courses []models.MealResponse
+
+		// Add the correct number of courses for this recommendation
+		for j := 0; j < totalCourses && (j) < len(courseCombinations); j++ {
+			topMeal := courseCombinations[j]
+			courses = append(courses, models.MealResponse{
+				ID:          topMeal.Meal.ID,
+				Course:      topMeal.Meal.Course,
+				Name:        topMeal.Meal.Name,
+				Score:       topMeal.Score,
+				Ingredients: mapIngredientsToResponse(topMeal.Meal.Ingredients),
+			})
 		}
 
-		// Group meals into recommendations based on the number of courses
-		for i := 0; i < len(topMeals); i += userHealthInfo.RequestedMeal.NumberOfCourses {
-			// Create a recommendation with the specified number of courses
-			var courses []models.MealResponse
-
-			// Add the correct number of courses for this recommendation
-			for j := 0; j < userHealthInfo.RequestedMeal.NumberOfCourses && (i+j) < len(topMeals); j++ {
-				topMeal := topMeals[i+j]
-				courses = append(courses, models.MealResponse{
-					ID:          topMeal.Meal.ID,
-					Course:      courseCombinations[j][0], // Correctly assign the course name based on j
-					Name:        topMeal.Meal.Name,
-					Score:       topMeal.Score,
-					Ingredients: mapIngredientsToResponse(topMeal.Meal.Ingredients),
-				})
-			}
-
-			// Create the recommendation and add it to the list
-			recommendation := models.Recommendation{
-				Combination: fmt.Sprintf("%d Course(s)", len(courses)), // e.g. "1 Course", "2 Courses"
-				Courses:     courses,
-			}
-			scoreRecommendations = append(scoreRecommendations, recommendation)
+		// Create the recommendation and add it to the list
+		recommendation := models.Recommendation{
+			Combination: fmt.Sprintf("%d Meal(s)", len(courses)),
+			Courses:     courses,
 		}
+		scoreRecommendations = append(scoreRecommendations, recommendation)
 
 		// Send the result to the result channel
 		resultChan <- scoreRecommendations
@@ -488,11 +482,11 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 		return nil, err
 	}
 
-	RequestedMealSQL := `INSERT INTO requested_meals (user_id, meal_type, number_of_courses)
-	VALUES (?, ?, ?)
+	RequestedMealSQL := `INSERT INTO requested_meals (user_id, meal_type, number_of_starter, number_of_main, number_of_dessert)
+	VALUES (?, ?, ?, ?, ?)
 	ON CONFLICT (user_id) DO UPDATE
-	SET meal_type = EXCLUDED.meal_type, number_of_courses = EXCLUDED.number_of_courses`
-	if err := tx.Exec(RequestedMealSQL, userId, userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfCourses).Error; err != nil {
+	SET meal_type = EXCLUDED.meal_type, number_of_starter = EXCLUDED.number_of_starter, number_of_main = EXCLUDED.number_of_main, number_of_dessert = EXCLUDED.number_of_dessert`
+	if err := tx.Exec(RequestedMealSQL, userId, userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert).Error; err != nil {
 		tx.Rollback()
 		return nil, err
 	}
@@ -508,47 +502,50 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 
 	go func() {
 		// Fetch meals based on the requested meal type and number of courses
-		meals, err := s.GetMealsByTypeAndCourse(userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfCourses)
+		meals, err := s.GetMealsByTypeAndCourse(userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
 		if err != nil {
 			errorChan <- &CustomError{"Failed to fetch meals", err}
 			return
 		}
 
-		// Calculate top meals, specifying the number of courses needed
-		topMeals := utils.GetTopMeals(userHealthInfo, *meals, 9)
+		// Calculate  meals, specifying the number of courses needed
+		calculateMeals := utils.CalculateMealScore(userHealthInfo, *meals)
 
 		// Prepare recommendations based on the number of courses
 		var scoreRecommendations []models.Recommendation
 
-		// Group meals into recommendations based on the number of courses
-		for i := 0; i < len(topMeals); i += userHealthInfo.RequestedMeal.NumberOfCourses {
-			// Create a recommendation with the specified number of courses
-			var courses []models.MealResponse
+		// Generate course combinations based on the requested number of courses
+		courseCombinations := utils.GenerateCourseCombinations(calculateMeals, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
 
-			// Add the correct number of courses for this recommendation
-			for j := 0; j < userHealthInfo.RequestedMeal.NumberOfCourses && (i+j) < len(topMeals); j++ {
-				topMeal := topMeals[i+j]
-				courses = append(courses, models.MealResponse{
-					ID:          topMeal.Meal.ID,
-					Course:      topMeal.Meal.Course,
-					Name:        topMeal.Meal.Name,
-					Score:       topMeal.Score,
-					Ingredients: mapIngredientsToResponse(topMeal.Meal.Ingredients),
-				})
-			}
+		// Check for valid number of course combinations
+		totalCourses := userHealthInfo.RequestedMeal.NumberOfStarter + userHealthInfo.RequestedMeal.NumberOfMain + userHealthInfo.RequestedMeal.NumberOfDessert
 
-			// Create the recommendation and add it to the list
-			recommendation := models.Recommendation{
-				Combination: fmt.Sprintf("%d Course(s)", len(courses)), // e.g. "1 Course", "2 Courses"
-				Courses:     courses,
-			}
-			scoreRecommendations = append(scoreRecommendations, recommendation)
+		// Create a recommendation with the specified number of courses
+		var courses []models.MealResponse
+
+		// Add the correct number of courses for this recommendation
+		for j := 0; j < totalCourses && (j) < len(courseCombinations); j++ {
+			topMeal := courseCombinations[j]
+			courses = append(courses, models.MealResponse{
+				ID:          topMeal.Meal.ID,
+				Course:      topMeal.Meal.Course,
+				Name:        topMeal.Meal.Name,
+				Score:       topMeal.Score,
+				Ingredients: mapIngredientsToResponse(topMeal.Meal.Ingredients),
+			})
 		}
+
+		// Create the recommendation and add it to the list
+		recommendation := models.Recommendation{
+			Combination: fmt.Sprintf("%d Meal(s)", len(courses)),
+			Courses:     courses,
+		}
+		scoreRecommendations = append(scoreRecommendations, recommendation)
 
 		// Send the result to the result channel
 		resultChan <- scoreRecommendations
 	}()
-
+	
 	// Wait for the result from the goroutine or handle errors
 	select {
 	case scoreRecommendations := <-resultChan:
