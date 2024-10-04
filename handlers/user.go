@@ -28,14 +28,28 @@ func (h *Handler) PostUser(c *gin.Context) {
 		return
 	}
 
-	postedUserHealthDataInfo, err := h.service.PostUser(info)
+	// Validate: max NumberOfStarter, NumberOfMain, and NumberOfDessert is 3 and min is 0
+	if info.RequestedMeal.NumberOfStarter < 0 || info.RequestedMeal.NumberOfStarter > 3 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "NumberOfStarter must be between 0 and 3"})
+		return
+	}
 
+	if info.RequestedMeal.NumberOfMain < 0 || info.RequestedMeal.NumberOfMain > 3 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "NumberOfMain must be between 0 and 3"})
+		return
+	}
+
+	if info.RequestedMeal.NumberOfDessert < 0 || info.RequestedMeal.NumberOfDessert > 3 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "NumberOfDessert must be between 0 and 3"})
+		return
+	}
+
+	postedUserHealthDataInfo, err := h.service.PostUser(info)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusCreated, postedUserHealthDataInfo)
-
 }
 
 // DeleteUserUserId deletes user health information by user ID
@@ -78,6 +92,7 @@ func (h *Handler) GetUserUserId(c *gin.Context) {
 // PutUserUserId updates user health information by user ID
 func (h *Handler) PutUserUserId(c *gin.Context) {
 	var info models.User
+	
 	if err := c.ShouldBindJSON(&info); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -86,6 +101,21 @@ func (h *Handler) PutUserUserId(c *gin.Context) {
 	id, err := utils.ParseAndValidateID(c.Param("userId"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+	// Validate: max NumberOfStarter, NumberOfMain, and NumberOfDessert is 3 and min is 0
+	if info.RequestedMeal.NumberOfStarter < 0 || info.RequestedMeal.NumberOfStarter > 3 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "NumberOfStarter must be between 0 and 3"})
+		return
+	}
+
+	if info.RequestedMeal.NumberOfMain < 0 || info.RequestedMeal.NumberOfMain > 3 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "NumberOfMain must be between 0 and 3"})
+		return
+	}
+
+	if info.RequestedMeal.NumberOfDessert < 0 || info.RequestedMeal.NumberOfDessert > 3 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "NumberOfDessert must be between 0 and 3"})
 		return
 	}
 
