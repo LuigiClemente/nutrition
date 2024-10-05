@@ -59,7 +59,9 @@ CREATE INDEX idx_health_conditions_user_id ON health_conditions(user_id);
 -- Last Requested Meal Category Table
 CREATE TABLE requested_meals (
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    meal_type INT,  
+    starter_meal_type INT,  
+    main_meal_type INT,  
+    dessert_meal_type INT,  
     number_of_starter INT,  
     number_of_main INT,  
     number_of_dessert  INT,  

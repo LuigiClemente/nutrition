@@ -36,23 +36,29 @@ func (s *Service) GetMealsByType(typeId int) (*[]models.Meal, error) {
 	return &meals, nil
 }
 
-func (s *Service) GetMealsByTypeAndCourse(typeId, numberOfStarter, numberOfMain, numberOfDessert int) (*[]models.Meal, error) {
+func (s *Service) GetMealsByTypeAndCourse(starterTypeId, mainTypeId, dessertTypeId, numberOfStarter, numberOfMain, numberOfDessert int) (*[]models.Meal, error) {
 	var meals []models.Meal
 	var courses []string
+	var mealTypeIDs []int
 
+	// Collect meal type IDs based on the input
 	if numberOfStarter > 0 {
 		courses = append(courses, "Starter")
+		mealTypeIDs = append(mealTypeIDs, starterTypeId)
 	}
 	if numberOfMain > 0 {
 		courses = append(courses, "Main")
+		mealTypeIDs = append(mealTypeIDs, mainTypeId)
 	}
 	if numberOfDessert > 0 {
 		courses = append(courses, "Dessert")
+		mealTypeIDs = append(mealTypeIDs, dessertTypeId)
 	}
 
 	fmt.Println("number of dessert: ", numberOfDessert)
+
 	// Adjust the query to handle multiple courses
-	query := s.db.Where("meal_type_id = ? AND course IN ?", typeId, courses)
+	query := s.db.Where("meal_type_id IN ? AND course IN ?", mealTypeIDs, courses)
 
 	// Only preload related models if needed
 	query = query.Preload("MealType").
@@ -66,6 +72,7 @@ func (s *Service) GetMealsByTypeAndCourse(typeId, numberOfStarter, numberOfMain,
 
 	return &meals, nil
 }
+
 
 func (s *Service) GetMealTypes() (*[]models.MealType, error) {
 	var types []models.MealType

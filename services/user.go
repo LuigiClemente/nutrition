@@ -136,14 +136,37 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 		return nil, &CustomError{"Failed to insert user preferences", err}
 	}
 
-	RequestedMealSQL := `INSERT INTO requested_meals (user_id, meal_type, number_of_starter, number_of_main, number_of_dessert)
-	VALUES (?, ?, ?, ?, ?)
+	RequestedMealSQL := `INSERT INTO requested_meals (
+		user_id, 
+		starter_meal_type, 
+		main_meal_type, 
+		dessert_meal_type, 
+		number_of_starter, 
+		number_of_main, 
+		number_of_dessert
+	) VALUES (?, ?, ?, ?, ?, ?, ?)
 	ON CONFLICT (user_id) DO UPDATE
-	SET meal_type = EXCLUDED.meal_type, number_of_starter = EXCLUDED.number_of_starter, number_of_main = EXCLUDED.number_of_main, number_of_dessert = EXCLUDED.number_of_dessert`
-	if err := tx.Exec(RequestedMealSQL, userID, userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert).Error; err != nil {
+	SET 
+		starter_meal_type = EXCLUDED.starter_meal_type, 
+		main_meal_type = EXCLUDED.main_meal_type, 
+		dessert_meal_type = EXCLUDED.dessert_meal_type, 
+		number_of_starter = EXCLUDED.number_of_starter, 
+		number_of_main = EXCLUDED.number_of_main, 
+		number_of_dessert = EXCLUDED.number_of_dessert`
+	
+	if err := tx.Exec(RequestedMealSQL,
+		userID,
+		userHealthInfo.RequestedMeal.StarterMealType,
+		userHealthInfo.RequestedMeal.MainMealType,
+		userHealthInfo.RequestedMeal.DessertMealType,
+		userHealthInfo.RequestedMeal.NumberOfStarter,
+		userHealthInfo.RequestedMeal.NumberOfMain,
+		userHealthInfo.RequestedMeal.NumberOfDessert,
+	).Error; err != nil {
 		tx.Rollback()
 		return nil, err
 	}
+	
 
 	// Commit the transaction
 	if err := tx.Commit().Error; err != nil {
@@ -156,7 +179,9 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 
 	go func() {
 		// Fetch meals based on the requested meal type and number of courses
-		meals, err := s.GetMealsByTypeAndCourse(userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
+		meals, err := s.GetMealsByTypeAndCourse(userHealthInfo.RequestedMeal.StarterMealType,
+			userHealthInfo.RequestedMeal.MainMealType,
+			userHealthInfo.RequestedMeal.DessertMealType, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
 		if err != nil {
 			errorChan <- &CustomError{"Failed to fetch meals", err}
 			return
@@ -264,7 +289,9 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 
 	go func() {
 		// Fetch meals based on the requested meal type and number of courses
-		meals, err := s.GetMealsByTypeAndCourse(userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
+		meals, err := s.GetMealsByTypeAndCourse(userHealthInfo.RequestedMeal.StarterMealType,
+			userHealthInfo.RequestedMeal.MainMealType,
+			userHealthInfo.RequestedMeal.DessertMealType, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
 		if err != nil {
 			errorChan <- &CustomError{"Failed to fetch meals", err}
 			return
@@ -482,14 +509,37 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 		return nil, err
 	}
 
-	RequestedMealSQL := `INSERT INTO requested_meals (user_id, meal_type, number_of_starter, number_of_main, number_of_dessert)
-	VALUES (?, ?, ?, ?, ?)
+	RequestedMealSQL := `INSERT INTO requested_meals (
+		user_id, 
+		starter_meal_type, 
+		main_meal_type, 
+		dessert_meal_type, 
+		number_of_starter, 
+		number_of_main, 
+		number_of_dessert
+	) VALUES (?, ?, ?, ?, ?, ?, ?)
 	ON CONFLICT (user_id) DO UPDATE
-	SET meal_type = EXCLUDED.meal_type, number_of_starter = EXCLUDED.number_of_starter, number_of_main = EXCLUDED.number_of_main, number_of_dessert = EXCLUDED.number_of_dessert`
-	if err := tx.Exec(RequestedMealSQL, userId, userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert).Error; err != nil {
+	SET 
+		starter_meal_type = EXCLUDED.starter_meal_type, 
+		main_meal_type = EXCLUDED.main_meal_type, 
+		dessert_meal_type = EXCLUDED.dessert_meal_type, 
+		number_of_starter = EXCLUDED.number_of_starter, 
+		number_of_main = EXCLUDED.number_of_main, 
+		number_of_dessert = EXCLUDED.number_of_dessert`
+	
+	if err := tx.Exec(RequestedMealSQL,
+		userId,
+		userHealthInfo.RequestedMeal.StarterMealType,
+		userHealthInfo.RequestedMeal.MainMealType,
+		userHealthInfo.RequestedMeal.DessertMealType,
+		userHealthInfo.RequestedMeal.NumberOfStarter,
+		userHealthInfo.RequestedMeal.NumberOfMain,
+		userHealthInfo.RequestedMeal.NumberOfDessert,
+	).Error; err != nil {
 		tx.Rollback()
 		return nil, err
 	}
+	
 
 	// Commit the transaction
 	if err := tx.Commit().Error; err != nil {
@@ -502,7 +552,9 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 
 	go func() {
 		// Fetch meals based on the requested meal type and number of courses
-		meals, err := s.GetMealsByTypeAndCourse(userHealthInfo.RequestedMeal.MealType, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
+		meals, err := s.GetMealsByTypeAndCourse(userHealthInfo.RequestedMeal.StarterMealType,
+			userHealthInfo.RequestedMeal.MainMealType,
+			userHealthInfo.RequestedMeal.DessertMealType, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
 		if err != nil {
 			errorChan <- &CustomError{"Failed to fetch meals", err}
 			return
@@ -545,7 +597,7 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 		// Send the result to the result channel
 		resultChan <- scoreRecommendations
 	}()
-	
+
 	// Wait for the result from the goroutine or handle errors
 	select {
 	case scoreRecommendations := <-resultChan:
