@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"nutrition/models"
 )
 
@@ -55,8 +54,6 @@ func (s *Service) GetMealsByTypeAndCourse(starterTypeId, mainTypeId, dessertType
 		mealTypeIDs = append(mealTypeIDs, dessertTypeId)
 	}
 
-	fmt.Println("number of dessert: ", numberOfDessert)
-
 	// Adjust the query to handle multiple courses
 	query := s.db.Where("meal_type_id IN ? AND course IN ?", mealTypeIDs, courses)
 
@@ -72,7 +69,6 @@ func (s *Service) GetMealsByTypeAndCourse(starterTypeId, mainTypeId, dessertType
 
 	return &meals, nil
 }
-
 
 func (s *Service) GetMealTypes() (*[]models.MealType, error) {
 	var types []models.MealType

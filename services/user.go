@@ -190,39 +190,15 @@ func (s *Service) PostUser(userHealthInfo models.User) (*models.UserHealthInfoRe
 		// Calculate  meals, specifying the number of courses needed
 		calculateMeals := utils.CalculateMealScore(userHealthInfo, *meals)
 
-		// Prepare recommendations based on the number of courses
-		var scoreRecommendations []models.Recommendation
+		
 
 		// Generate course combinations based on the requested number of courses
 		courseCombinations := utils.GenerateCourseCombinations(calculateMeals, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
 
-		// Check for valid number of course combinations
-		totalCourses := userHealthInfo.RequestedMeal.NumberOfStarter + userHealthInfo.RequestedMeal.NumberOfMain + userHealthInfo.RequestedMeal.NumberOfDessert
-
-		// Create a recommendation with the specified number of courses
-		var courses []models.MealResponse
-
-		// Add the correct number of courses for this recommendation
-		for j := 0; j < totalCourses && (j) < len(courseCombinations); j++ {
-			topMeal := courseCombinations[j]
-			courses = append(courses, models.MealResponse{
-				ID:          topMeal.Meal.ID,
-				Course:      topMeal.Meal.Course,
-				Name:        topMeal.Meal.Name,
-				Score:       topMeal.Score,
-				Ingredients: mapIngredientsToResponse(topMeal.Meal.Ingredients),
-			})
-		}
-
-		// Create the recommendation and add it to the list
-		recommendation := models.Recommendation{
-			Combination: fmt.Sprintf("%d Meal(s)", len(courses)),
-			Courses:     courses,
-		}
-		scoreRecommendations = append(scoreRecommendations, recommendation)
+		
 
 		// Send the result to the result channel
-		resultChan <- scoreRecommendations
+		resultChan <- courseCombinations
 	}()
 
 	// Wait for the result from the goroutine or handle errors
@@ -300,39 +276,15 @@ func (s *Service) GetUserUserId(userId int) (*models.UserHealthInfoResponse, err
 		// Calculate  meals, specifying the number of courses needed
 		calculateMeals := utils.CalculateMealScore(userHealthInfo, *meals)
 
-		// Prepare recommendations based on the number of courses
-		var scoreRecommendations []models.Recommendation
+		
 
 		// Generate course combinations based on the requested number of courses
 		courseCombinations := utils.GenerateCourseCombinations(calculateMeals, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
 
-		// Check for valid number of course combinations
-		totalCourses := userHealthInfo.RequestedMeal.NumberOfStarter + userHealthInfo.RequestedMeal.NumberOfMain + userHealthInfo.RequestedMeal.NumberOfDessert
-
-		// Create a recommendation with the specified number of courses
-		var courses []models.MealResponse
-
-		// Add the correct number of courses for this recommendation
-		for j := 0; j < totalCourses && (j) < len(courseCombinations); j++ {
-			topMeal := courseCombinations[j]
-			courses = append(courses, models.MealResponse{
-				ID:          topMeal.Meal.ID,
-				Course:      topMeal.Meal.Course,
-				Name:        topMeal.Meal.Name,
-				Score:       topMeal.Score,
-				Ingredients: mapIngredientsToResponse(topMeal.Meal.Ingredients),
-			})
-		}
-
-		// Create the recommendation and add it to the list
-		recommendation := models.Recommendation{
-			Combination: fmt.Sprintf("%d Meal(s)", len(courses)),
-			Courses:     courses,
-		}
-		scoreRecommendations = append(scoreRecommendations, recommendation)
+		
 
 		// Send the result to the result channel
-		resultChan <- scoreRecommendations
+		resultChan <- courseCombinations
 	}()
 
 	// Wait for the result from the goroutine or handle errors
@@ -563,39 +515,15 @@ func (s *Service) PutUserUserId(userId int, userHealthInfo models.User) (*models
 		// Calculate  meals, specifying the number of courses needed
 		calculateMeals := utils.CalculateMealScore(userHealthInfo, *meals)
 
-		// Prepare recommendations based on the number of courses
-		var scoreRecommendations []models.Recommendation
+		
 
 		// Generate course combinations based on the requested number of courses
 		courseCombinations := utils.GenerateCourseCombinations(calculateMeals, userHealthInfo.RequestedMeal.NumberOfStarter, userHealthInfo.RequestedMeal.NumberOfMain, userHealthInfo.RequestedMeal.NumberOfDessert)
 
-		// Check for valid number of course combinations
-		totalCourses := userHealthInfo.RequestedMeal.NumberOfStarter + userHealthInfo.RequestedMeal.NumberOfMain + userHealthInfo.RequestedMeal.NumberOfDessert
-
-		// Create a recommendation with the specified number of courses
-		var courses []models.MealResponse
-
-		// Add the correct number of courses for this recommendation
-		for j := 0; j < totalCourses && (j) < len(courseCombinations); j++ {
-			topMeal := courseCombinations[j]
-			courses = append(courses, models.MealResponse{
-				ID:          topMeal.Meal.ID,
-				Course:      topMeal.Meal.Course,
-				Name:        topMeal.Meal.Name,
-				Score:       topMeal.Score,
-				Ingredients: mapIngredientsToResponse(topMeal.Meal.Ingredients),
-			})
-		}
-
-		// Create the recommendation and add it to the list
-		recommendation := models.Recommendation{
-			Combination: fmt.Sprintf("%d Meal(s)", len(courses)),
-			Courses:     courses,
-		}
-		scoreRecommendations = append(scoreRecommendations, recommendation)
+		
 
 		// Send the result to the result channel
-		resultChan <- scoreRecommendations
+		resultChan <- courseCombinations
 	}()
 
 	// Wait for the result from the goroutine or handle errors

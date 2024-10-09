@@ -74,7 +74,6 @@ type MealForOption struct {
 }
 
 type Recommendation struct {
-	Combination string         `json:"combination"` // One Course, Two Courses, etc.
 	Courses     []MealResponse `json:"courses"`     // List of courses in this recommendation
 
 }

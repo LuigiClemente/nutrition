@@ -2,18 +2,158 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"math"
 	"nutrition/models"
 	"reflect"
-	"sort"
 	"strconv"
-	"time"
 
 	"gorm.io/datatypes"
-	"gorm.io/gorm"
 )
+
+// Function to generate meal recommendations
+func GenerateCourseCombinations(scoredMeals []models.ScoredMeal, numStarter, numMain, numDessert int) []models.Recommendation {
+	var recommendations []models.Recommendation
+
+	// Group meals by course type
+	courseMeals := make(map[string][]models.ScoredMeal)
+	for _, scoredMeal := range scoredMeals {
+		courseMeals[scoredMeal.Meal.Course] = append(courseMeals[scoredMeal.Meal.Course], scoredMeal)
+	}
+
+	// Cache lengths of available courses
+	numStartersAvailable := len(courseMeals["Starter"])
+	numMainsAvailable := len(courseMeals["Main"])
+	numDessertsAvailable := len(courseMeals["Dessert"])
+
+	// Handle case when only starters should be listed (numMain == 0 and numDessert == 0)
+	if numMain == 0 && numDessert == 0 && numStarter > 0 {
+		courseSelection := make([]models.MealResponse, 0)
+		for starterIndex := 0; starterIndex < numStartersAvailable && starterIndex < numStarter; starterIndex++ {
+			starterMeals := courseMeals["Starter"][starterIndex]
+			courseSelection = append(courseSelection, models.MealResponse{
+				ID:          starterMeals.Meal.ID,
+				Course:      starterMeals.Meal.Course,
+				Name:        starterMeals.Meal.Name,
+				Ingredients: mapIngredientsToIngredientResponse(starterMeals.Meal.Ingredients),
+				Score:       starterMeals.Score,
+			})
+		}
+		// Append the combination to recommendations
+		recommendations = append(recommendations, models.Recommendation{
+			Courses: courseSelection,
+		})
+		return recommendations
+	}
+
+	// Handle case when only desserts should be listed (numMain == 0 and numStarter == 0)
+	if numMain == 0 && numStarter == 0 && numDessert > 0 {
+		courseSelection := make([]models.MealResponse, 0)
+		for dessertIndex := 0; dessertIndex < numDessertsAvailable && dessertIndex < numDessert; dessertIndex++ {
+			dessertMeals := courseMeals["Dessert"][dessertIndex]
+			courseSelection = append(courseSelection, models.MealResponse{
+				ID:          dessertMeals.Meal.ID,
+				Course:      dessertMeals.Meal.Course,
+				Name:        dessertMeals.Meal.Name,
+				Ingredients: mapIngredientsToIngredientResponse(dessertMeals.Meal.Ingredients),
+				Score:       dessertMeals.Score,
+			})
+		}
+		// Append the combination to recommendations
+		recommendations = append(recommendations, models.Recommendation{
+			Courses: courseSelection,
+		})
+		return recommendations
+	}
+
+	// Handle case when numStarter and numDessert are 0 (only mains)
+	if numStarter == 0 && numDessert == 0 && numMain > 0 {
+		for mainIndex := 0; mainIndex < numMainsAvailable && mainIndex < numMain; mainIndex++ {
+			courseSelection := make([]models.MealResponse, 0)
+			mainMeals := courseMeals["Main"][mainIndex]
+			courseSelection = append(courseSelection, models.MealResponse{
+				ID:          mainMeals.Meal.ID,
+				Course:      mainMeals.Meal.Course,
+				Name:        mainMeals.Meal.Name,
+				Ingredients: mapIngredientsToIngredientResponse(mainMeals.Meal.Ingredients),
+				Score:       mainMeals.Score,
+			})
+			// Append the combination to recommendations
+			recommendations = append(recommendations, models.Recommendation{
+				Courses: courseSelection,
+			})
+		}
+		return recommendations
+	}
+
+	// Handle combinations of starters, mains, and desserts
+	for mainIndex := 0; mainIndex < numMainsAvailable || numMain == 0; mainIndex++ {
+		courseSelection := make([]models.MealResponse, 0)
+
+		// Add starters
+		for j := 0; j < numStarter && j < numStartersAvailable; j++ {
+			meals := courseMeals["Starter"][j]
+			courseSelection = append(courseSelection, models.MealResponse{
+				ID:          meals.Meal.ID,
+				Course:      meals.Meal.Course,
+				Name:        meals.Meal.Name,
+				Ingredients: mapIngredientsToIngredientResponse(meals.Meal.Ingredients),
+				Score:       meals.Score,
+			})
+		}
+
+		// Add the main course if numMain > 0
+		if numMain > 0 && mainIndex < numMainsAvailable {
+			mainMeals := courseMeals["Main"][mainIndex]
+			courseSelection = append(courseSelection, models.MealResponse{
+				ID:          mainMeals.Meal.ID,
+				Course:      mainMeals.Meal.Course,
+				Name:        mainMeals.Meal.Name,
+				Ingredients: mapIngredientsToIngredientResponse(mainMeals.Meal.Ingredients),
+				Score:       mainMeals.Score,
+			})
+		}
+
+		// Add desserts
+		for dessertIndex := 0; dessertIndex < numDessert && dessertIndex < numDessertsAvailable; dessertIndex++ {
+			dessertMeals := courseMeals["Dessert"][dessertIndex]
+			courseSelection = append(courseSelection, models.MealResponse{
+				ID:          dessertMeals.Meal.ID,
+				Course:      dessertMeals.Meal.Course,
+				Name:        dessertMeals.Meal.Name,
+				Ingredients: mapIngredientsToIngredientResponse(dessertMeals.Meal.Ingredients),
+				Score:       dessertMeals.Score,
+			})
+		}
+
+		// Append the combination to recommendations
+		recommendations = append(recommendations, models.Recommendation{
+			Courses: courseSelection,
+		})
+
+		// If there are no mains and we've processed all available starters and desserts, we break the loop
+		if numMain == 0 {
+			break
+		}
+	}
+
+	return recommendations
+}
+
+// mapIngredientsToIngredientResponse converts ingredients into IngredientResponse.
+func mapIngredientsToIngredientResponse(ingredients []models.Ingredient) []models.IngredientResponse {
+	var ingredientResponses []models.IngredientResponse
+	for _, ingredient := range ingredients {
+		ingredientResponses = append(ingredientResponses, models.IngredientResponse{
+			Name:    ingredient.Name,
+			Amount:  ingredient.Amount,
+			Unit:    ingredient.Unit,
+			Portion: ingredient.Portion,
+			Ounces:  FloatToString(GramsToOunces(ingredient.Amount)),
+		})
+	}
+	return ingredientResponses
+}
 
 // Normalize the score to a 0-100 scale.
 func normalizeScore(fitScore, maxPossibleScore float64) float64 {
@@ -34,8 +174,6 @@ func CompareJSONFields(a, b datatypes.JSON) bool {
 	return reflect.DeepEqual(aMap, bMap)
 }
 
-
-
 func GramsToOunces(grams float64) float64 {
 	ounces := grams / 28.35
 	return math.Round(ounces*100) / 100
@@ -47,66 +185,4 @@ func FloatToString(value float64) string {
 
 func handleError(err error) {
 	log.Printf("Error: %v", err)
-}
-
-// GenerateCourseCombinations combines top-scored meals for requested courses.
-func GenerateCourseCombinations(scoredMeals []models.ScoredMeal, numStarter, numMain, numDessert int) []models.ScoredMeal {
-	// Group meals by course
-	starters, mains, desserts := groupScoredMealsByCourse(scoredMeals)
-
-	// Select top meals for each course
-	topStarters := getTopMeals(starters, numStarter)
-	topMains := getTopMeals(mains, numMain)
-	topDesserts := getTopMeals(desserts, numDessert)
-
-	// Combine the selected top meals into a flat list
-	return combineMeals(topStarters, topMains, topDesserts)
-}
-
-// groupScoredMealsByCourse groups scored meals by their "Course" field.
-func groupScoredMealsByCourse(scoredMeals []models.ScoredMeal) (starters, mains, desserts []models.ScoredMeal) {
-	for _, scoredMeal := range scoredMeals {
-		switch scoredMeal.Meal.Course {
-		case "Starter":
-			starters = append(starters, scoredMeal)
-		case "Main":
-			mains = append(mains, scoredMeal)
-		case "Dessert":
-			desserts = append(desserts, scoredMeal)
-		}
-	}
-	return
-}
-
-// getTopMeals returns the top-scored meals up to the requested number.
-func getTopMeals(meals []models.ScoredMeal, num int) []models.ScoredMeal {
-	// Sort meals by score in descending order
-	sort.Slice(meals, func(i, j int) bool {
-		return meals[i].Score > meals[j].Score
-	})
-
-	// Return only the top requested number of meals
-	if num > len(meals) {
-		num = len(meals)
-	}
-	return meals[:num]
-}
-
-// combineMeals combines the selected top meals from starters, mains, and desserts into a single flat list.
-func combineMeals(starters, mains, desserts []models.ScoredMeal) []models.ScoredMeal {
-	return append(append(starters, mains...), desserts...)
-}
-
-// deleteOldRecentMeals deletes meal records older than 7 days from the recent meals table.
-func DeleteOldRecentMeals(db *gorm.DB) error {
-	// Calculate the cutoff date (7 days ago from now)
-	cutoffDate := time.Now().AddDate(0, 0, -7)
-
-	// Perform the delete operation
-	if err := db.Where("timestamp < ?", cutoffDate).Delete(&models.RecentMeals{}).Error; err != nil {
-		return fmt.Errorf("failed to delete old recent meals: %w", err)
-	}
-
-	log.Println("Deleted old recent meals successfully")
-	return nil
 }
