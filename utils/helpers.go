@@ -40,71 +40,61 @@ func GenerateCourseCombinations(scoredMeals []models.ScoredMeal, numStarter, num
 		courseMeals[scoredMeal.Meal.Course] = append(courseMeals[scoredMeal.Meal.Course], scoredMeal)
 	}
 
-	// Preallocate recommendations slice based on possible combinations
-	numRecommendations := 1
-	if numStarter > 0 {
-		numRecommendations *= len(courseMeals["Starter"]) / numStarter
-	}
-	if numMain > 0 {
-		numRecommendations *= len(courseMeals["Main"]) / numMain
-	}
-	if numDessert > 0 {
-		numRecommendations *= len(courseMeals["Dessert"]) / numDessert
-	}
-	recommendations = make([]models.Recommendation, 0, numRecommendations)
+	// Generate all possible combinations of starters, mains, and desserts
+	starters := courseMeals["Starter"]
+	mains := courseMeals["Main"]
+	desserts := courseMeals["Dessert"]
 
-	// Generate combinations
-	for i := 0; i < numRecommendations; i++ {
-		courseSelection := []models.MealResponse{}
-		
-		// Select starters
-		for j := 0; j < numStarter && j < len(courseMeals["Starter"]); j++ {
-			meal := courseMeals["Starter"][i*numStarter+j]
-			courseSelection = append(courseSelection, models.MealResponse{
-				ID:          meal.Meal.ID,
-				Course:      meal.Meal.Course,
-				Name:        meal.Meal.Name,
-				Ingredients: mapIngredientsToIngredientResponse(meal.Meal.Ingredients),
-				Score:       meal.Score,
-			})
-		}
-		
-		// Select mains
-		for k := 0; k < numMain && (i*numMain+k) < len(courseMeals["Main"]); k++ {
-			meal := courseMeals["Main"][i*numMain+k]
-			courseSelection = append(courseSelection, models.MealResponse{
-				ID:          meal.Meal.ID,
-				Course:      meal.Meal.Course,
-				Name:        meal.Meal.Name,
-				Ingredients: mapIngredientsToIngredientResponse(meal.Meal.Ingredients),
-				Score:       meal.Score,
-			})
-		}
-		
-		// Select desserts
-		for l := 0; l < numDessert && l < len(courseMeals["Dessert"]); l++ {
-			meal := courseMeals["Dessert"][l]
-			courseSelection = append(courseSelection, models.MealResponse{
-				ID:          meal.Meal.ID,
-				Course:      meal.Meal.Course,
-				Name:        meal.Meal.Name,
-				Ingredients: mapIngredientsToIngredientResponse(meal.Meal.Ingredients),
-				Score:       meal.Score,
-			})
-		}
-		
-		recommendations = append(recommendations, models.Recommendation{
-			Courses: courseSelection,
-		})
-		
-		// Early exit if no mains or desserts are required
-		if numMain == 0 && numDessert == 0 {
-			break
+	// Nested loops to generate all combinations
+	for s := 0; s+numStarter <= len(starters); s++ {
+		for m := 0; m+numMain <= len(mains); m++ {
+			for d := 0; d+numDessert <= len(desserts); d++ {
+				courseSelection := []models.MealResponse{}
+
+				// Add starters
+				for i := s; i < s+numStarter; i++ {
+					courseSelection = append(courseSelection, models.MealResponse{
+						ID:          starters[i].Meal.ID,
+						Course:      starters[i].Meal.Course,
+						Name:        starters[i].Meal.Name,
+						Ingredients: mapIngredientsToIngredientResponse(starters[i].Meal.Ingredients),
+						Score:       starters[i].Score,
+					})
+				}
+
+				// Add mains
+				for i := m; i < m+numMain; i++ {
+					courseSelection = append(courseSelection, models.MealResponse{
+						ID:          mains[i].Meal.ID,
+						Course:      mains[i].Meal.Course,
+						Name:        mains[i].Meal.Name,
+						Ingredients: mapIngredientsToIngredientResponse(mains[i].Meal.Ingredients),
+						Score:       mains[i].Score,
+					})
+				}
+
+				// Add desserts
+				for i := d; i < d+numDessert; i++ {
+					courseSelection = append(courseSelection, models.MealResponse{
+						ID:          desserts[i].Meal.ID,
+						Course:      desserts[i].Meal.Course,
+						Name:        desserts[i].Meal.Name,
+						Ingredients: mapIngredientsToIngredientResponse(desserts[i].Meal.Ingredients),
+						Score:       desserts[i].Score,
+					})
+				}
+
+				// Add the new combination to recommendations
+				recommendations = append(recommendations, models.Recommendation{
+					Courses: courseSelection,
+				})
+			}
 		}
 	}
 
 	return recommendations
 }
+
 
 
 // mapIngredientsToIngredientResponse converts ingredients into IngredientResponse.
