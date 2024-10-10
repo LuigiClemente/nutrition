@@ -1,201 +1,388 @@
 {
+    "user_info": {
+        "id": 11,
+        "name": "Ahmad",
+        "age": 30,
+        "gender": "Male",
+        "body_metrics": {
+            "user_id": 11,
+            "weight": 70,
+            "height": 175
+        },
+        "activity_level": "Moderate",
+        "dietary_preferences": {
+            "user_id": 11,
+            "vegetarian": false,
+            "vegan": false,
+            "gluten_free": false,
+            "dairy_free": false,
+            "specific_avoidances": [
+                "Shellfish"
+            ]
+        },
+        "health_conditions": [
+            {
+                "user_id": 11,
+                "name": "Hypertension",
+                "severity": "Moderate"
+            }
+        ],
+        "nutritional_deficiencies": [
+            "Vitamin D",
+            "Iron"
+        ],
+        "allergies": [
+            "Peanuts"
+        ],
+        "recent_meals": [
+            {
+                "id": 12,
+                "user_id": 11,
+                "meal_id": 2,
+                "timestamp": "2024-09-30T18:00:00Z"
+            }
+        ],
+        "goals": [
+            {
+                "id": 12,
+                "user_id": 11,
+                "type": "Weight loss",
+                "target": 5,
+                "duration": 90
+            }
+        ],
+        "microbiome_data": {
+            "user_id": 11,
+            "diversity_score": 75,
+            "gut_health_recommendations": [
+                "Increase fiber intake"
+            ]
+        },
+        "blood_glucose": 90,
+        "lipid_profiles": {
+            "user_id": 11,
+            "cholesterol": 0,
+            "hdl": 0,
+            "ldl": 0,
+            "triglycerides": 0
+        },
+        "environmental_factors": {
+            "user_id": 11,
+            "location": "Urban",
+            "climate": "Temperate",
+            "season": "Fall"
+        },
+        "requested_meal": {
+            "user_id": 0,
+            "starter_meal_type": 1,
+            "main_meal_type": 1,
+            "dessert_meal_type": 1,
+            "number_of_starter": 2,
+            "number_of_main": 2,
+            "number_of_dessert ": 2
+        },
+        "meal_histories": [],
+        "health_score": 85,
+        "preferences": {
+            "user_id": 11,
+            "preferred_cuisines": [
+                "Italian",
+                "Asian"
+            ],
+            "meal_timings": [
+                "Lunch",
+                "Dinner"
+            ],
+            "favorite_ingredients": [
+                "Chicken",
+                "Broccoli"
+            ]
+        }
+    },
     "recommendations": [
         {
-            "combination": "One Course",
             "courses": [
                 {
-                    "id": 14,
-                    "name": "Caprese Salad",
+                    "meal_id": 1,
+                    "course": "Main",
+                    "meal_name": "Grilled Chicken Salad",
+                    "ingredients": [
+                        {
+                            "name": "Chicken Breast",
+                            "amount": 150,
+                            "unit": "Grams",
+                            "portion": "1 pcs",
+                            "ounces": "5.29"
+                        },
+                        {
+                            "name": "Mixed Greens",
+                            "amount": 100,
+                            "unit": "Grams",
+                            "portion": "2 cups",
+                            "ounces": "3.53"
+                        },
+                        {
+                            "name": "Olive Oil",
+                            "amount": 10,
+                            "unit": "ML",
+                            "portion": "1 tbsp",
+                            "ounces": "0.35"
+                        }
+                    ],
+                    "score": 68.18
+                },
+                {
+                    "meal_id": 9,
+                    "course": "Main",
+                    "meal_name": "Lentil Soup",
+                    "ingredients": [
+                        {
+                            "name": "Lentils",
+                            "amount": 100,
+                            "unit": "Grams",
+                            "portion": "0.5 cup",
+                            "ounces": "3.53"
+                        },
+                        {
+                            "name": "Carrots",
+                            "amount": 50,
+                            "unit": "Grams",
+                            "portion": "1 pcs",
+                            "ounces": "1.76"
+                        },
+                        {
+                            "name": "Olive Oil",
+                            "amount": 10,
+                            "unit": "ML",
+                            "portion": "1 tbsp",
+                            "ounces": "0.35"
+                        }
+                    ],
+                    "score": 45.45
+                },
+                {
+                    "meal_id": 11,
                     "course": "Starter",
+                    "meal_name": "Bruschetta",
                     "ingredients": [
                         {
                             "name": "Tomato",
                             "amount": 100,
                             "unit": "grams",
-                            "portion": "1/2 cup"
-                        },
-                        {
-                            "name": "Fresh Mozzarella",
-                            "amount": 100,
-                            "portion": "1/2 cup"
+                            "portion": "2 pcs",
+                            "ounces": "3.53"
                         },
                         {
                             "name": "Basil",
                             "amount": 10,
-                            "portion": "1 tbsp"
-                        },
-                        {
-                            "name": "Olive Oil",
-                            "amount": 1,
-                            "portion": "2 tbsp"
-                        },
-                        {
-                            "name": "Balsamic Vinegar",
-                            "amount": 1,
-                            "portion": "1 tbsp"
+                            "unit": "grams",
+                            "portion": "1",
+                            "ounces": "0.35"
                         }
                     ],
-                    "score": 0
-                }
-            ]
-        },
-        {
-            "combination": "Two Courses",
-            "courses": [
+                    "score": 45.45
+                },
                 {
-                    "id": 14,
-                    "name": "Caprese Salad",
+                    "meal_id": 12,
                     "course": "Starter",
+                    "meal_name": "Stuffed Mushrooms",
                     "ingredients": [
                         {
-                            "name": "Tomato",
-                            "amount": 100,
-                            "portion": "1/2 cup"
-                        },
-                        {
-                            "name": "Fresh Mozzarella",
-                            "amount": 100,
-                            "portion": "1/2 cup"
-                        },
-                        {
-                            "name": "Basil",
-                            "amount": 10,
-                            "portion": "1 tbsp"
-                        },
-                        {
-                            "name": "Olive Oil",
-                            "amount": 1,
-                            "portion": "2 tbsp"
-                        },
-                        {
-                            "name": "Balsamic Vinegar",
-                            "amount": 1,
-                            "portion": "1 tbsp"
-                        }
-                    ],
-                    "score": 0
-                },
-                {
-                    "id": 1,
-                    "name": "Grilled Chicken Salad",
-                    "course": "Main",
-                    "ingredients": [
-                        {
-                            "name": "Chicken Breast",
+                            "name": "Mushrooms",
                             "amount": 150,
-                            "portion": "2 pcs"
+                            "unit": "grams",
+                            "portion": "2 pcs",
+                            "ounces": "5.29"
                         },
                         {
-                            "name": "Mixed Greens",
-                            "amount": 100,
-                            "portion": "1 cup"
-                        },
-                        {
-                            "name": "Olive Oil",
-                            "amount": 10,
-                            "portion": "2 tbsp"
-                        },
-                        {
-                            "name": "Balsamic Vinegar",
-                            "amount": 5,
-                            "portion": "1 tbsp"
-                        }
-                    ],
-                    "score": 9.09
-                }
-            ]
-        },
-        {
-            "combination": "Three Courses",
-            "courses": [
-                {
-                    "id": 14,
-                    "name": "Caprese Salad",
-                    "course": "Starter",
-                    "ingredients": [
-                        {
-                            "name": "Tomato",
-                            "amount": 100,
-                            "portion": "1/2 cup"
-                        },
-                        {
-                            "name": "Fresh Mozzarella",
-                            "amount": 100,
-                            "portion": "1/2 cup"
-                        },
-                        {
-                            "name": "Basil",
-                            "amount": 10,
-                            "portion": "1 tbsp"
-                        },
-                        {
-                            "name": "Olive Oil",
-                            "amount": 1,
-                            "portion": "2 tbsp"
-                        },
-                        {
-                            "name": "Balsamic Vinegar",
-                            "amount": 1,
-                            "portion": "1 tbsp"
-                        }
-                    ],
-                    "score": 0
-                },
-                {
-                    "id": 1,
-                    "name": "Grilled Chicken Salad",
-                    "course": "Main",
-                    "ingredients": [
-                        {
-                            "name": "Chicken Breast",
-                            "amount": 150,
-                            "portion": "2 pcs"
-                        },
-                        {
-                            "name": "Mixed Greens",
-                            "amount": 100,
-                            "portion": "1 cup"
-                        },
-                        {
-                            "name": "Olive Oil",
-                            "amount": 10,
-                            "portion": "2 tbsp"
-                        },
-                        {
-                            "name": "Balsamic Vinegar",
-                            "amount": 5,
-                            "portion": "1 tbsp"
-                        }
-                    ],
-                    "score": 9.09
-                },
-                {
-                    "id": 3,
-                    "name": "Fruit Salad",
-                    "course": "Dessert",
-                    "ingredients": [
-                        {
-                            "name": "Strawberries",
-                            "amount": 100,
-                            "portion": "1/2 cup"
-                        },
-                        {
-                            "name": "Blueberries",
+                            "name": "Cream Cheese",
                             "amount": 50,
-                            "portion": "1/4 cup"
-                        },
-                        {
-                            "name": "Greek Yogurt",
-                            "amount": 100,
-                            "portion": "1/2 cup"
-                        },
-                        {
-                            "name": "Honey",
-                            "amount": 1,
-                            "portion": "1 tbsp"
+                            "unit": "grams",
+                            "portion": "2 tbsp",
+                            "ounces": "1.76"
                         }
                     ],
-                    "score": 8.75
+                    "score": 40.91
+                },
+                {
+                    "meal_id": 17,
+                    "course": "Dessert",
+                    "meal_name": "Tiramisu",
+                    "ingredients": [
+                        {
+                            "name": "Mascarpone Cheese",
+                            "amount": 250,
+                            "unit": "grams",
+                            "portion": "1 pcs",
+                            "ounces": "8.82"
+                        },
+                        {
+                            "name": "Ladyfingers",
+                            "amount": 200,
+                            "unit": "grams",
+                            "portion": "2",
+                            "ounces": "7.05"
+                        }
+                    ],
+                    "score": 45.45
+                },
+                {
+                    "meal_id": 16,
+                    "course": "Dessert",
+                    "meal_name": "Apple Pie",
+                    "ingredients": [
+                        {
+                            "name": "Apples",
+                            "amount": 4,
+                            "unit": "pieces",
+                            "portion": "Sliced",
+                            "ounces": "0.14"
+                        }
+                    ],
+                    "score": 45.45
+                }
+            ]
+        },
+        {
+            "courses": [
+                {
+                    "meal_id": 6,
+                    "course": "Main",
+                    "meal_name": "Vegan Buddha Bowl",
+                    "ingredients": [
+                        {
+                            "name": "Brown Rice",
+                            "amount": 100,
+                            "unit": "Grams",
+                            "portion": "0.5 cup",
+                            "ounces": "3.53"
+                        },
+                        {
+                            "name": "Chickpeas",
+                            "amount": 50,
+                            "unit": "Grams",
+                            "portion": "0.25 cup",
+                            "ounces": "1.76"
+                        },
+                        {
+                            "name": "Tahini",
+                            "amount": 20,
+                            "unit": "Grams",
+                            "portion": "1 tbsp",
+                            "ounces": "0.71"
+                        }
+                    ],
+                    "score": 45.45
+                },
+                {
+                    "meal_id": 3,
+                    "course": "Main",
+                    "meal_name": "Quinoa Salad",
+                    "ingredients": [
+                        {
+                            "name": "Quinoa",
+                            "amount": 100,
+                            "unit": "Grams",
+                            "portion": "0.5 cup",
+                            "ounces": "3.53"
+                        },
+                        {
+                            "name": "Cucumber",
+                            "amount": 50,
+                            "unit": "Grams",
+                            "portion": "1 pcs",
+                            "ounces": "1.76"
+                        },
+                        {
+                            "name": "Olive Oil",
+                            "amount": 10,
+                            "unit": "ML",
+                            "portion": "1 tbsp",
+                            "ounces": "0.35"
+                        }
+                    ],
+                    "score": 45.45
+                },
+                {
+                    "meal_id": 11,
+                    "course": "Starter",
+                    "meal_name": "Bruschetta",
+                    "ingredients": [
+                        {
+                            "name": "Tomato",
+                            "amount": 100,
+                            "unit": "grams",
+                            "portion": "2 pcs",
+                            "ounces": "3.53"
+                        },
+                        {
+                            "name": "Basil",
+                            "amount": 10,
+                            "unit": "grams",
+                            "portion": "1",
+                            "ounces": "0.35"
+                        }
+                    ],
+                    "score": 45.45
+                },
+                {
+                    "meal_id": 12,
+                    "course": "Starter",
+                    "meal_name": "Stuffed Mushrooms",
+                    "ingredients": [
+                        {
+                            "name": "Mushrooms",
+                            "amount": 150,
+                            "unit": "grams",
+                            "portion": "2 pcs",
+                            "ounces": "5.29"
+                        },
+                        {
+                            "name": "Cream Cheese",
+                            "amount": 50,
+                            "unit": "grams",
+                            "portion": "2 tbsp",
+                            "ounces": "1.76"
+                        }
+                    ],
+                    "score": 40.91
+                },
+                {
+                    "meal_id": 17,
+                    "course": "Dessert",
+                    "meal_name": "Tiramisu",
+                    "ingredients": [
+                        {
+                            "name": "Mascarpone Cheese",
+                            "amount": 250,
+                            "unit": "grams",
+                            "portion": "1 pcs",
+                            "ounces": "8.82"
+                        },
+                        {
+                            "name": "Ladyfingers",
+                            "amount": 200,
+                            "unit": "grams",
+                            "portion": "2",
+                            "ounces": "7.05"
+                        }
+                    ],
+                    "score": 45.45
+                },
+                {
+                    "meal_id": 16,
+                    "course": "Dessert",
+                    "meal_name": "Apple Pie",
+                    "ingredients": [
+                        {
+                            "name": "Apples",
+                            "amount": 4,
+                            "unit": "pieces",
+                            "portion": "Sliced",
+                            "ounces": "0.14"
+                        }
+                    ],
+                    "score": 45.45
                 }
             ]
         }
