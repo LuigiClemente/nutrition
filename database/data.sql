@@ -114,7 +114,27 @@ INSERT INTO meal_tags (tag) VALUES
 ('Low Carb'),
 ('Dairy-Free'),
 ('Low Calorie'),
-('Keto');
+('Keto'),
+('Vegetarian'),
+('Paleo'),
+('Whole30'),
+('Sugar-Free'),
+('Low Fat'),
+('Organic'),
+('High Fiber'),
+('Nut-Free'),
+('Soy-Free'),
+('Comfort Food'),
+('Quick & Easy'),
+('Family-Friendly'),
+('Mediterranean'),
+('Diabetic-Friendly'),
+('Heart-Healthy'),
+('Anti-Inflammatory'),
+('Meal Prep'),
+('Low Sodium'),
+('Whole Grain'),
+('Plant-Based');
 
 
 -- Insert Meal Types
@@ -186,18 +206,39 @@ INSERT INTO ingredients (meal_id, name, amount, unit, portion) VALUES
 
 -- Insert Meal Tags for Meals
 INSERT INTO meal_tag_relationships (meal_id, tag_id) VALUES
-(1, 1),  -- Grilled Chicken Salad tagged as 'Healthy'
-(2, 2),  -- Vegetable Stir Fry tagged as 'Vegan'
-(3, 1),  -- Quinoa Salad tagged as 'Gluten-Free'
-(4, 3),  -- Gluten-Free Pancakes tagged as 'Gluten-Free'
-(5, 1),  -- Baked Salmon tagged as 'High Protein'
-(6, 2),  -- Vegan Buddha Bowl tagged as 'Vegan'
-(7, 4),  -- Chicken Curry tagged as 'Spicy'
-(8, 5),  -- Fruit Parfait tagged as 'Dessert'
-(9, 1),  -- Lentil Soup tagged as 'Healthy'
-(10, 2), -- Tofu Scramble tagged as 'Vegan'
-(11, 1),  -- Bruschetta, Healthy
-(12, 1);  -- Stuffed Mushrooms, Healthy; 
+(1, 1),   -- Grilled Chicken Salad tagged as 'Healthy'
+(1, 6),   -- Grilled Chicken Salad tagged as 'High Protein'
+(1, 7),   -- Grilled Chicken Salad tagged as 'Low Carb'
+(2, 2),   -- Vegetable Stir Fry tagged as 'Vegan'
+(2, 9),   -- Vegetable Stir Fry tagged as 'Low Calorie'
+(3, 1),   -- Quinoa Salad tagged as 'Healthy'
+(3, 3),   -- Quinoa Salad tagged as 'Gluten-Free'
+(3, 16),  -- Quinoa Salad tagged as 'Organic'
+(4, 3),   -- Gluten-Free Pancakes tagged as 'Gluten-Free'
+(4, 5),   -- Gluten-Free Pancakes tagged as 'Dessert'
+(4, 9),   -- Gluten-Free Pancakes tagged as 'Low Calorie'
+(5, 1),   -- Baked Salmon tagged as 'Healthy'
+(5, 6),   -- Baked Salmon tagged as 'High Protein'
+(5, 10),  -- Baked Salmon tagged as 'Keto'
+(6, 2),   -- Vegan Buddha Bowl tagged as 'Vegan'
+(6, 7),   -- Vegan Buddha Bowl tagged as 'Low Carb'
+(6, 16),  -- Vegan Buddha Bowl tagged as 'Organic'
+(7, 4),   -- Chicken Curry tagged as 'Spicy'
+(7, 19),  -- Chicken Curry tagged as 'Comfort Food'
+(7, 1),   -- Chicken Curry tagged as 'Healthy'
+(8, 5),   -- Fruit Parfait tagged as 'Dessert'
+(8, 9),   -- Fruit Parfait tagged as 'Low Calorie'
+(9, 1),   -- Lentil Soup tagged as 'Healthy'
+(9, 18),  -- Lentil Soup tagged as 'Nut-Free'
+(9, 16),  -- Lentil Soup tagged as 'Organic'
+(10, 2),  -- Tofu Scramble tagged as 'Vegan'
+(10, 9),  -- Tofu Scramble tagged as 'Low Calorie'
+(10, 18), -- Tofu Scramble tagged as 'Nut-Free'
+(11, 1),  -- Bruschetta tagged as 'Healthy'
+(11, 16), -- Bruschetta tagged as 'Organic'
+(12, 1),  -- Stuffed Mushrooms tagged as 'Healthy'
+(12, 16); -- Stuffed Mushrooms tagged as 'Organic'
+
 
 -- Insert Meal History for Users
 INSERT INTO meal_histories (user_id, meal_id, timestamp) VALUES
