@@ -24,44 +24,44 @@ const (
 
 // calculateMealScore computes scores for meals based on user preferences and goals.
 func CalculateMealScore(user models.User, meals []models.Meal) []models.ScoredMeal {
-    var wg sync.WaitGroup
-    mealsWithScores := make([]models.ScoredMeal, len(meals))
-    userBMI := calculateBMI(user.BodyMetrics.Height, user.BodyMetrics.Weight)
+	var wg sync.WaitGroup
+	mealsWithScores := make([]models.ScoredMeal, len(meals))
+	userBMI := calculateBMI(user.BodyMetrics.Height, user.BodyMetrics.Weight)
 
-    for i, meal := range meals {
-        nutritionalContent := map[string]float64{}
-        // Unmarshal JSON before launching goroutine
-        if err := json.Unmarshal(meal.NutritionalContent, &nutritionalContent); err != nil {
-            handleError(fmt.Errorf("error unmarshaling nutritional content for meal %d: %w", meal.ID, err))
-            continue
-        }
+	for i, meal := range meals {
+		nutritionalContent := map[string]float64{}
+		// Unmarshal JSON before launching goroutine
+		if err := json.Unmarshal(meal.NutritionalContent, &nutritionalContent); err != nil {
+			handleError(fmt.Errorf("error unmarshaling nutritional content for meal %d: %w", meal.ID, err))
+			continue
+		}
 
-        wg.Add(1)
-        go func(i int, meal models.Meal) {
-            defer wg.Done()
+		wg.Add(1)
+		go func(i int, meal models.Meal) {
+			defer wg.Done()
 
-            fitScore := 0.0
-            fitScore += calculateDietaryMatch(user, meal)
-            fitScore += calculateHealthGoalsAlignment(user, nutritionalContent, userBMI)
-            fitScore += calculateMicrobiomeCompatibility(user, meal)
-            fitScore += calculateEnvironmentalAdaptability(user, meal)
-            fitScore += calculateRecentConsumptionPenalty(user, meal)
-            fitScore += calculateAgeGenderScore(user, nutritionalContent)
+			fitScore := 0.0
+			fitScore += calculateDietaryMatch(user, meal)
+			fitScore += calculateHealthGoalsAlignment(user, nutritionalContent, userBMI)
+			fitScore += calculateMicrobiomeCompatibility(user, meal)
+			fitScore += calculateEnvironmentalAdaptability(user, meal)
+			fitScore += calculateRecentConsumptionPenalty(user, meal)
+			fitScore += calculateAgeGenderScore(user, nutritionalContent)
 
-            // Normalize the score
-            normalizedScore := normalizeScore(fitScore, maxTotalScore)
-            mealsWithScores[i] = models.ScoredMeal{Meal: &meal, Score: normalizedScore}
-        }(i, meal)
-    }
+			// Normalize the score
+			normalizedScore := normalizeScore(fitScore, maxTotalScore)
+			mealsWithScores[i] = models.ScoredMeal{Meal: &meal, Score: normalizedScore}
+		}(i, meal)
+	}
 
-    wg.Wait()
+	wg.Wait()
 
-    // Sort meals by normalized score in descending order
-    sort.Slice(mealsWithScores, func(i, j int) bool {
-        return mealsWithScores[i].Score > mealsWithScores[j].Score
-    })
+	// Sort meals by normalized score in descending order
+	sort.Slice(mealsWithScores, func(i, j int) bool {
+		return mealsWithScores[i].Score > mealsWithScores[j].Score
+	})
 
-    return mealsWithScores
+	return mealsWithScores
 }
 
 // calculateDietaryMatch scores meals based on user's dietary preferences and avoidances.
@@ -87,8 +87,6 @@ func calculateDietaryMatch(user models.User, meal models.Meal) float64 {
 	return score
 }
 
-
-
 // calculateHealthGoalsAlignment scores meals based on how well they align with user's health goals.
 func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[string]float64, bmi float64) float64 {
 	var wg sync.WaitGroup
@@ -104,8 +102,8 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 		defer wg.Done()
 		score := 0.0
 
-		switch goalType {
-		case "Weight loss":
+		switch strings.ToLower(goalType) {
+		case "weight loss":
 			if hasCalories && calories <= 400.0 {
 				score += 30.0
 			}
@@ -123,7 +121,7 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 				score += 10.0
 			}
 
-		case "Muscle gain":
+		case "muscle gain":
 			if protein, hasProtein := nutritionalContent["Protein"]; hasProtein && protein >= 25.0 {
 				score += 30.0
 			}
@@ -137,7 +135,7 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 				score += 30.0
 			}
 
-		case "Heart health":
+		case "heart health":
 
 			if cholesterol, hasCholesterol := nutritionalContent["Cholesterol"]; hasCholesterol && cholesterol <= 20.0 {
 				score += 10.0
@@ -149,7 +147,7 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 				score += 10.0
 			}
 
-		case "Blood sugar management":
+		case "blood sugar management":
 
 			if hasSugar && sugar <= 5.0 {
 				score += 20.0
@@ -158,12 +156,12 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 				score += 10.0
 			}
 
-		case "Gut health":
+		case "gut health":
 			if hasFiber && fiber >= 8.0 {
 				score += 30.0
 			}
 
-		case "Metabolic health":
+		case "metabolic health":
 			if hasSugar && sugar <= 5.0 && hasCalories && calories <= 500.0 {
 				score += 30.0
 			}
@@ -173,7 +171,7 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 				}
 			}
 
-		case "Cholesterol reduction":
+		case "cholesterol reduction":
 			if cholesterol, hasCholesterol := nutritionalContent["Cholesterol"]; hasCholesterol && cholesterol <= 20.0 {
 				score += 30.0
 			}
@@ -181,7 +179,7 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 				score += 20.0
 			}
 
-		case "Weight maintenance":
+		case "weight maintenance":
 			if hasCalories && calories >= 400.0 && calories <= 600.0 {
 				score += 30.0
 			}
@@ -192,7 +190,7 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 				score += 10.0
 			}
 
-		case "Lean muscle maintenance":
+		case "lean muscle maintenance":
 			if protein, hasProtein := nutritionalContent["Protein"]; hasProtein && protein >= 15.0 {
 				score += 30.0
 			}
@@ -200,7 +198,7 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 				score += 10.0
 			}
 
-		case "Improved energy levels":
+		case "improved energy levels":
 			if carbs, hasCarbs := nutritionalContent["Carbs"]; hasCarbs && carbs >= 40.0 {
 				score += 30.0
 			}
@@ -211,7 +209,7 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 				score += 10.0
 			}
 
-		case "Endurance training support":
+		case "endurance training support":
 			if carbs, hasCarbs := nutritionalContent["Carbs"]; hasCarbs && carbs >= 40.0 {
 				score += 30.0
 			}
@@ -222,7 +220,7 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 				score += 10.0
 			}
 
-		case "Cardiovascular fitness":
+		case "cardiovascular fitness":
 			if sodium, hasSodium := nutritionalContent["Sodium"]; hasSodium && sodium <= 200.0 {
 				score += 30.0
 			}
@@ -235,17 +233,17 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 				score += 10.0
 			}
 
-		case "Detoxification":
+		case "detoxification":
 			if hasFiber && fiber >= 8.0 {
 				score += 30.0
 			}
 
-		case "Bone health":
+		case "bone health":
 			if calcium, hasCalcium := nutritionalContent["Calcium"]; hasCalcium && calcium >= 200.0 {
 				score += 30.0
 			}
 
-		case "Skin health":
+		case "skin health":
 			if vitaminA, hasVitaminA := nutritionalContent["Vitamin A"]; hasVitaminA {
 				if vitaminC, hasVitaminC := nutritionalContent["Vitamin C"]; hasVitaminC && vitaminA >= 10.0 && vitaminC >= 20.0 {
 					score += 30.0
@@ -255,12 +253,12 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 				score += 20.0
 			}
 
-		case "Anti-inflammatory diet":
+		case "anti-inflammatory diet":
 			if antioxidants, hasAntioxidants := nutritionalContent["Antioxidants"]; hasAntioxidants && antioxidants >= 5.0 {
 				score += 30.0
 			}
 
-		case "Hormonal balance":
+		case "hormonal balance":
 			if omega3, hasOmega3 := nutritionalContent["Omega-3"]; hasOmega3 && omega3 >= 10.0 {
 				score += 30.0
 			}
@@ -268,7 +266,7 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 				score += 20.0
 			}
 
-		case "Improved mental clarity":
+		case "improved mental clarity":
 			if omega3, hasOmega3 := nutritionalContent["Omega-3"]; hasOmega3 && omega3 >= 10.0 {
 				score += 30.0
 			}
@@ -340,14 +338,14 @@ func calculateEnvironmentalAdaptability(user models.User, meal models.Meal) floa
 		score += 5.0 // Favor warm meals in winter
 	}
 
-	// Score adjustments based on user location
-	switch strings.ToLower(user.EnvironmentalFactors.Location) {
+	// Score adjustments based on user climate
+	switch strings.ToLower(user.EnvironmentalFactors.Climate) {
 	case "tropical":
 		if tagMap["cooling"] {
-			score += 3.0 // Favor cooling meals in tropical locations
+			score += 3.0 // Favor cooling meals in tropical climates
 		}
 		if tagMap["light"] {
-			score += 2.0 // Favor light meals in tropical locations
+			score += 2.0 // Favor light meals in tropical climates
 		}
 	case "urban":
 		if tagMap["quick"] {

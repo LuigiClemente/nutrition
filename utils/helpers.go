@@ -32,9 +32,9 @@ func GenerateCourseCombinations(scoredMeals []models.ScoredMeal, numStarter, num
 
 	// Group meals by course type
 	courseMeals := map[string][]models.ScoredMeal{
-		"Starter":  {},
-		"Main":     {},
-		"Dessert":  {},
+		"Starter": {},
+		"Main":    {},
+		"Dessert": {},
 	}
 	for _, scoredMeal := range scoredMeals {
 		courseMeals[scoredMeal.Meal.Course] = append(courseMeals[scoredMeal.Meal.Course], scoredMeal)
@@ -94,8 +94,6 @@ func GenerateCourseCombinations(scoredMeals []models.ScoredMeal, numStarter, num
 
 	return recommendations
 }
-
-
 
 // mapIngredientsToIngredientResponse converts ingredients into IngredientResponse.
 func mapIngredientsToIngredientResponse(ingredients []models.Ingredient) []models.IngredientResponse {
