@@ -304,24 +304,74 @@ func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[stri
 
 // calculateMicrobiomeCompatibility scores meals based on how well they support the user's microbiome.
 func calculateMicrobiomeCompatibility(user models.User, meal models.Meal) float64 {
+	// Define mappings of gut health recommendations to meal tags
+	recommendationToTag := map[string]string{
+		"Increase Fiber":             "High Fiber",
+		"Reduce Fat Intake":          "Low Fat",
+		"Add Probiotics":             "Probiotic",
+		"Eat More Vegetables":        "Plant-Based",
+		"Increase Water Intake":      "Hydrating",
+		"Reduce Sugar":               "Sugar-Free",
+		"Add Prebiotics":             "Prebiotic",
+		"Reduce Meat Consumption":    "Vegetarian",
+		"Avoid Gluten":               "Gluten-Free",
+		"Increase Protein":           "High Protein",
+		"Eat Fermented Foods":        "Fermented",
+		"Increase Calcium":           "High Calcium",
+		"Eat Leafy Greens":           "Plant-Based",
+		"Reduce Salt":                "Low Sodium",
+		"Increase Fruits":            "Plant-Based",
+		"Add Whole Grains":           "Whole Grain",
+		"Eat More Yogurt":            "Probiotic",
+		"Avoid Allergens":            "Allergen-Free",
+		"Increase Magnesium":         "High Magnesium",
+		"Eat Omega-3 Rich Foods":     "Heart-Healthy",
+		"Reduce Cholesterol":         "Low Cholesterol",
+		"Increase Iron Intake":       "Iron-Rich",
+		"Reduce Processed Foods":     "Whole30",
+		"Add Antioxidants":           "Anti-Inflammatory",
+		"Increase Healthy Fats":      "Keto",
+		"Eat Plant-Based Proteins":   "Plant-Based",
+		"Increase Omega-3":           "Heart-Healthy",
+		"Avoid Processed Sugar":      "Sugar-Free",
+		"Eat More Fiber":             "High Fiber",
+		"Reduce Dairy Intake":        "Dairy-Free",
+		"Eat More Nuts and Seeds":    "Nut-Free",
+		"Avoid Refined Carbs":        "Low Carb",
+		"Eat More Legumes":           "Plant-Based",
+		"Reduce Alcohol Consumption": "Moderate",
+		"Eat More Whole Foods":       "Whole30",
+	}
+
+	// Create a set of meal tags for faster lookup
+	mealTagSet := make(map[string]struct{})
+	for _, tag := range meal.MealTags {
+		mealTagSet[strings.ToLower(tag.Tag)] = struct{}{}
+	}
+
+	score := 0.0
+
 	// Iterate over the gut health recommendations of the user
 	for _, recommendation := range user.MicrobiomeData.GutHealthRecommendations {
-		// Check if the meal contains the recommendation as a tag
-		if containsRecommendationTag(meal.MealTags, recommendation) {
-			return 10.0 // Increase score for gut-health-promoting meals
-		}
-	}
-	return 0.0
-}
+		// Trim spaces and convert recommendation to lowercase for comparison
+		trimmedRecommendation := strings.TrimSpace(strings.ToLower(recommendation))
 
-// Helper function to check if a recommendation is in the meal tags
-func containsRecommendationTag(tags []models.MealTag, recommendation string) bool {
-	for _, tag := range tags {
-		if tag.Tag == recommendation {
-			return true
+		// Check if the recommendation maps to a tag
+		for key, tag := range recommendationToTag {
+			if strings.ToLower(strings.TrimSpace(key)) == trimmedRecommendation {
+				// Convert the tag to lowercase and check against the meal tag set
+				lowerTag := strings.ToLower(tag)
+				if _, exists := mealTagSet[lowerTag]; exists {
+					score = 10.0
+
+					break // Exit loop after finding the match
+				}
+			}
 		}
+
 	}
-	return false
+
+	return score
 }
 
 // calculateEnvironmentalAdaptability scores meals based on their environmental impact and user’s preferences.
