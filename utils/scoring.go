@@ -14,12 +14,12 @@ const (
 	/*
 		MaxAgeGenderScore           = 20.0
 		MaxRecentConsumptionPenalty = 10.0
-		MaxEnvironmentalAdaptability = 15.0
+		MaxEnvironmentalAdaptability = 22.0
 		MaxMicrobiomeCompatibility  = 10.0
 		MaxDietaryMatch             = 25.0
 		MaxHealthGoalsAlignment     = 30.0
 	*/
-	maxTotalScore = 110.0
+	maxTotalScore = 117.0
 )
 
 // calculateMealScore computes scores for meals based on user preferences and goals.
@@ -386,8 +386,11 @@ func calculateEnvironmentalAdaptability(user models.User, meal models.Meal) floa
 	}
 
 	// Score adjustments based on user season
-	if strings.ToLower(user.EnvironmentalFactors.Season) == "winter" && tagMap["warm"] {
-		score += 5.0 // Favor warm meals in winter
+	if strings.ToLower(user.EnvironmentalFactors.Season) == "winter" && tagMap["healthy"] {
+		score += 5.0 // Favor healthy meals in winter
+	}
+	if strings.ToLower(user.EnvironmentalFactors.Season) == "summer" && tagMap["light"] {
+		score += 5.0 // Favor light meals in summer
 	}
 
 	// Score adjustments based on user climate
@@ -403,19 +406,40 @@ func calculateEnvironmentalAdaptability(user models.User, meal models.Meal) floa
 		if tagMap["quick"] {
 			score += 3.0 // Favor quick meals for urban lifestyles
 		}
+		if tagMap["healthy"] {
+			score += 2.0 // Favor healthy meals in urban settings
+		}
 	case "rural":
 		if tagMap["hearty"] {
 			score += 4.0 // Favor hearty meals for rural settings
 		}
+		if tagMap["family-friendly"] {
+			score += 3.0 // Favor family-friendly meals in rural areas
+		}
+	case "temperate":
+		if tagMap["organic"] {
+			score += 2.0 // Favor organic meals in temperate climates
+		}
+	case "hot":
+		if tagMap["light"] {
+			score += 4.0 // Favor light meals in hot climates
+		}
+		if tagMap["low calorie"] {
+			score += 3.0 // Favor low-calorie meals in hot climates
+		}
 	}
 
-	// Score adjustments based on user climate
-	if strings.ToLower(user.EnvironmentalFactors.Climate) == "hot" && tagMap["light"] {
-		score += 4.0 // Favor light meals in hot climates
+	// General tags that can enhance adaptability
+	if tagMap["plant-based"] {
+		score += 3.0 // Favor plant-based meals
+	}
+	if tagMap["heart-healthy"] {
+		score += 2.0 // Favor heart-healthy meals
 	}
 
 	return score
 }
+
 
 // calculateRecentConsumptionPenalty penalizes meals based on recent user consumption history.
 func calculateRecentConsumptionPenalty(user models.User, meal models.Meal) float64 {
