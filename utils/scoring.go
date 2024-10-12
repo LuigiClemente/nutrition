@@ -68,18 +68,19 @@ func CalculateMealScore(user models.User, meals []models.Meal) []models.ScoredMe
 func calculateDietaryMatch(user models.User, meal models.Meal) float64 {
 	score := 0.0
 
-	// Create a map of dietary preferences
+	// Create a map of dietary preferences in lowercase
 	preferences := map[string]bool{
-		"Vegetarian":  user.DietaryPreferences.Vegetarian,
-		"Vegan":       user.DietaryPreferences.Vegan,
-		"Gluten-Free": user.DietaryPreferences.GlutenFree,
-		"Dairy-Free":  user.DietaryPreferences.DairyFree,
+		"vegetarian":  user.DietaryPreferences.Vegetarian,
+		"vegan":       user.DietaryPreferences.Vegan,
+		"gluten-free": user.DietaryPreferences.GlutenFree,
+		"dairy-free":  user.DietaryPreferences.DairyFree,
 	}
 
 	// Iterate over the tags of the meal
 	for _, tag := range meal.MealTags {
-		// Check if the tag's name matches any of the user preferences
-		if match, exists := preferences[tag.Tag]; exists && match {
+		// Convert the tag to lowercase and check if it matches any user preference
+		tagLower := strings.ToLower(tag.Tag)
+		if match, exists := preferences[tagLower]; exists && match {
 			score += 10.0 // Increase score for each matching tag
 		}
 	}
