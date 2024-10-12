@@ -81,7 +81,8 @@ func calculateDietaryMatch(user models.User, meal models.Meal) float64 {
 		// Convert the tag to lowercase and check if it matches any user preference
 		tagLower := strings.ToLower(tag.Tag)
 		if match, exists := preferences[tagLower]; exists && match {
-			score += 10.0 // Increase score for each matching tag
+			score = 10.0
+			break
 		}
 	}
 
