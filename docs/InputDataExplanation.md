@@ -42,7 +42,7 @@
 
 This document outlines the key nutritional and health-related elements that may be considered for meal scoring or tracking.
 
-## Core Nutritional Keys
+## Nutritional Keys (nutritional_content)
 - **Calories**: The total amount of energy provided by the meal.
 - **Sugar**: Total sugar content, typically listed as grams.
 - **Fiber**: Amount of dietary fiber in grams.
@@ -94,6 +94,41 @@ This document outlines the key nutritional and health-related elements that may 
 - **Beta-carotene**: A type of Vitamin A found in plants, beneficial for skin and eye health.
 
 
+## Gut Health Recommendations
+
+1. **Increase Fiber**
+2. **Reduce Fat Intake**
+3. **Add Probiotics**
+4. **Eat More Vegetables**
+5. **Increase Water Intake**
+6. **Reduce Sugar**
+7. **Add Prebiotics**
+8. **Reduce Meat Consumption**
+9. **Avoid Gluten**
+10. **Eat More Fiber**
+11. **Increase Protein**
+12. **Eat Fermented Foods**
+13. **Increase Calcium**
+14. **Eat Leafy Greens**
+15. **Reduce Salt**
+16. **Increase Fruits**
+17. **Add Whole Grains**
+18. **Eat More Yogurt**
+19. **Avoid Allergens**
+20. **Increase Antioxidants**
+21. **Avoid Processed Foods**
+22. **Increase Omega-3 Intake**
+23. **Reduce Dairy Intake**
+24. **Add Healthy Fats**
+25. **Eat More Nuts and Seeds**
+26. **Avoid Refined Carbs**
+27. **Eat More Legumes**
+28. **Consume Plant-Based Proteins**
+29. **Reduce Alcohol Consumption**
+30. **Eat More Whole Foods**
+
+
+
 # Possible Climates
 
 - Temperate
@@ -130,3 +165,37 @@ This document outlines the key nutritional and health-related elements that may 
 - Pizza
 - Seafood
 - Vegetarian
+
+
+## Meal Tags
+
+- Healthy
+- Vegan
+- Gluten-Free
+- Spicy
+- Dessert
+- High Protein
+- Low Carb
+- Dairy-Free
+- Low Calorie
+- Keto
+- Vegetarian
+- Paleo
+- Whole30
+- Sugar-Free
+- Low Fat
+- Organic
+- High Fiber
+- Nut-Free
+- Soy-Free
+- Comfort Food
+- Quick & Easy
+- Family-Friendly
+- Mediterranean
+- Diabetic-Friendly
+- Heart-Healthy
+- Anti-Inflammatory
+- Meal Prep
+- Low Sodium
+- Whole Grain
+- Plant-Based
