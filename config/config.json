@@ -1,0 +1,18 @@
+{
+    "dietary_preferences_scores": {
+        "vegetarian": 10.0,
+        "vegan": 10.0,
+        "gluten_free": 10.0,
+        "dairy_free": 10.0
+    },
+    "health_goals_scores": {
+        "diabetes_friendly": 15.0,
+        "heart_healthy": 15.0
+    },
+    "default_scores": {
+        "recent_consumption_penalty": -15.0,
+        "age_calcium_vitaminD": 10.0,
+        "gender_protein": 15.0,
+        "gender_iron": 10.0
+    }
+}

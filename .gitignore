@@ -1,0 +1,40 @@
+# Binaries
+bin/
+build/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Go workspace files
+*.swp
+*.swo
+*.tmp
+*.log
+
+# Go module cache
+**/go.sum
+**/go.mod
+
+# Go build artifacts
+*.out
+*.a
+
+# Dependency directories
+vendor/
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.iml
+*.sublime-workspace
+*.sublime-project
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Test coverage files
+coverage.out
