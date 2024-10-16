@@ -18,8 +18,9 @@ const (
 		MaxMicrobiomeCompatibility  = 10.0
 		MaxDietaryMatch             = 25.0
 		MaxHealthGoalsAlignment     = 30.0
+		MaxFavoriteIngredientsScore     = 15.0
 	*/
-	maxTotalScore = 117.0
+	maxTotalScore = 132.0
 )
 
 // calculateMealScore computes scores for meals based on user preferences and goals.
@@ -47,6 +48,7 @@ func CalculateMealScore(user models.User, meals []models.Meal) []models.ScoredMe
 			fitScore += calculateEnvironmentalAdaptability(user, meal)
 			fitScore += calculateRecentConsumptionPenalty(user, meal)
 			fitScore += calculateAgeGenderScore(user, nutritionalContent)
+			fitScore += calculateFavoriteIngredientsScore(user, meal)
 
 			// Normalize the score
 			normalizedScore := normalizeScore(fitScore, maxTotalScore)
@@ -538,3 +540,37 @@ func calculateAgeGenderScore(user models.User, nutritionalContent map[string]flo
 
 	return score
 }
+
+// calculateFavoriteIngredientsScore calculates the score for favorite ingredients with a max score of 15.
+func calculateFavoriteIngredientsScore(user models.User, meal models.Meal) float64 {
+    // Set the maximum score and score per matching ingredient
+    const maxScore = 15.0
+    const scorePerMatch = 5.0
+
+    // If no favorite ingredients, return 0
+    if len(user.Preferences.FavoriteIngredients) == 0 {
+        return 0.0
+    }
+
+    // Create a set for favorite ingredients (case insensitive) for fast lookup
+    favoriteIngredientsMap := make(map[string]struct{}, len(user.Preferences.FavoriteIngredients))
+    for _, ingredient := range user.Preferences.FavoriteIngredients {
+        favoriteIngredientsMap[strings.ToLower(ingredient)] = struct{}{}
+    }
+
+    // Count matching ingredients, and calculate the score
+    matches := 0
+    for _, mealIngredient := range meal.Ingredients {
+        if _, exists := favoriteIngredientsMap[strings.ToLower(mealIngredient.Name)]; exists {
+            matches++
+            if matches*int(scorePerMatch) >= int(maxScore) {
+                return maxScore // Return early if the max score is reached
+            }
+        }
+    }
+
+    // Return the calculated score based on matches
+    return float64(matches) * scorePerMatch
+}
+
+
