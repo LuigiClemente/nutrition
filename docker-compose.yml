@@ -1,29 +1,13 @@
-version: '3.8'
+version: "3.8" # Specify the Docker Compose file version
 
 services:
-  db:
-    image: postgres:13-alpine
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: nutrition_app
+  nutrition-app: # Name of your service
+    build:
+      context: . # Path to the directory containing the Dockerfile
+      dockerfile: Dockerfile # Name of the Dockerfile (optional if it's named 'Dockerfile')
+    ports:
+      - "1010:1010" # Map port 1010 of the container to port 1010 on the host
+    env_file:
+      - .env # Load environment variables from the .env file
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
-  app:
-    build: .
-    environment:
-      DB_HOST: 88.99.227.238
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: nutrition_app
-      DB_PORT: 5432
-    ports:
-      - "1010:1010"
-    depends_on:
-      - db
-
-volumes:
-  postgres_data:
+      - .:/go/src/app # Mount current directory to /go/src/app in the container (optional for development)
