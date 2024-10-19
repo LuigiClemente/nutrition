@@ -1,0 +1,6 @@
+.git
+*.md
+.cache
+*.sql
+test.graphql
+policy.hcl
