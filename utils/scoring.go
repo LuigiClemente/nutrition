@@ -93,6 +93,13 @@ func calculateDietaryMatch(user models.User, meal models.Meal) float64 {
 
 // calculateHealthGoalsAlignment scores meals based on how well they align with user's health goals.
 func calculateHealthGoalsAlignment(user models.User, nutritionalContent map[string]float64, bmi float64) float64 {
+
+	// if no goal 
+	if len(user.Goals) < 1 {
+		// default
+		return 30
+	}
+
 	var wg sync.WaitGroup
 	scoreMap := sync.Map{}
 
@@ -442,7 +449,6 @@ func calculateEnvironmentalAdaptability(user models.User, meal models.Meal) floa
 	return score
 }
 
-
 // calculateRecentConsumptionPenalty penalizes meals based on recent user consumption history.
 func calculateRecentConsumptionPenalty(user models.User, meal models.Meal) float64 {
 	for _, recentMeal := range user.RecentMeals {
@@ -543,34 +549,32 @@ func calculateAgeGenderScore(user models.User, nutritionalContent map[string]flo
 
 // calculateFavoriteIngredientsScore calculates the score for favorite ingredients with a max score of 15.
 func calculateFavoriteIngredientsScore(user models.User, meal models.Meal) float64 {
-    // Set the maximum score and score per matching ingredient
-    const maxScore = 15.0
-    const scorePerMatch = 5.0
+	// Set the maximum score and score per matching ingredient
+	const maxScore = 15.0
+	const scorePerMatch = 5.0
 
-    // If no favorite ingredients, return 0
-    if len(user.Preferences.FavoriteIngredients) == 0 {
-        return 0.0
-    }
+	// If no favorite ingredients, return 0
+	if len(user.Preferences.FavoriteIngredients) == 0 {
+		return 0.0
+	}
 
-    // Create a set for favorite ingredients (case insensitive) for fast lookup
-    favoriteIngredientsMap := make(map[string]struct{}, len(user.Preferences.FavoriteIngredients))
-    for _, ingredient := range user.Preferences.FavoriteIngredients {
-        favoriteIngredientsMap[strings.ToLower(ingredient)] = struct{}{}
-    }
+	// Create a set for favorite ingredients (case insensitive) for fast lookup
+	favoriteIngredientsMap := make(map[string]struct{}, len(user.Preferences.FavoriteIngredients))
+	for _, ingredient := range user.Preferences.FavoriteIngredients {
+		favoriteIngredientsMap[strings.ToLower(ingredient)] = struct{}{}
+	}
 
-    // Count matching ingredients, and calculate the score
-    matches := 0
-    for _, mealIngredient := range meal.Ingredients {
-        if _, exists := favoriteIngredientsMap[strings.ToLower(mealIngredient.Name)]; exists {
-            matches++
-            if matches*int(scorePerMatch) >= int(maxScore) {
-                return maxScore // Return early if the max score is reached
-            }
-        }
-    }
+	// Count matching ingredients, and calculate the score
+	matches := 0
+	for _, mealIngredient := range meal.Ingredients {
+		if _, exists := favoriteIngredientsMap[strings.ToLower(mealIngredient.Name)]; exists {
+			matches++
+			if matches*int(scorePerMatch) >= int(maxScore) {
+				return maxScore // Return early if the max score is reached
+			}
+		}
+	}
 
-    // Return the calculated score based on matches
-    return float64(matches) * scorePerMatch
+	// Return the calculated score based on matches
+	return float64(matches) * scorePerMatch
 }
-
-
