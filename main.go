@@ -5,6 +5,7 @@ import (
 	"nutrition/api"
 	"nutrition/utils"
 
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
@@ -20,10 +21,9 @@ func main() {
 	// Set up the Gin router
 	router := api.SetupRouter()
 
-
 	go utils.ScheduleDeletion()
 	// Set Gin to production mode
-	//gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.ReleaseMode)
 	// Start the server
 	router.Run(":1010")
 

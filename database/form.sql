@@ -122,7 +122,7 @@ CREATE TABLE meal_tags (
 -- Meals Table with Foreign Key Relationships
 CREATE TABLE meals (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(128) NOT NULL,
+    name VARCHAR(128) UNIQUE NOT NULL,
     nutritional_content JSONB,  -- JSONB for flexible nutritional data
     meal_timings TEXT[] DEFAULT '{}',  -- Default empty array
     meal_type_id INT REFERENCES meal_types(id) ON DELETE SET NULL,  -- Foreign key to meal types

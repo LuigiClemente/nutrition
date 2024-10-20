@@ -82,7 +82,11 @@
         ]
     },
     "requested_meal": {
-        "meal_type": 3,
-        "number_of_courses": 1
+        "starter_meal_type": 1,
+        "main_meal_type": 1,
+        "dessert_meal_type": 1,
+        "number_of_starter": 2,
+        "number_of_main": 2,
+        "number_of_dessert ": 2
     }
 }
